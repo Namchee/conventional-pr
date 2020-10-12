@@ -1,0 +1,41 @@
+name: 'Conventional PRs'
+description: "Enforce conventional commit style in your project's pull requests"
+author: 'Cristopher Namchee'
+inputs:
+  access_token:
+    description: 'GitHub Access Token'
+    required: true
+  check_draft:
+    description: 'Determine whether Conventional PR should check draft PRs'
+    required: false
+    default: false
+  label:
+    description: 'Nonconventional PRs label'
+    required: false
+    default: 'Nonconventional'
+  close:
+    description: 'Determine whether Conventional PR should close nonconventional PRs'
+    required: false
+    default: true
+  template:
+    description: 'Comment header on invalid PRs'
+    required: false
+    default: "Thank you for your contribution attempt in this repository!\n\nUnfortunately, this pull request doesn't meet our standards by reason we stated below. Please create another pull request that meets our standards in the future."
+  strict:
+    description: 'Determine whether the current restriction should apply to maintainers or not'
+    required: false
+    default: true
+  allowedTypes:
+    description: 'List of allowed conventional commit types'
+    required: false
+    default: ''
+  allowedScopes:
+    description: 'List of allowed conventional commit scopes'
+    required: false
+    default: ''
+runs:
+  using: docker
+  image: 'Dockerfile'
+branding:
+  icon: 'compass'
+  color: 'gray-dark'
