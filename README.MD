@@ -44,7 +44,7 @@ jobs:
 
 Refer to [GitHub workflow syntax](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#about-yaml-syntax-for-workflows) for more advanced usage.
 
-See the example [here](https://github.com/Namchee/conventional-pr/blob/main/.github/workflows/conventional-pr.yml)
+See the example [here](https://github.com/Namchee/conventional-pr/blob/master/.github/workflows/conventional-pr.yml)
 
 ## Caveats
 
