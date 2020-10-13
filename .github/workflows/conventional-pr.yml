@@ -3,10 +3,10 @@ name: Check PR semantics
 on: pull_request
 
 jobs:
-  hqprs:
+  conventional-pr:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR semantics
-        uses: Namchee/conventional-pr@v0.1.0
+        uses: Namchee/conventional-pr@v0.2.0
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}

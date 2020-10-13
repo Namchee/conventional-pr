@@ -18,11 +18,13 @@ const (
 	closedState = "closed"
 )
 
+// Metadata for the current repository
 type Metadata struct {
 	name  string
 	owner string
 }
 
+// Options passed from the action input
 type Options struct {
 	token         string
 	checkDraft    bool
@@ -35,11 +37,18 @@ type Options struct {
 	allowedScopes []string
 }
 
+// Event that triggers the action
 type Event struct {
 	Action string "json:action"
 	Number int    "json:number"
 }
+type BadCommit struct {
+	hash    string
+	message string
+}
 
+// Get all the required environment variables and encapsulate them
+// in a custom struct.
 func getOptionsValues() Options {
 	token := os.Getenv("INPUT_ACCESS_TOKEN")
 
@@ -100,6 +109,7 @@ func main() {
 	file.Close()
 
 	pullRequest, _, err := client.PullRequests.Get(ctx, metadata.owner, metadata.name, event.Number)
+	commitList, _, err := client.PullRequests.ListCommits(ctx, metadata.owner, metadata.name, event.Number, &github.ListOptions{})
 	body := pullRequest.GetBody()
 
 	if err != nil {
@@ -112,7 +122,7 @@ func main() {
 		log.Fatalln("Failed to fetch user data")
 	}
 
-	events := []string{"opened", "reopened"}
+	events := []string{"opened", "reopened"} // probably will change
 
 	if !contains(events, event.Action) { // ignore most events
 		os.Exit(0)
@@ -135,6 +145,7 @@ func main() {
 
 	isTitleValid := isConventional(pullRequest.GetTitle(), &options)
 	issueMentions := getIssues(&ctx, client, metadata.owner, metadata.name, body)
+	badCommit := getUnconventionalCommit(commitList, &options)
 
 	if !isTitleValid { // Nonconventional
 		reason = "Pull requests title must follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style."
@@ -142,6 +153,8 @@ func main() {
 		reason = "Pull requests must have a clear and concise description."
 	} else if len(issueMentions) == 0 { // doesn't reference an issue
 		reason = "Pull requests must at least refer to an issue."
+	} else if badCommit != nil {
+		reason = fmt.Sprintf("Commit message %s at commit %s doesn't follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style.", badCommit.message, badCommit.hash)
 	}
 
 	if len(reason) > 0 {
@@ -151,10 +164,11 @@ func main() {
 			log.Fatalln("Failed to close pull request")
 		}
 
-		os.Exit(1)
+		log.Fatalln(reason)
 	}
 }
 
+// Utility function to check if `v` is present on array `s`
 func contains(s []string, v string) bool {
 	for _, val := range s {
 		if val == v {
@@ -165,6 +179,7 @@ func contains(s []string, v string) bool {
 	return false
 }
 
+// Get repository owner and name from raw GitHub metadata.
 func getRepositoryMetadata(rawMetadata string) *Metadata {
 	tokens := strings.SplitN(rawMetadata, "/", 2)
 
@@ -175,17 +190,18 @@ func getRepositoryMetadata(rawMetadata string) *Metadata {
 	return &Metadata{tokens[1], tokens[0]}
 }
 
+// Determine whether a text follows conventional commit style.
 func isConventional(
-	title string,
+	text string,
 	options *Options,
 ) bool {
 	pattern := regexp.MustCompile(`([\w\s]+)(\(([\w\s]+)\))?!?: [\w\s]+`)
 
-	if !pattern.Match([]byte(title)) {
+	if !pattern.Match([]byte(text)) {
 		return false
 	}
 
-	submatches := pattern.FindStringSubmatch(title)
+	submatches := pattern.FindStringSubmatch(text)
 
 	if (len(options.allowedTypes) > 1 && !contains(options.allowedTypes, submatches[1])) ||
 		len(options.allowedScopes) > 1 && !contains(options.allowedScopes, submatches[3]) {
@@ -195,6 +211,7 @@ func isConventional(
 	return true
 }
 
+// Get all issue mentions from the pull request body.
 func getIssueMentions(
 	prBody string,
 ) []int {
@@ -213,6 +230,29 @@ func getIssueMentions(
 	return numbers
 }
 
+// Get the first unconventional commit message.
+//
+// Will return nil if not found.
+func getUnconventionalCommit(
+	commits []*github.RepositoryCommit,
+	options *Options,
+) *BadCommit {
+	for _, repoCommit := range commits {
+		commit := repoCommit.GetCommit()
+		msg := commit.GetMessage()
+
+		if !isConventional(msg, options) {
+			return &BadCommit{
+				commit.GetSHA(),
+				msg,
+			}
+		}
+	}
+
+	return nil
+}
+
+// Get all issues from a repository.
 func getIssues(
 	ctx *context.Context,
 	client *github.Client,
@@ -234,6 +274,7 @@ func getIssues(
 	return issues
 }
 
+// Close a pull request with specific reason and options.
 func closePullRequest(
 	reason string,
 	options *Options,
