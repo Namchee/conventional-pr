@@ -3,7 +3,7 @@ name: Check PR semantics
 on: pull_request
 
 jobs:
-  hqprs:
+  conventional-pr:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR semantics
