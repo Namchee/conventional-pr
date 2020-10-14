@@ -25,11 +25,11 @@ inputs:
     description: 'Determine whether the current restriction should apply to maintainers or not'
     required: false
     default: true
-  allowedTypes:
+  allowed_types:
     description: 'List of allowed conventional commit types'
     required: false
     default: ''
-  allowedScopes:
+  allowed_scopes:
     description: 'List of allowed conventional commit scopes'
     required: false
     default: ''

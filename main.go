@@ -42,8 +42,9 @@ type Event struct {
 	Action string "json:action"
 	Number int    "json:number"
 }
+
 type BadCommit struct {
-	hash    string
+	url     string
 	message string
 }
 
@@ -154,7 +155,7 @@ func main() {
 	} else if len(issueMentions) == 0 { // doesn't reference an issue
 		reason = "Pull requests must at least refer to an issue."
 	} else if badCommit != nil {
-		reason = fmt.Sprintf("Commit message %s at commit %s doesn't follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style.", badCommit.message, badCommit.hash)
+		reason = fmt.Sprintf("Commit message `%s` at commit %s doesn't follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style.", badCommit.message, badCommit.url)
 	}
 
 	if len(reason) > 0 {
@@ -243,7 +244,7 @@ func getUnconventionalCommit(
 
 		if !isConventional(msg, options) {
 			return &BadCommit{
-				commit.GetSHA(),
+				commit.GetHTMLURL(),
 				msg,
 			}
 		}
