@@ -9,6 +9,7 @@ A PR is considered to be low quality if it satisfies at least one of these crite
 - Doesn't have a description on it (empty body).
 - Doesn't attempt to solve an issue (reference an issue).
 - Doesn't follow [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style
+- Affects too many file at once. Smaller pull requests are easier to be reviewed, thus keeping the review quality high.
 
 > You can disable checking on draft pull requests, [see below options](#Usage)
 
@@ -55,6 +56,7 @@ Name | Required? | Default | Description
 `allowed_types` | `false` | `''` | Allowed types according to [conventional commit](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) style. Fill it with empty string to allow all types.
 `allowed_scopes` | `false` | `''` | Allowed scopes according to [conventional commit](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) style. Fill it with empty string to allow all scopes.
 `check_draft` | `false` | `false` | Determine whether quality checks should also check draft pull requests.
+`maximum_file_change` | `false` | `0` | Limits how many file can be changed per one pull request. Set it to zero to disable this feature.
 
 ## Caveats
 

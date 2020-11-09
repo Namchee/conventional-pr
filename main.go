@@ -35,6 +35,7 @@ type Options struct {
 	template      string
 	allowedTypes  []string
 	allowedScopes []string
+	maxFileChange int
 }
 
 // Event that triggers the action
@@ -43,13 +44,14 @@ type Event struct {
 	Number int    "json:number"
 }
 
+// BadCommit that doesn't follow the conventional commit message
 type BadCommit struct {
 	url     string
 	message string
 }
 
 // Get all the required environment variables and encapsulate them
-// in a custom struct.
+// in a custom Options struct.
 func getOptionsValues() Options {
 	token := os.Getenv("INPUT_ACCESS_TOKEN")
 
@@ -65,6 +67,7 @@ func getOptionsValues() Options {
 	allowedTypes := strings.Split(os.Getenv("INPUT_ALLOWED_TYPES"), ",")
 	allowedScopes := strings.Split(os.Getenv("INPUT_ALLOWED_SCOPES"), ",")
 	checkDraft := os.Getenv("INPUT_CHECK_DRAFT") == "true"
+	maxFileChange, _ := strconv.Atoi(os.Getenv("INPUT_MAXIMUM_FILE_CHANGE"))
 
 	return Options{
 		token,
@@ -76,6 +79,7 @@ func getOptionsValues() Options {
 		template,
 		allowedTypes,
 		allowedScopes,
+		maxFileChange,
 	}
 }
 
@@ -136,6 +140,7 @@ func main() {
 	}
 
 	bypassByPrivilege := privilege.GetPermission() == "admin" && !options.strict
+	fileChangeCount := pullRequest.GetChangedFiles()
 	isDraft := !options.checkDraft && pullRequest.GetDraft()
 
 	if bypassByPrivilege || isDraft { // ignore on high privilege or draft PRs
@@ -147,6 +152,7 @@ func main() {
 	isTitleValid := isConventional(pullRequest.GetTitle(), &options)
 	issueMentions := getIssues(&ctx, client, metadata.owner, metadata.name, body)
 	badCommit := getUnconventionalCommit(commitList, &options)
+	hasTooManyChanges := options.maxFileChange > 0 && fileChangeCount > options.maxFileChange
 
 	if !isTitleValid { // Nonconventional
 		reason = "Pull requests title must follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style."
@@ -154,6 +160,8 @@ func main() {
 		reason = "Pull requests must have a clear and concise description."
 	} else if len(issueMentions) == 0 { // doesn't reference an issue
 		reason = "Pull requests must at least refer to an issue."
+	} else if hasTooManyChanges { // too many changed files
+		reason = "This pull request have too many changed files. Consider splitting this pull request into some few smaller PRs."
 	} else if badCommit != nil {
 		reason = fmt.Sprintf("Commit message `%s` at commit %s doesn't follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style.", badCommit.message, badCommit.url)
 	}
