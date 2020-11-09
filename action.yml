@@ -33,6 +33,10 @@ inputs:
     description: 'List of allowed conventional commit scopes'
     required: false
     default: ''
+  maximum_file_change:
+    description: 'Limits how many files should be changes per 1 pull request'
+    required: false
+    default: 0
 runs:
   using: docker
   image: 'Dockerfile'
