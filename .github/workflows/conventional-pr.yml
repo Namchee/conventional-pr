@@ -10,4 +10,4 @@ jobs:
         uses: Namchee/conventional-pr@v0.3.0
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
-          strict: false
+          strict: true
