@@ -1,4 +1,4 @@
-# Conventional PR
+# Super Duper Conventional PR
 
 [![Go Version Badge](https://img.shields.io/github/go-mod/go-version/namchee/conventional-pr)](https://github.com/Namchee/conventional-pr)
 
