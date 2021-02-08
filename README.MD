@@ -11,7 +11,7 @@ A PR is considered to be low quality if it satisfies at least one of these crite
 - Doesn't follow [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style
 - Affects too many file at once. Smaller pull requests are easier to be reviewed, thus keeping the review quality high.
 
-> You can disable checking on draft pull requests, [see below options](#Usage)
+> You can disable checks on draft pull requests, [see below options](#Usage)
 
 ## Features
 
@@ -26,13 +26,15 @@ A PR is considered to be low quality if it satisfies at least one of these crite
 Simply add this action on one of your GitHub workflows job:
 
 ```yml
-on: pull_request # Run these every new pull request
+on:
+  pull_request:
+    types: [opened, reopened] # Currently, this action only support these events
 
 jobs:
   hqprs:
     runs-on: ubuntu-latest
     steps:
-      - name: hqprs
+      - name: conventional-pr
         uses: Namchee/conventional-pr@v(version)
         with:
           access_token: YOUR_GITHUB_ACCESS_TOKEN_HERE
@@ -46,17 +48,19 @@ See it in action [here](https://github.com/Namchee/conventional-pr/blob/master/.
 
 You can customize this actions with these following options (fill it on `with` section):
 
-Name | Required? | Default | Description
+**Name** | **Required?** | **Default Value** | **Description**
 ---- | --------- | ------- | -----------
-`access_token` | `true` | | [GitHub access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) to interact with GitHub API. It is recommended to store this token with [GitHub Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets)
+`access_token` | `true` | | [GitHub access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) to interact with GitHub API. It is recommended to store this token with [GitHub Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets).
 `close` | `false` | `true` | Determine whether the action should automatically close low quality pull requests.
-`template` | `false` | [See The Metadata](./action.yml) | Comment template to use when commenting on low quality pull requests
+`template` | `false` | [See The Metadata](./action.yml) | Comment template to use when commenting on low quality pull requests.
 `strict` | `false` | `true` | Determine whether the restrictions should apply to repository administrators.
-`label` | `false` | `Nonconventional` | Label to use when marking low quality pull requests. If it doesn't exist, the action will automatically create it.
-`allowed_types` | `false` | `''` | Allowed types according to [conventional commit](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) style. Fill it with empty string to allow all types.
-`allowed_scopes` | `false` | `''` | Allowed scopes according to [conventional commit](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) style. Fill it with empty string to allow all scopes.
-`check_draft` | `false` | `false` | Determine whether quality checks should also check draft pull requests.
+`label` | `false` | `Nonconventional` | Label to use when marking low quality pull requests. If it doesn't exist, this action will automatically create it.
+`allowed_types` | `false` | `''` | Allowed types according to [conventional commit](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) style. Fill it with empty string to allow all types. Comma-separated.
+`allowed_scopes` | `false` | `''` | Allowed scopes according to [conventional commit](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets) style. Fill it with empty string to allow all scopes. Comma-separated.
+`check_draft` | `false` | `false` | Determine whether quality checks should also be applied to draft pull requests.
 `maximum_file_change` | `false` | `0` | Limits how many file can be changed per one pull request. Set it to zero to disable this feature.
+`link_issue` | `false` | `true` | Determine whether a conventional pull request should always have an issue or pull requests references on it.
+`ignore_bot` | `false` | `true` | Determines whether checks should be skipped on PRs that is created by bots. Useful when relying on bots like [dependabot](https://github.com/dependabot)
 
 ## Caveats
 
