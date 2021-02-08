@@ -26,13 +26,15 @@ A PR is considered to be low quality if it satisfies at least one of these crite
 Simply add this action on one of your GitHub workflows job:
 
 ```yml
-on: pull_request # Run these every new pull request
+on:
+  pull_request:
+    types: [opened, reopened] # Currently, this action only support these events
 
 jobs:
   hqprs:
     runs-on: ubuntu-latest
     steps:
-      - name: hqprs
+      - name: conventional-pr
         uses: Namchee/conventional-pr@v(version)
         with:
           access_token: YOUR_GITHUB_ACCESS_TOKEN_HERE

@@ -20,9 +20,12 @@ inputs:
   template:
     description: 'Comment header on invalid PRs'
     required: false
-    default: "Thank you for your contribution attempt in this repository!\n\nUnfortunately, this pull request doesn't meet our standards by reason we stated below. Please create another pull request that meets our standards in the future."
+    default: |-
+      Thank you for your contribution attempt in this repository!
+      
+      Unfortunately, this pull request doesn't meet our standards by reason we stated below. Please create another pull request that meets our standards in the future.
   strict:
-    description: 'Determine whether the current restriction should apply to maintainers or not'
+    description: 'Determine whether the current restriction should also apply to repository administrators'
     required: false
     default: true
   allowed_types:
@@ -34,9 +37,17 @@ inputs:
     required: false
     default: ''
   maximum_file_change:
-    description: 'Limits how many files should be changes per 1 pull request'
+    description: 'Limits how many files should be changes per pull request'
     required: false
     default: 0
+  link_issue:
+    description: 'Determine whether a conventional PR should always refer to an issue'
+    required: false
+    default: true
+  ignore_bot:
+    description: 'Determine whether PR checking should be skipped on PRs that is created by bots'
+    required: false
+    default: true
 runs:
   using: docker
   image: 'Dockerfile'

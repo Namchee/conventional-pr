@@ -36,6 +36,8 @@ type Options struct {
 	allowedTypes  []string
 	allowedScopes []string
 	maxFileChange int
+	issue         bool
+	ignoreBot     bool
 }
 
 // Event that triggers the action
@@ -68,6 +70,8 @@ func getOptionsValues() Options {
 	allowedScopes := strings.Split(os.Getenv("INPUT_ALLOWED_SCOPES"), ",")
 	checkDraft := os.Getenv("INPUT_CHECK_DRAFT") == "true"
 	maxFileChange, _ := strconv.Atoi(os.Getenv("INPUT_MAXIMUM_FILE_CHANGE"))
+	issue := os.Getenv("INPUT_LINK_ISSUE") == "true"
+	ignoreBot := os.Getenv("INPUT_IGNORE_BOT") == "true"
 
 	return Options{
 		token,
@@ -80,6 +84,8 @@ func getOptionsValues() Options {
 		allowedTypes,
 		allowedScopes,
 		maxFileChange,
+		issue,
+		ignoreBot,
 	}
 }
 
@@ -113,8 +119,19 @@ func main() {
 	}
 	file.Close()
 
-	pullRequest, _, err := client.PullRequests.Get(ctx, metadata.owner, metadata.name, event.Number)
-	commitList, _, err := client.PullRequests.ListCommits(ctx, metadata.owner, metadata.name, event.Number, &github.ListOptions{})
+	pullRequest, _, err := client.PullRequests.Get(
+		ctx,
+		metadata.owner,
+		metadata.name,
+		event.Number,
+	)
+	commitList, _, err := client.PullRequests.ListCommits(
+		ctx,
+		metadata.owner,
+		metadata.name,
+		event.Number,
+		nil,
+	)
 	body := pullRequest.GetBody()
 
 	if err != nil {
@@ -133,17 +150,25 @@ func main() {
 		os.Exit(0)
 	}
 
-	privilege, _, err := client.Repositories.GetPermissionLevel(ctx, metadata.owner, metadata.name, user.GetLogin())
+	privilege, _, err := client.Repositories.GetPermissionLevel(
+		ctx,
+		metadata.owner,
+		metadata.name,
+		user.GetLogin(),
+	)
 
 	if err != nil {
 		log.Fatalln("Failed to fetch privilege level")
 	}
 
-	bypassByPrivilege := privilege.GetPermission() == "admin" && !options.strict
+	bypassByPrivilege := strings.ToLower(privilege.GetPermission()) == "admin" &&
+		!options.strict
 	fileChangeCount := pullRequest.GetChangedFiles()
 	isDraft := !options.checkDraft && pullRequest.GetDraft()
+	ignoreBot := strings.ToLower(user.GetType()) == "bot" &&
+		options.ignoreBot
 
-	if bypassByPrivilege || isDraft { // ignore on high privilege or draft PRs
+	if bypassByPrivilege || isDraft || ignoreBot {
 		os.Exit(0)
 	}
 
@@ -152,28 +177,39 @@ func main() {
 	isTitleValid := isConventional(pullRequest.GetTitle(), &options)
 	issueMentions := getIssues(&ctx, client, metadata.owner, metadata.name, body)
 	badCommit := getUnconventionalCommit(commitList, &options)
-	hasTooManyChanges := options.maxFileChange > 0 && fileChangeCount > options.maxFileChange
+	hasTooManyChanges := options.maxFileChange > 0 &&
+		fileChangeCount > options.maxFileChange
 
 	if !isTitleValid { // Nonconventional
 		reason = "Pull requests title must follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style."
 	} else if len(body) == 0 { // empty PR body
 		reason = "Pull requests must have a clear and concise description."
-	} else if len(issueMentions) == 0 { // doesn't reference an issue
+	} else if len(issueMentions) == 0 && options.issue { // doesn't reference an issue
 		reason = "Pull requests must at least refer to an issue."
 	} else if hasTooManyChanges { // too many changed files
-		reason = "This pull request have too many changed files. Consider splitting this pull request into some few smaller PRs."
+		reason = "This pull request has too many file changes. Consider splitting this pull request into some few smaller PRs."
 	} else if badCommit != nil {
 		reason = fmt.Sprintf("Commit message `%s` at commit %s doesn't follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style.", badCommit.message, badCommit.url)
 	}
 
 	if len(reason) > 0 {
-		err := closePullRequest(reason, &options, client, &ctx, metadata.owner, metadata.name, pullRequest.GetNumber())
+		err := closePullRequest(
+			reason,
+			&options,
+			client,
+			&ctx,
+			metadata.owner,
+			metadata.name,
+			pullRequest.GetNumber(),
+		)
 
 		if err != nil {
 			log.Fatalln("Failed to close pull request")
 		}
 
 		log.Fatalln(reason)
+	} else {
+		log.Printf("Pull request %d is a conventional PR!", pullRequest.GetNumber())
 	}
 }
 
@@ -252,7 +288,7 @@ func getUnconventionalCommit(
 
 		if !isConventional(msg, options) {
 			return &BadCommit{
-				commit.GetHTMLURL(),
+				commit.GetSHA(),
 				msg,
 			}
 		}
@@ -294,7 +330,7 @@ func closePullRequest(
 	number int,
 ) error {
 	_, _, err := client.Issues.CreateComment(*ctx, owner, repo, number, &github.IssueComment{
-		Body: github.String(fmt.Sprintf("%s\n\nReason: %s", options.template, reason)),
+		Body: github.String(fmt.Sprintf("%s\n\n**Reason**: %s", options.template, reason)),
 	})
 	if err != nil {
 		return err
