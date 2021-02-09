@@ -144,7 +144,7 @@ func main() {
 		log.Fatalln("Failed to fetch user data")
 	}
 
-	events := []string{"opened", "reopened"} // probably will change
+	events := []string{"opened", "reopened", "ready_for_review"} // probably will change
 
 	if !contains(events, event.Action) { // ignore most events
 		os.Exit(0)
@@ -163,10 +163,24 @@ func main() {
 
 	bypassByPrivilege := strings.ToLower(privilege.GetPermission()) == "admin" &&
 		!options.strict
+
+	if bypassByPrivilege {
+		log.Println("Pull request checks are skipped due to high administrative privileges")
+	}
+
 	fileChangeCount := pullRequest.GetChangedFiles()
 	isDraft := !options.checkDraft && pullRequest.GetDraft()
+
+	if isDraft {
+		log.Println("Pull request checks are skipped since the corresponding pull request is still a draft")
+	}
+
 	ignoreBot := strings.ToLower(user.GetType()) == "bot" &&
 		options.ignoreBot
+
+	if ignoreBot {
+		log.Println("Pull request checks are skipped since the corresponding pull request is submitted by a bot")
+	}
 
 	if bypassByPrivilege || isDraft || ignoreBot {
 		os.Exit(0)
