@@ -28,7 +28,7 @@ Simply add this action on one of your GitHub workflows job:
 ```yml
 on:
   pull_request:
-    types: [opened, reopened] # Currently, this action only support these events
+    types: [opened, reopened, ready_for_review] # Currently, this action only support these events
 
 jobs:
   hqprs:
@@ -61,6 +61,16 @@ You can customize this actions with these following options (fill it on `with` s
 `maximum_file_change` | `false` | `0` | Limits how many file can be changed per one pull request. Set it to zero to disable this feature.
 `link_issue` | `false` | `true` | Determine whether a conventional pull request should always have an issue or pull requests references on it.
 `ignore_bot` | `false` | `true` | Determines whether checks should be skipped on PRs that is created by bots. Useful when relying on bots like [dependabot](https://github.com/dependabot)
+
+## Supported Events
+
+Below is the list of supported [GitHub Action events](https://docs.github.com/en/actions/reference/events-that-trigger-workflows):
+
+**Name** | **Triggered On**
+---- | ------------
+`opened` | When a new pull request is submitted.
+`reopened` | When a closed pull request is re-opened, either by the original author or by someone else.
+`ready_for_review` | When a draft pull request is finished and transformed into normal pull request.
 
 ## Caveats
 
