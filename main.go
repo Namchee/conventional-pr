@@ -218,7 +218,8 @@ func main() {
 		)
 
 		if err != nil {
-			log.Fatalln("Failed to close pull request")
+			log.Printf(reason)
+			log.Fatalf("Failed to change pull request: %s", err)
 		}
 
 		log.Fatalln(reason)
