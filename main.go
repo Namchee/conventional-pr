@@ -206,6 +206,16 @@ func main() {
 		reason = fmt.Sprintf("Commit message `%s` at commit %s doesn't follow the [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) style.", badCommit.message, badCommit.url)
 	}
 
+	log.Printf("Title is valid: %s", strconv.FormatBool(isTitleValid))
+	log.Printf("Length of body: %d", len(body))
+	log.Printf("Count of issues: %d", len(issueMentions))
+	log.Printf("Too many changes in PR: %s", strconv.FormatBool(hasTooManyChanges))
+	if badCommit != nil {
+		log.Printf("No bad commits found.")
+	} else {
+		log.Printf("Bad commits found.")
+	}
+
 	if len(reason) > 0 {
 		err := closePullRequest(
 			reason,
@@ -218,7 +228,8 @@ func main() {
 		)
 
 		if err != nil {
-			log.Fatalln("Failed to close pull request")
+			log.Printf(reason)
+			log.Fatalf("Failed to change pull request: %s", err)
 		}
 
 		log.Fatalln(reason)
