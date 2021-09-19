@@ -76,6 +76,13 @@ Below is the list of supported [GitHub Action events](https://docs.github.com/en
 
 - If the issues are linked manually and are not mentioned in the PR body, the PR is still considered to be invalid.
 
+## Contributors
+
+This project won't be possible without these wonderful contributors:
+
+1. [Namchee](https://github.com/Namchee)
+2. [smutel](https://github.com/smutel)
+
 ## License
 
 This project is licensed under the [MIT License](./LICENSE)
