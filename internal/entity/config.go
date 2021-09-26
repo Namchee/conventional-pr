@@ -6,7 +6,7 @@ import (
 	"github.com/Namchee/ethos/internal/utils"
 )
 
-// Configuration object which is parsed from the action input
+// Config is a configuration object that is parsed from the action input
 type Config struct {
 	Token         string
 	Draft         bool
