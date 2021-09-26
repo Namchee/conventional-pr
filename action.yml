@@ -1,31 +1,32 @@
-name: 'Conventional PRs'
-description: "Enforce conventional commit style in your project's pull requests"
+name: 'Ethos'
+description: 'Enforce conventional commit style in your project's pull requests'
 author: 'Cristopher Namchee'
 inputs:
   access_token:
-    description: 'GitHub Access Token'
-    required: true
+    description: 'GitHub account access token'
+    required: false
+    default: ''
   check_draft:
-    description: 'Determine whether Conventional PR should check draft PRs'
+    description: 'Determine whether checks should be skipped pull request is a draft'
     required: false
     default: false
-  label:
-    description: 'Nonconventional PRs label'
-    required: false
-    default: 'Nonconventional'
   close:
-    description: 'Determine whether Conventional PR should close nonconventional PRs'
+    description: 'Determine whether checks should close invalid PRs'
     required: false
     default: true
+  label:
+    description: 'Invalid PRs label'
+    required: false
+    default: 'ethos:invalid'
   template:
-    description: 'Comment header on invalid PRs'
+    description: 'Comment template on invalid PRs'
     required: false
     default: |-
       Thank you for your contribution attempt in this repository!
       
       Unfortunately, this pull request doesn't meet our standards by reason we stated below. Please create another pull request that meets our standards in the future.
   strict:
-    description: 'Determine whether the current restriction should also apply to repository administrators'
+    description: 'Determine whether checks should also apply to repository administrators'
     required: false
     default: true
   allowed_types:
@@ -36,18 +37,22 @@ inputs:
     description: 'List of allowed conventional commit scopes'
     required: false
     default: ''
-  maximum_file_change:
+  maximum_file_changes:
     description: 'Limits how many files should be changes per pull request'
     required: false
     default: 0
   link_issue:
-    description: 'Determine whether a conventional PR should always refer to an issue'
+    description: 'Determine whether a valid PR should always refer to an issue'
     required: false
     default: true
   ignore_bot:
-    description: 'Determine whether PR checking should be skipped on PRs that is created by bots'
+    description: 'Determine whether checks should be skipped if the author is a bot'
     required: false
     default: true
+  check_commits:
+    description: 'Determine whether checks should also be applied to all commits'
+    required: false
+    default: false
 runs:
   using: docker
   image: 'Dockerfile'
