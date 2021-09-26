@@ -4,13 +4,20 @@ import (
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/Namchee/ethos/internal/constants"
 )
 
 func TestReadConfig(t *testing.T) {
+	type expected struct {
+		config *Config
+		err    error
+	}
 	tests := []struct {
-		name  string
-		mocks map[string]string
-		want  Config
+		name    string
+		mocks   map[string]string
+		want    expected
+		wantErr bool
 	}{
 		{
 			name: "should read config correctly",
@@ -21,13 +28,17 @@ func TestReadConfig(t *testing.T) {
 				"INPUT_IGNORE_BOT":           "false",
 				"INPUT_MAXIMUM_FILE_CHANGES": "11",
 			},
-			want: Config{
-				Token:       "foo_bar",
-				Draft:       false,
-				Issue:       true,
-				Bot:         false,
-				FileChanges: 11,
+			want: expected{
+				config: &Config{
+					Token:       "foo_bar",
+					Draft:       false,
+					Issue:       true,
+					Bot:         false,
+					FileChanges: 11,
+				},
+				err: nil,
 			},
+			wantErr: false,
 		},
 		{
 			name: "should fallback to github-actions account",
@@ -38,12 +49,16 @@ func TestReadConfig(t *testing.T) {
 				"INPUT_LINK_ISSUE":   "true",
 				"INPUT_IGNORE_BOT":   "false",
 			},
-			want: Config{
-				Token: "baz",
-				Draft: false,
-				Issue: true,
-				Bot:   false,
+			want: expected{
+				config: &Config{
+					Token: "baz",
+					Draft: false,
+					Issue: true,
+					Bot:   false,
+				},
+				err: nil,
 			},
+			wantErr: false,
 		},
 		{
 			name: "should be able to handle arrays",
@@ -51,10 +66,35 @@ func TestReadConfig(t *testing.T) {
 				"INPUT_ACCESS_TOKEN":  "foo_bar",
 				"INPUT_ALLOWED_TYPES": "a, b, c",
 			},
-			want: Config{
-				Token:        "foo_bar",
-				AllowedTypes: []string{"a", "b", "c"},
+			want: expected{
+				config: &Config{
+					Token:        "foo_bar",
+					AllowedTypes: []string{"a", "b", "c"},
+				},
+				err: nil,
 			},
+			wantErr: false,
+		},
+		{
+			name:  "should throw an error when token is empty",
+			mocks: map[string]string{},
+			want: expected{
+				config: nil,
+				err:    constants.ErrMissingToken,
+			},
+			wantErr: true,
+		},
+		{
+			name: "should throw an error when fileChanges is negative",
+			mocks: map[string]string{
+				"INPUT_ACCESS_TOKEN":         "foo",
+				"INPUT_MAXIMUM_FILE_CHANGES": "-1",
+			},
+			want: expected{
+				config: nil,
+				err:    constants.ErrNegativeFileChange,
+			},
+			wantErr: true,
 		},
 	}
 
@@ -65,9 +105,13 @@ func TestReadConfig(t *testing.T) {
 				defer os.Unsetenv(key)
 			}
 
-			got := ReadConfig()
+			got, err := ReadConfig()
 
-			if !reflect.DeepEqual(got, tc.want) {
+			if tc.wantErr && err == nil {
+				t.Fatalf("ReadConfig() err = %v, wantErr = %v", err, tc.wantErr)
+			}
+
+			if !reflect.DeepEqual(got, tc.want.config) {
 				t.Fatalf("ReadConfig() = %v, want = %v", got, tc.want)
 			}
 		})

@@ -4,5 +4,11 @@ import "errors"
 
 // Metadata error
 var (
-	ErrMalformedMetadata = errors.New("error when parsing repository metadata")
+	ErrMalformedMetadata = errors.New("[Meta] Malformed repository metadata")
+)
+
+// Config error
+var (
+	ErrMissingToken       = errors.New("[Config] Access token is empty")
+	ErrNegativeFileChange = errors.New("[Config] Maximum file change must not be a negative number")
 )

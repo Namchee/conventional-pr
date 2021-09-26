@@ -3,6 +3,7 @@ package entity
 import (
 	"regexp"
 
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/utils"
 )
 
@@ -25,12 +26,16 @@ type Config struct {
 
 // ReadConfig reads environment variables for input values which are supplied
 // from an action runner and create Conventional PR's configuration from it
-func ReadConfig() Config {
+func ReadConfig() (*Config, error) {
 	token := utils.ReadEnvString("INPUT_ACCESS_TOKEN")
 
 	if len(token) == 0 {
 		// Use github-actions bot account to provide message
 		token = utils.ReadEnvString("GITHUB_TOKEN")
+	}
+
+	if token == "" {
+		return nil, constants.ErrMissingToken
 	}
 
 	draft := utils.ReadEnvBool("INPUT_CHECK_DRAFT")
@@ -60,7 +65,11 @@ func ReadConfig() Config {
 
 	fileChanges := utils.ReadEnvInt("INPUT_MAXIMUM_FILE_CHANGES")
 
-	return Config{
+	if fileChanges < 0 {
+		return nil, constants.ErrNegativeFileChange
+	}
+
+	return &Config{
 		Token:         token,
 		Draft:         draft,
 		Close:         close,
@@ -74,5 +83,5 @@ func ReadConfig() Config {
 		AllowedScopes: allowedScopes,
 		FileChanges:   fileChanges,
 		Commits:       commits,
-	}
+	}, nil
 }

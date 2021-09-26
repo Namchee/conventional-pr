@@ -8,20 +8,20 @@ import (
 )
 
 func TestCreateMeta(t *testing.T) {
-	type result struct {
+	type expected struct {
 		meta *Meta
 		err  error
 	}
 	tests := []struct {
 		name    string
 		args    string
-		want    result
+		want    expected
 		wantErr bool
 	}{
 		{
 			name: "should be able to extract metadata",
 			args: "foo/bar",
-			want: result{
+			want: expected{
 				meta: &Meta{
 					Name:  "bar",
 					Owner: "foo",
@@ -33,7 +33,7 @@ func TestCreateMeta(t *testing.T) {
 		{
 			name: "should throw an error",
 			args: "fake_github_repository",
-			want: result{
+			want: expected{
 				meta: nil,
 				err:  constants.ErrMalformedMetadata,
 			},
