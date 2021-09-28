@@ -10,87 +10,13 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Namchee/ethos/internal/entity"
 	"github.com/google/go-github/v32/github"
 	"golang.org/x/oauth2"
 )
 
-const (
-	closedState = "closed"
-)
-
-// Metadata for the current repository
-type Metadata struct {
-	name  string
-	owner string
-}
-
-// Options passed from the action input
-type Options struct {
-	token         string
-	checkDraft    bool
-	label         string
-	strict        bool
-	close         bool
-	assignee      bool
-	template      string
-	allowedTypes  []string
-	allowedScopes []string
-	maxFileChange int
-	issue         bool
-	ignoreBot     bool
-}
-
-// Event that triggers the action
-type Event struct {
-	Action string "json:action"
-	Number int    "json:number"
-}
-
-// BadCommit that doesn't follow the conventional commit message
-type BadCommit struct {
-	url     string
-	message string
-}
-
-// Get all the required environment variables and encapsulate them
-// in a custom Options struct.
-func getOptionsValues() Options {
-	token := os.Getenv("INPUT_ACCESS_TOKEN")
-
-	if len(token) == 0 {
-		log.Fatalln("Missing GitHub Access Token")
-	}
-
-	label := os.Getenv("INPUT_LABEL")
-	close := os.Getenv("INPUT_CLOSE") == "true"
-	assignee := os.Getenv("INPUT_ASSIGNEE") == "true"
-	template := os.Getenv("INPUT_TEMPLATE")
-	strict := os.Getenv("INPUT_STRICT") == "true"
-	allowedTypes := strings.Split(os.Getenv("INPUT_ALLOWED_TYPES"), ",")
-	allowedScopes := strings.Split(os.Getenv("INPUT_ALLOWED_SCOPES"), ",")
-	checkDraft := os.Getenv("INPUT_CHECK_DRAFT") == "true"
-	maxFileChange, _ := strconv.Atoi(os.Getenv("INPUT_MAXIMUM_FILE_CHANGE"))
-	issue := os.Getenv("INPUT_LINK_ISSUE") == "true"
-	ignoreBot := os.Getenv("INPUT_IGNORE_BOT") == "true"
-
-	return Options{
-		token,
-		checkDraft,
-		label,
-		strict,
-		close,
-		assignee,
-		template,
-		allowedTypes,
-		allowedScopes,
-		maxFileChange,
-		issue,
-		ignoreBot,
-	}
-}
-
 func main() {
-	options := getOptionsValues()
+	config, err := entity.ReadConfig()
 
 	ctx := context.Background()
 

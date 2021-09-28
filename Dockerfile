@@ -1,7 +1,6 @@
-FROM golang:latest
+FROM golang:1.16
 
-ENV GO111MODULE=on
-WORKDIR /app
+WORKDIR /ci
 
 COPY go.mod .
 COPY go.sum .
@@ -10,7 +9,8 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o hqprs .
+RUN  go build -a -o ethos .
 
-CMD ["/app/hqprs"]
+RUN chmod +x /ci/ethos
 
+CMD ["/ci/ethos"]
