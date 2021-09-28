@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -11,50 +10,42 @@ import (
 	"strings"
 
 	"github.com/Namchee/ethos/internal/entity"
+	"github.com/Namchee/ethos/internal/utils"
 	"github.com/google/go-github/v32/github"
 	"golang.org/x/oauth2"
 )
 
 func main() {
 	config, err := entity.ReadConfig()
+	meta, err := entity.CreateMeta(
+		utils.ReadEnvString("GITHUB_REPOSITORY"),
+	)
+	event, err := entity.ReadEvent(
+		utils.ReadEnvString("GITHUB_EVENT_PATH"),
+	)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	ctx := context.Background()
 
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: options.token},
+		&oauth2.Token{AccessToken: config.Token},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 	client := github.NewClient(tc)
 
-	metadata := getRepositoryMetadata(os.Getenv("GITHUB_REPOSITORY"))
-
-	if metadata == nil {
-		log.Fatalln("Failed to read repository metadata")
-	}
-
-	file, err := os.Open(os.Getenv("GITHUB_EVENT_PATH"))
-
-	if err != nil {
-		log.Fatalln("Failed to open event data")
-	}
-
-	var event Event
-
-	if err = json.NewDecoder(file).Decode(&event); err != nil {
-		log.Fatalln("Failed to parse event data")
-	}
-	file.Close()
-
 	pullRequest, _, err := client.PullRequests.Get(
 		ctx,
-		metadata.owner,
-		metadata.name,
+		meta.Owner,
+		meta.Name,
 		event.Number,
 	)
 	commitList, _, err := client.PullRequests.ListCommits(
 		ctx,
-		metadata.owner,
-		metadata.name,
+		meta.Owner,
+		meta.Name,
 		event.Number,
 		nil,
 	)
