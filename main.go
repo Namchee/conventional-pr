@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
 	"github.com/Namchee/ethos/internal/utils"
 	"github.com/google/go-github/v32/github"
@@ -61,9 +62,7 @@ func main() {
 		log.Fatalln("Failed to fetch user data")
 	}
 
-	events := []string{"opened", "reopened", "ready_for_review"} // probably will change
-
-	if !contains(events, event.Action) { // ignore most events
+	if !contains(constants.Events, event.Action) { // ignore most events
 		os.Exit(0)
 	}
 
