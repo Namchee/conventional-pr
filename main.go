@@ -18,16 +18,17 @@ import (
 
 func main() {
 	config, err := entity.ReadConfig()
-	meta, err := entity.CreateMeta(
-		utils.ReadEnvString("GITHUB_REPOSITORY"),
-	)
-	event, err := entity.ReadEvent(
-		utils.ReadEnvString("GITHUB_EVENT_PATH"),
-	)
 
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	meta, _ := entity.CreateMeta(
+		utils.ReadEnvString("GITHUB_REPOSITORY"),
+	)
+	event, _ := entity.ReadEvent(
+		utils.ReadEnvString("GITHUB_EVENT_PATH"),
+	)
 
 	ctx := context.Background()
 

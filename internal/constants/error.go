@@ -18,3 +18,8 @@ var (
 	ErrEventFileRead  = errors.New("[Event] Failed to read event file")
 	ErrEventFileParse = errors.New("[Event] Failed to parse event file")
 )
+
+// Title validator error
+var (
+	ErrInvalidTitle = errors.New("pull request title does not follow the conventional commit style")
+)

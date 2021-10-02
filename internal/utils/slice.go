@@ -10,3 +10,14 @@ func RemoveEmptyStrings(s []string) []string {
 	}
 	return slice
 }
+
+// Utility function to check if `v` is present on array `s`
+func ContainsString(s []string, v string) bool {
+	for _, val := range s {
+		if val == v {
+			return true
+		}
+	}
+
+	return false
+}
