@@ -12,10 +12,14 @@ import (
 	"github.com/google/go-github/v32/github"
 )
 
-type titleValidator struct {}
+type titleValidator struct {
+	Name string
+}
 
 func NewTitleValidator() internal.Validator {
-	return &titleValidator{}
+	return &titleValidator{
+		Name: "Pull request has valid title",
+	}
 }
 
 func (v *titleValidator) IsValid(pullRequest *github.PullRequest, config *entity.Config) error {
