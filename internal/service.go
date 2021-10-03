@@ -9,6 +9,6 @@ type Validator interface {
 	IsValid(*github.PullRequest, *entity.Config) error
 }
 
-type Whitelister interface {
-	IsWhitelistable(*github.PullRequest, *entity.Config) bool
+type Whitelist interface {
+	IsWhitelisted(*github.PullRequest, *entity.Config) bool
 }

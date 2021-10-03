@@ -9,7 +9,7 @@ inputs:
   check_draft:
     description: 'Determine whether checks should be skipped pull request is a draft'
     required: false
-    default: false
+    default: true
   close:
     description: 'Determine whether checks should close invalid PRs'
     required: false
