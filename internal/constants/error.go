@@ -11,6 +11,7 @@ var (
 var (
 	ErrMissingToken       = errors.New("[Config] Access token is empty")
 	ErrNegativeFileChange = errors.New("[Config] Maximum file change must not be a negative number")
+	ErrInvalidPattern = errors.New("[Config] Invalid pull request title pattern")
 )
 
 // Event error

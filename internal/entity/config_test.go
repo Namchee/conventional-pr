@@ -61,21 +61,6 @@ func TestReadConfig(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "should be able to handle arrays",
-			mocks: map[string]string{
-				"INPUT_ACCESS_TOKEN":  "foo_bar",
-				"INPUT_ALLOWED_TYPES": "a, b, c",
-			},
-			want: expected{
-				config: &Config{
-					Token:        "foo_bar",
-					AllowedTypes: []string{"a", "b", "c"},
-				},
-				err: nil,
-			},
-			wantErr: false,
-		},
-		{
 			name:  "should throw an error when token is empty",
 			mocks: map[string]string{},
 			want: expected{

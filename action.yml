@@ -22,21 +22,13 @@ inputs:
     description: 'Comment template on invalid PRs'
     required: false
     default: |-
-      Thank you for your contribution attempt in this repository!
+      Thank you submitting a pull request to this repository!
       
-      Unfortunately, this pull request doesn't meet our standards by reason we stated below. Please create another pull request that meets our standards in the future.
+      Unfortunately, this pull request doesn't meet our pull request standards by a reason we stated below. Please create another pull request that meets our standards in the future.
   strict:
     description: 'Determine whether checks should also apply to repository administrators'
     required: false
     default: true
-  allowed_types:
-    description: 'List of allowed conventional commit types'
-    required: false
-    default: ''
-  allowed_scopes:
-    description: 'List of allowed conventional commit scopes'
-    required: false
-    default: ''
   maximum_file_changes:
     description: 'Limits how many files should be changes per pull request'
     required: false
@@ -53,6 +45,10 @@ inputs:
     description: 'Determine whether checks should also be applied to all commits'
     required: false
     default: false
+  pattern:
+    description: 'Valid pull request title and commit message pattern in Perl syntax'
+    required: false
+    default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
 runs:
   using: docker
   image: 'Dockerfile'

@@ -15,9 +15,8 @@ type Config struct {
 	Strict        bool
 	Close         bool
 	Assign        bool
+	Pattern 	  string
 	Template      string
-	AllowedTypes  []string
-	AllowedScopes []string
 	FileChanges   int
 	Issue         bool
 	Bot           bool
@@ -49,19 +48,11 @@ func ReadConfig() (*Config, error) {
 	label := utils.ReadEnvString("INPUT_LABEL")
 	template := utils.ReadEnvString("INPUT_TEMPLATE")
 
-	pattern := regexp.MustCompile(`\s?,\s?`)
+	pattern := utils.ReadEnvString("INPUT_PATTERN")
 
-	allowedTypes := pattern.Split(
-		utils.ReadEnvString("INPUT_ALLOWED_TYPES"),
-		-1,
-	)
-	allowedTypes = utils.RemoveEmptyStrings(allowedTypes)
-
-	allowedScopes := pattern.Split(
-		utils.ReadEnvString("INPUT_ALLOWED_SCOPES"),
-		-1,
-	)
-	allowedScopes = utils.RemoveEmptyStrings(allowedScopes)
+	if _, err := regexp.Compile(pattern); err != nil {
+		return nil, constants.ErrInvalidTitle
+	}
 
 	fileChanges := utils.ReadEnvInt("INPUT_MAXIMUM_FILE_CHANGES")
 
@@ -76,11 +67,10 @@ func ReadConfig() (*Config, error) {
 		Strict:        strict,
 		Assign:        assign,
 		Issue:         issue,
+		Pattern: 	   pattern,
 		Bot:           bot,
 		Label:         label,
 		Template:      template,
-		AllowedTypes:  allowedTypes,
-		AllowedScopes: allowedScopes,
 		FileChanges:   fileChanges,
 		Commits:       commits,
 	}, nil
