@@ -7,15 +7,17 @@ import (
 )
 
 type draftWhitelist struct {
-	Name string
+	config *entity.Config
+	Name   string
 }
 
-func NewDraftWhitelist() internal.Whitelist {
+func NewDraftWhitelist(_ *github.Client, config *entity.Config) internal.Whitelist {
 	return &draftWhitelist{
-		Name: "Pull request is a draft",
+		Name:   "Pull request is a draft",
+		config: config,
 	}
 }
 
-func (w *draftWhitelist) IsWhitelisted(pullRequest *github.PullRequest, config *entity.Config) bool {
-	return pullRequest.GetDraft() && !config.Draft 
+func (w *draftWhitelist) IsWhitelisted(pullRequest *github.PullRequest) bool {
+	return pullRequest.GetDraft() && !w.config.Draft
 }

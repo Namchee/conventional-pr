@@ -13,10 +13,10 @@ import (
 // This test also tests the default pattern
 func TestTitleValidator_IsValid(t *testing.T) {
 	type args struct {
-		title string
+		title   string
 		pattern string
 	}
-	tests := []struct{
+	tests := []struct {
 		name string
 		args args
 		want error
@@ -24,7 +24,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow conventional commit style",
 			args: args{
-				title: "feat: testing",
+				title:   "feat: testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: nil,
@@ -32,7 +32,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow scoped conventional commit style",
 			args: args{
-				title: "feat(ci): testing",
+				title:   "feat(ci): testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: nil,
@@ -40,7 +40,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow breaking changes",
 			args: args{
-				title: "feat(ci)!: testing",
+				title:   "feat(ci)!: testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: nil,
@@ -58,7 +58,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 		{
 			name: "should return an error",
 			args: args{
-				title: "I'm invalid",
+				title:   "I'm invalid",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: constants.ErrInvalidTitle,
@@ -76,9 +76,9 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				Pattern: tc.args.pattern,
 			}
 
-			validator := NewTitleValidator()
+			validator := NewTitleValidator(config)
 
-			got := validator.IsValid(pull, config)
+			got := validator.IsValid(pull)
 
 			assert.Equal(
 				t,

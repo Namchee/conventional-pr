@@ -10,19 +10,21 @@ import (
 )
 
 type titleValidator struct {
-	Name string
+	Name   string
+	config *entity.Config
 }
 
-func NewTitleValidator() internal.Validator {
+func NewTitleValidator(config *entity.Config) internal.Validator {
 	return &titleValidator{
-		Name: "Pull request has valid title",
+		Name:   "Pull request has valid title",
+		config: config,
 	}
 }
 
-func (v *titleValidator) IsValid(pullRequest *github.PullRequest, config *entity.Config) error {
+func (v *titleValidator) IsValid(pullRequest *github.PullRequest) error {
 	title := pullRequest.GetTitle()
 
-	pattern := regexp.MustCompile(config.Pattern)
+	pattern := regexp.MustCompile(v.config.Pattern)
 
 	if !pattern.Match([]byte(title)) {
 		return constants.ErrInvalidTitle

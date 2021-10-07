@@ -11,10 +11,10 @@ import (
 
 func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 	type args struct {
-		draft bool
+		draft  bool
 		config bool
 	}
-	tests := []struct{
+	tests := []struct {
 		name string
 		args args
 		want bool
@@ -22,7 +22,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 		{
 			name: "should be skipped if config = false, draft = true",
 			args: args{
-				draft: true,
+				draft:  true,
 				config: false,
 			},
 			want: true,
@@ -30,7 +30,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 		{
 			name: "should be checked if config = true, draft = true",
 			args: args{
-				draft: true,
+				draft:  true,
 				config: true,
 			},
 			want: false,
@@ -38,7 +38,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 		{
 			name: "should be checked if config = false, draft = false",
 			args: args{
-				draft: false,
+				draft:  false,
 				config: false,
 			},
 			want: false,
@@ -46,7 +46,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 		{
 			name: "should be checked if config = true, draft = false",
 			args: args{
-				draft: false,
+				draft:  false,
 				config: true,
 			},
 			want: false,
@@ -61,10 +61,11 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			config := &entity.Config{
 				Draft: tc.args.config,
 			}
+			client := &github.Client{}
 
-			validator := NewDraftWhitelist()
+			whitelister := NewDraftWhitelist(client, config)
 
-			got := validator.IsWhitelisted(pull, config)
+			got := whitelister.IsWhitelisted(pull)
 
 			assert.Equal(
 				t,
