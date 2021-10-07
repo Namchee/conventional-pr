@@ -9,7 +9,8 @@ import (
 // GithubClient handles all interaction with Github's API
 // Designed this way for easier software testing
 type GithubClient interface {
-	GetUser(context.Context, string) (*github.User, *github.Response, error)
+	GetUser(context.Context, string) (*github.User, error)
+	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)
 }
 
 type githubClient struct {
@@ -20,6 +21,19 @@ func NewGithubClient(client *github.Client) GithubClient {
 	return &githubClient{client: client}
 }
 
-func (cl *githubClient) GetUser(ctx context.Context, name string) (*github.User, *github.Response, error) {
-	return cl.client.Users.Get(ctx, name)
+func (cl *githubClient) GetUser(ctx context.Context, name string) (*github.User, error) {
+	user, _, err := cl.client.Users.Get(ctx, name)
+
+	return user, err
+}
+
+func (cl *githubClient) GetPermissionLevel(
+	ctx context.Context,
+	owner string,
+	name string,
+	user string,
+) (*github.RepositoryPermissionLevel, error) {
+	perms, _, err := cl.client.Repositories.GetPermissionLevel(ctx, owner, name, user)
+
+	return perms, err
 }

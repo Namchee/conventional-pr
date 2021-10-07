@@ -1,11 +1,9 @@
 package whitelist
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/Namchee/ethos/internal/entity"
-	"github.com/Namchee/ethos/internal/mocks"
 	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
@@ -62,18 +60,12 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			config := &entity.Config{
 				Draft: tc.args.config,
 			}
-			client := mocks.NewGithubClientMock()
 
-			whitelister := NewDraftWhitelist(client, config)
+			whitelister := NewDraftWhitelist(nil, config, nil)
 
 			got := whitelister.IsWhitelisted(pull)
 
-			assert.Equal(
-				t,
-				got,
-				tc.want,
-				fmt.Sprintf("DraftWhitelist.IsWhitelisted() = %v, want = %v", got, tc.want),
-			)
+			assert.Equal(t, got, tc.want)
 		})
 	}
 }

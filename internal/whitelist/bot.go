@@ -16,16 +16,20 @@ type botWhitelist struct {
 	Name   string
 }
 
-func NewBotWhitelist(client internal.GithubClient, config *entity.Config) internal.Whitelist {
+func NewBotWhitelist(
+	client internal.GithubClient,
+	config *entity.Config,
+	_ *entity.Meta,
+) internal.Whitelist {
 	return &botWhitelist{
 		client: client,
 		config: config,
-		Name:   "Pull request is made by bot",
+		Name:   "Pull request is sent by a bot",
 	}
 }
 
 func (w *botWhitelist) IsWhitelisted(pullRequest *github.PullRequest) bool {
-	user, _, _ := w.client.GetUser(
+	user, _ := w.client.GetUser(
 		context.Background(),
 		pullRequest.GetUser().GetLogin(),
 	)

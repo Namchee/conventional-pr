@@ -4,3 +4,8 @@ package constants
 const (
 	BotUser = "bot"
 )
+
+// Permission levels
+const (
+	AdminUser = "admin"
+)

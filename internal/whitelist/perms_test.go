@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBotWhitelist_IsWhitelisted(t *testing.T) {
+func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 	type args struct {
 		name   string
 		config bool
@@ -20,23 +20,23 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 		want bool
 	}{
 		{
-			name: "should be skipped if is bot and bot = true",
-			args: args{
-				name:   "foo",
-				config: true,
-			},
-			want: true,
-		},
-		{
-			name: "should be checked if is bot and bot = false",
+			name: "should be skipped if is high privilege and strict = false",
 			args: args{
 				name:   "foo",
 				config: false,
 			},
+			want: true,
+		},
+		{
+			name: "should be checked if is high privilege and strict = true",
+			args: args{
+				name:   "foo",
+				config: true,
+			},
 			want: false,
 		},
 		{
-			name: "should be checked if is not bot and bot = true",
+			name: "should be checked if is low privilege and strict = true",
 			args: args{
 				name:   "bar",
 				config: true,
@@ -44,7 +44,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "should be checked if is not bot and bot = false",
+			name: "should be checked if is low privilege and strict = false",
 			args: args{
 				name:   "bar",
 				config: false,
@@ -62,11 +62,12 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				User: user,
 			}
 			config := &entity.Config{
-				Bot: tc.args.config,
+				Strict: tc.args.config,
 			}
+			meta := &entity.Meta{}
 			client := mocks.NewGithubClientMock()
 
-			whitelister := NewBotWhitelist(client, config, nil)
+			whitelister := NewPermissionWhitelist(client, config, meta)
 
 			got := whitelister.IsWhitelisted(pull)
 
