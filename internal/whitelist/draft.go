@@ -11,7 +11,7 @@ type draftWhitelist struct {
 	Name   string
 }
 
-func NewDraftWhitelist(_ *github.Client, config *entity.Config) internal.Whitelist {
+func NewDraftWhitelist(_ internal.GithubClient, config *entity.Config) internal.Whitelist {
 	return &draftWhitelist{
 		Name:   "Pull request is a draft",
 		config: config,

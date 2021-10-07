@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
+func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 	type args struct {
-		draft  bool
+		name   string
 		config bool
 	}
 	tests := []struct {
@@ -21,34 +21,34 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 		want bool
 	}{
 		{
-			name: "should be skipped if config = false, draft = true",
+			name: "should be skipped if is bot and bot = true",
 			args: args{
-				draft:  true,
-				config: false,
+				name:   "foo",
+				config: true,
 			},
 			want: true,
 		},
 		{
-			name: "should be checked if config = true, draft = true",
+			name: "should be checked if is bot and bot = false",
 			args: args{
-				draft:  true,
-				config: true,
-			},
-			want: false,
-		},
-		{
-			name: "should be checked if config = false, draft = false",
-			args: args{
-				draft:  false,
+				name:   "foo",
 				config: false,
 			},
 			want: false,
 		},
 		{
-			name: "should be checked if config = true, draft = false",
+			name: "should be checked if is not bot and bot = true",
 			args: args{
-				draft:  false,
+				name:   "bar",
 				config: true,
+			},
+			want: false,
+		},
+		{
+			name: "should be checked if is not bot and bot = false",
+			args: args{
+				name:   "bar",
+				config: false,
 			},
 			want: false,
 		},
@@ -56,15 +56,18 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			user := &github.User{
+				Login: &tc.args.name,
+			}
 			pull := &github.PullRequest{
-				Draft: &tc.args.draft,
+				User: user,
 			}
 			config := &entity.Config{
-				Draft: tc.args.config,
+				Bot: tc.args.config,
 			}
 			client := mocks.NewGithubClientMock()
 
-			whitelister := NewDraftWhitelist(client, config)
+			whitelister := NewBotWhitelist(client, config)
 
 			got := whitelister.IsWhitelisted(pull)
 
@@ -72,7 +75,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				t,
 				got,
 				tc.want,
-				fmt.Sprintf("DraftWhitelist.IsWhitelisted() = %v, want = %v", got, tc.want),
+				fmt.Sprintf("BotWhitelist.IsWhitelisted() = %v, want = %v", got, tc.want),
 			)
 		})
 	}
