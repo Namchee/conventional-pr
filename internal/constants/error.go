@@ -11,7 +11,7 @@ var (
 var (
 	ErrMissingToken       = errors.New("[Config] Access token is empty")
 	ErrNegativeFileChange = errors.New("[Config] Maximum file change must not be a negative number")
-	ErrInvalidPattern = errors.New("[Config] Invalid pull request title pattern")
+	ErrInvalidPattern     = errors.New("[Config] Invalid pull request title pattern")
 )
 
 // Event error
@@ -20,7 +20,8 @@ var (
 	ErrEventFileParse = errors.New("[Event] Failed to parse event file")
 )
 
-// Title validator error
+// validator error
 var (
 	ErrInvalidTitle = errors.New("pull request title does not follow the conventional commit style")
+	ErrNoIssue      = errors.New("pull request title does not mention any issues")
 )

@@ -14,7 +14,7 @@ type titleValidator struct {
 	config *entity.Config
 }
 
-func NewTitleValidator(config *entity.Config) internal.Validator {
+func NewTitleValidator(_ internal.GithubClient, config *entity.Config) internal.Validator {
 	return &titleValidator{
 		Name:   "Pull request has valid title",
 		config: config,

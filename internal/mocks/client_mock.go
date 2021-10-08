@@ -11,7 +11,7 @@ import (
 // GitHub's client mock. Used in testing
 type githubClientMock struct{}
 
-func (m *githubClientMock) GetUser(ctx context.Context, name string) (*github.User, error) {
+func (m *githubClientMock) GetUser(_ context.Context, name string) (*github.User, error) {
 	bot := constants.BotUser
 	user := "user"
 
@@ -22,10 +22,23 @@ func (m *githubClientMock) GetUser(ctx context.Context, name string) (*github.Us
 	return &github.User{Type: &user}, nil
 }
 
-func (m *githubClientMock) GetPermissionLevel(
+func (m *githubClientMock) GetIssue(
 	ctx context.Context,
-	owner string,
-	name string,
+	_ string,
+	_ string,
+	number int,
+) (*github.Issue, error) {
+	if number == 123 {
+		return &github.Issue{}, nil
+	}
+
+	return nil, nil
+}
+
+func (m *githubClientMock) GetPermissionLevel(
+	_ context.Context,
+	_ string,
+	_ string,
 	user string,
 ) (*github.RepositoryPermissionLevel, error) {
 	admin := constants.AdminUser

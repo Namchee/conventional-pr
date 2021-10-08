@@ -1,7 +1,6 @@
 package validator
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/Namchee/ethos/internal/constants"
@@ -67,25 +66,18 @@ func TestTitleValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			titlePointer := tc.args.title
-
 			pull := &github.PullRequest{
-				Title: &titlePointer,
+				Title: &tc.args.title,
 			}
 			config := &entity.Config{
 				Pattern: tc.args.pattern,
 			}
 
-			validator := NewTitleValidator(config)
+			validator := NewTitleValidator(nil, config)
 
 			got := validator.IsValid(pull)
 
-			assert.Equal(
-				t,
-				got,
-				tc.want,
-				fmt.Sprintf("TitleValidator.IsValid() = %v, want = %v", got, tc.want),
-			)
+			assert.Equal(t, got, tc.want)
 		})
 	}
 }

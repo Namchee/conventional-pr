@@ -10,6 +10,7 @@ import (
 // Designed this way for easier software testing
 type GithubClient interface {
 	GetUser(context.Context, string) (*github.User, error)
+	GetIssue(context.Context, string, string, int) (*github.Issue, error)
 	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)
 }
 
@@ -25,6 +26,17 @@ func (cl *githubClient) GetUser(ctx context.Context, name string) (*github.User,
 	user, _, err := cl.client.Users.Get(ctx, name)
 
 	return user, err
+}
+
+func (cl *githubClient) GetIssue(
+	ctx context.Context,
+	owner string,
+	name string,
+	number int,
+) (*github.Issue, error) {
+	issue, _, err := cl.client.Issues.Get(ctx, owner, name, number)
+
+	return issue, err
 }
 
 func (cl *githubClient) GetPermissionLevel(
