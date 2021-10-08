@@ -5,14 +5,14 @@ import (
 
 	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
-	"github.com/Namchee/ethos/internal/mocks"
 	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIssueValidator_IsValid(t *testing.T) {
+func TestFileValidator_IsValid(t *testing.T) {
 	type args struct {
-		body string
+		changes int
+		config  int
 	}
 	tests := []struct {
 		name string
@@ -20,37 +20,41 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		want error
 	}{
 		{
-			name: "should allow issue references",
+			name: "should allow few changes",
 			args: args{
-				body: "Closes #123",
+				changes: 2,
+				config:  2,
 			},
 			want: nil,
 		},
 		{
-			name: "should reject if no issue at all",
+			name: "should reject if introduces too many change",
 			args: args{
-				body: "this is a fake body",
+				changes: 3,
+				config:  2,
 			},
-			want: constants.ErrNoIssue,
+			want: constants.ErrTooManyChanges,
 		},
 		{
-			name: "should distinguih false alarm",
+			name: "should allow huge changes if turned off",
 			args: args{
-				body: "This is a fake issue #69",
+				changes: 10000,
+				config:  0,
 			},
-			want: constants.ErrNoIssue,
+			want: nil,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			pull := &github.PullRequest{
-				Body: &tc.args.body,
+				ChangedFiles: &tc.args.changes,
+			}
+			config := &entity.Config{
+				FileChanges: tc.args.config,
 			}
 
-			client := mocks.NewGithubClientMock()
-
-			validator := NewIssueValidator(client, nil, &entity.Meta{})
+			validator := NewFileValidator(nil, config, nil)
 
 			got := validator.IsValid(pull)
 
