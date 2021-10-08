@@ -55,6 +55,38 @@ func (m *githubClientMock) GetPermissionLevel(
 	}, nil
 }
 
+func (m *githubClientMock) GetCommits(
+	ctx context.Context,
+	owner string,
+	name string,
+	event int,
+) ([]*github.RepositoryCommit, error) {
+	good := "feat(test): test something"
+	bad := "this is bad"
+	if event == 123 {
+		return []*github.RepositoryCommit{
+			{
+				Commit: &github.Commit{
+					Message: &good,
+				},
+			},
+		}, nil
+	}
+
+	if event == 69 {
+		return []*github.RepositoryCommit{
+			{
+				Commit: &github.Commit{
+					Message: &bad,
+					SHA:     &bad,
+				},
+			},
+		}, nil
+	}
+
+	return []*github.RepositoryCommit{}, nil
+}
+
 func NewGithubClientMock() internal.GithubClient {
 	return &githubClientMock{}
 }

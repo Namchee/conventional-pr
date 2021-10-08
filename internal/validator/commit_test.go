@@ -3,81 +3,79 @@ package validator
 import (
 	"testing"
 
-	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
+	"github.com/Namchee/ethos/internal/mocks"
 	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
 // This test also tests the default pattern
-func TestTitleValidator_IsValid(t *testing.T) {
+func TestCommitValidator_IsValid(t *testing.T) {
 	type args struct {
-		title   string
+		number  int
+		config  bool
 		pattern string
 	}
 	tests := []struct {
-		name string
-		args args
-		want error
+		name    string
+		args    args
+		wantErr bool
 	}{
 		{
 			name: "should allow valid commits",
 			args: args{
-				title:   "feat: testing",
+				number:  123,
+				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: nil,
+			wantErr: false,
 		},
 		{
-			name: "should allow scoped valid commits",
+			name: "should allow when config is false",
 			args: args{
-				title:   "feat(ci): testing",
+				number:  69,
+				config:  false,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: nil,
+			wantErr: false,
 		},
 		{
-			name: "should allow breaking changes",
+			name: "should allow when no commits",
 			args: args{
-				title:   "feat(ci)!: testing",
+				number:  420,
+				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: nil,
+			wantErr: false,
 		},
 		{
-			name: "should allow multi line commit message",
+			name: "should reject on invalid commits",
 			args: args{
-				title: `feat(ci): testing
-				
-				BREAKING CHANGE: foo bar`,
+				number:  69,
+				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: nil,
-		},
-		{
-			name: "should return an error",
-			args: args{
-				title:   "I'm invalid",
-				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
-			},
-			want: constants.ErrInvalidTitle,
+			wantErr: true,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			pull := &github.PullRequest{
-				Title: &tc.args.title,
+				Number: &tc.args.number,
 			}
 			config := &entity.Config{
+				Commits: tc.args.config,
 				Pattern: tc.args.pattern,
 			}
 
-			validator := NewTitleValidator(nil, config, nil)
+			client := mocks.NewGithubClientMock()
+
+			validator := NewCommitValidator(client, config, &entity.Meta{})
 
 			got := validator.IsValid(pull)
 
-			assert.Equal(t, got, tc.want)
+			assert.Equal(t, tc.wantErr, got != nil)
 		})
 	}
 }

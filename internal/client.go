@@ -12,6 +12,7 @@ type GithubClient interface {
 	GetUser(context.Context, string) (*github.User, error)
 	GetIssue(context.Context, string, string, int) (*github.Issue, error)
 	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)
+	GetCommits(context.Context, string, string, int) ([]*github.RepositoryCommit, error)
 }
 
 type githubClient struct {
@@ -48,4 +49,15 @@ func (cl *githubClient) GetPermissionLevel(
 	perms, _, err := cl.client.Repositories.GetPermissionLevel(ctx, owner, name, user)
 
 	return perms, err
+}
+
+func (cl *githubClient) GetCommits(
+	ctx context.Context,
+	owner string,
+	name string,
+	event int,
+) ([]*github.RepositoryCommit, error) {
+	commits, _, err := cl.client.PullRequests.ListCommits(ctx, owner, name, event, nil)
+
+	return commits, err
 }
