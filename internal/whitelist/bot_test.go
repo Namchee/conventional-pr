@@ -17,7 +17,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want bool
+		want *entity.WhitelistResult
 	}{
 		{
 			name: "should be skipped if is bot and bot = true",
@@ -25,7 +25,10 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				name:   "foo",
 				config: true,
 			},
-			want: true,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request is submitted by a bot",
+				Result: true,
+			},
 		},
 		{
 			name: "should be checked if is bot and bot = false",
@@ -33,7 +36,10 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				name:   "foo",
 				config: false,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request is submitted by a bot",
+				Result: false,
+			},
 		},
 		{
 			name: "should be checked if is not bot and bot = true",
@@ -41,7 +47,10 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				name:   "bar",
 				config: true,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request is submitted by a bot",
+				Result: false,
+			},
 		},
 		{
 			name: "should be checked if is not bot and bot = false",
@@ -49,7 +58,10 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				name:   "bar",
 				config: false,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request is submitted by a bot",
+				Result: false,
+			},
 		},
 	}
 

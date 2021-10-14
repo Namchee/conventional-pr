@@ -16,7 +16,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want bool
+		want *entity.WhitelistResult
 	}{
 		{
 			name: "should be skipped if config = false, draft = true",
@@ -24,7 +24,10 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				draft:  true,
 				config: false,
 			},
-			want: true,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request is a draft",
+				Result: true,
+			},
 		},
 		{
 			name: "should be checked if config = true, draft = true",
@@ -32,7 +35,10 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				draft:  true,
 				config: true,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request is a draft",
+				Result: false,
+			},
 		},
 		{
 			name: "should be checked if config = false, draft = false",
@@ -40,7 +46,10 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				draft:  false,
 				config: false,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request is a draft",
+				Result: false,
+			},
 		},
 		{
 			name: "should be checked if config = true, draft = false",
@@ -48,7 +57,10 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				draft:  false,
 				config: true,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request is a draft",
+				Result: false,
+			},
 		},
 	}
 

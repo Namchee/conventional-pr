@@ -17,7 +17,7 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want bool
+		want *entity.WhitelistResult
 	}{
 		{
 			name: "should be skipped if is high privilege and strict = false",
@@ -25,7 +25,10 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 				name:   "foo",
 				config: false,
 			},
-			want: true,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request has high privileges",
+				Result: true,
+			},
 		},
 		{
 			name: "should be checked if is high privilege and strict = true",
@@ -33,7 +36,10 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 				name:   "foo",
 				config: true,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request has high privileges",
+				Result: false,
+			},
 		},
 		{
 			name: "should be checked if is low privilege and strict = true",
@@ -41,7 +47,10 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 				name:   "bar",
 				config: true,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request has high privileges",
+				Result: false,
+			},
 		},
 		{
 			name: "should be checked if is low privilege and strict = false",
@@ -49,7 +58,10 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 				name:   "bar",
 				config: false,
 			},
-			want: false,
+			want: &entity.WhitelistResult{
+				Name:   "Pull request has high privileges",
+				Result: false,
+			},
 		},
 	}
 

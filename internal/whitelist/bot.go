@@ -24,16 +24,21 @@ func NewBotWhitelist(
 	return &botWhitelist{
 		client: client,
 		config: config,
-		Name:   "Pull request is sent by a bot",
+		Name:   "Pull request is submitted by a bot",
 	}
 }
 
-func (w *botWhitelist) IsWhitelisted(pullRequest *github.PullRequest) bool {
+func (w *botWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
 	user, _ := w.client.GetUser(
 		context.Background(),
 		pullRequest.GetUser().GetLogin(),
 	)
 
-	return strings.ToLower(user.GetType()) == constants.BotUser &&
+	result := strings.ToLower(user.GetType()) == constants.BotUser &&
 		w.config.Bot
+
+	return &entity.WhitelistResult{
+		Name:   w.Name,
+		Result: result,
+	}
 }

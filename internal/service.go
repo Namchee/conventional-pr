@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"github.com/Namchee/ethos/internal/entity"
 	"github.com/google/go-github/v32/github"
 )
 
@@ -9,5 +10,5 @@ type Validator interface {
 }
 
 type Whitelist interface {
-	IsWhitelisted(*github.PullRequest) bool
+	IsWhitelisted(*github.PullRequest) *entity.WhitelistResult
 }
