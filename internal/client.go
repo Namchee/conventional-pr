@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/google/go-github/v32/github"
 )
 
@@ -13,6 +14,9 @@ type GithubClient interface {
 	GetIssue(context.Context, string, string, int) (*github.Issue, error)
 	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)
 	GetCommits(context.Context, string, string, int) ([]*github.RepositoryCommit, error)
+	Comment(context.Context, string, string, int, *github.PullRequestComment) error
+	Label(context.Context, string, string, int, string) error
+	Close(context.Context, string, string, int) error
 }
 
 type githubClient struct {
@@ -60,4 +64,44 @@ func (cl *githubClient) GetCommits(
 	commits, _, err := cl.client.PullRequests.ListCommits(ctx, owner, name, event, nil)
 
 	return commits, err
+}
+
+func (cl *githubClient) Comment(
+	ctx context.Context,
+	owner string,
+	name string,
+	event int,
+	comment *github.PullRequestComment,
+) error {
+	_, _, err := cl.client.PullRequests.CreateComment(ctx, owner, name, event, comment)
+
+	return err
+}
+
+func (cl *githubClient) Label(
+	ctx context.Context,
+	owner string,
+	name string,
+	event int,
+	label string,
+) error {
+	_, _, err := cl.client.Issues.AddLabelsToIssue(ctx, owner, name, event, []string{
+		label,
+	})
+
+	return err
+}
+
+func (cl *githubClient) Close(
+	ctx context.Context,
+	owner string,
+	name string,
+	event int,
+) error {
+	state := constants.Closed
+
+	cl.client.PullRequests.Edit(ctx, owner, name, event, &github.PullRequest{
+		State: &state,
+	})
+	return nil
 }

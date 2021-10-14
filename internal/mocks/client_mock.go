@@ -2,6 +2,7 @@ package mocks
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Namchee/ethos/internal"
 	"github.com/Namchee/ethos/internal/constants"
@@ -85,6 +86,47 @@ func (m *githubClientMock) GetCommits(
 	}
 
 	return []*github.RepositoryCommit{}, nil
+}
+
+func (m *githubClientMock) Comment(
+	_ context.Context,
+	_ string,
+	_ string,
+	event int,
+	comment *github.PullRequestComment,
+) error {
+	if event == 123 {
+		return nil
+	}
+
+	return errors.New("Error")
+}
+
+func (m *githubClientMock) Label(
+	_ context.Context,
+	_ string,
+	_ string,
+	event int,
+	_ string,
+) error {
+	if event == 123 {
+		return nil
+	}
+
+	return errors.New("Error")
+}
+
+func (m *githubClientMock) Close(
+	_ context.Context,
+	_ string,
+	_ string,
+	event int,
+) error {
+	if event == 123 {
+		return nil
+	}
+
+	return errors.New("Error")
 }
 
 func NewGithubClientMock() internal.GithubClient {
