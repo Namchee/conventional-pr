@@ -1,6 +1,7 @@
 package whitelist
 
 import (
+	"sort"
 	"sync"
 
 	"github.com/Namchee/ethos/internal"
@@ -59,6 +60,18 @@ func (w *WhitelistGroup) Process(
 	for result := range channel {
 		results = append(results, result)
 	}
+
+	sort.Slice(results, func(i, j int) bool {
+		if results[i].Result == results[j].Result {
+			return results[i].Name < results[j].Name
+		}
+
+		if results[i].Result {
+			return false
+		}
+
+		return true
+	})
 
 	return results
 }
