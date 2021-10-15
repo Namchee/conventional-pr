@@ -23,13 +23,16 @@ func (w *WhitelistGroup) processWhitelist(
 	pullRequest *github.PullRequest,
 	pool chan *entity.WhitelistResult,
 ) {
-	go func() {
-		defer w.wg.Done()
+	defer w.wg.Done()
+	result := whitelist.IsWhitelisted(pullRequest)
+	pool <- result
+}
 
-		w.wg.Add(1)
-		result := whitelist.IsWhitelisted(pullRequest)
-		pool <- result
-	}()
+func (w *WhitelistGroup) cleanup(
+	channel chan *entity.WhitelistResult,
+) {
+	w.wg.Wait()
+	close(channel)
 }
 
 func (w *WhitelistGroup) Process(
@@ -42,17 +45,18 @@ func (w *WhitelistGroup) Process(
 	draft := NewDraftWhitelist(client, config, meta)
 	perms := NewPermissionWhitelist(client, config, meta)
 
-	resultPool := make(chan *entity.WhitelistResult, 3)
+	channel := make(chan *entity.WhitelistResult, 3)
 
-	go w.processWhitelist(bot, pullRequest, resultPool)
-	go w.processWhitelist(draft, pullRequest, resultPool)
-	go w.processWhitelist(perms, pullRequest, resultPool)
+	w.wg.Add(3)
+	go w.processWhitelist(bot, pullRequest, channel)
+	go w.processWhitelist(draft, pullRequest, channel)
+	go w.processWhitelist(perms, pullRequest, channel)
 
-	w.wg.Wait()
+	go w.cleanup(channel)
 
 	var results []*entity.WhitelistResult
 
-	for result := range resultPool {
+	for result := range channel {
 		results = append(results, result)
 	}
 
