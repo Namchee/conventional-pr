@@ -23,6 +23,7 @@ var (
 // validator error
 var (
 	ErrInvalidTitle   = errors.New("pull request title does not follow the conventional commit style")
-	ErrNoIssue        = errors.New("pull request title does not mention any issues")
+	ErrNoBody         = errors.New("pull request must have a non-empty body")
+	ErrNoIssue        = errors.New("pull request does not mention any issues")
 	ErrTooManyChanges = errors.New("pull request introduces too many changes")
 )

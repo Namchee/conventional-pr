@@ -6,6 +6,7 @@ const (
 	IssueValidatorName  = "Pull request mentioned issue(s)"
 	FileValidatorName   = "Pull request does not introduce too much changes"
 	CommitValidatorName = "All commit(s) in the pull request has valid messages"
+	BodyValidatorName   = "Pull request should have a non-empty body"
 )
 
 // Whitelist names
