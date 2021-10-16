@@ -20,19 +20,25 @@ func NewTitleValidator(
 	_ *entity.Meta,
 ) internal.Validator {
 	return &titleValidator{
-		Name:   "Pull request has valid title",
+		Name:   constants.TitleValidatorName,
 		config: config,
 	}
 }
 
-func (v *titleValidator) IsValid(pullRequest *github.PullRequest) error {
+func (v *titleValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidatorResult {
 	title := pullRequest.GetTitle()
 
 	pattern := regexp.MustCompile(v.config.Pattern)
 
 	if !pattern.Match([]byte(title)) {
-		return constants.ErrInvalidTitle
+		return &entity.ValidatorResult{
+			Name:   v.Name,
+			Result: constants.ErrInvalidTitle,
+		}
 	}
 
-	return nil
+	return &entity.ValidatorResult{
+		Name:   v.Name,
+		Result: nil,
+	}
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type Validator interface {
-	IsValid(*github.PullRequest) error
+	IsValid(*github.PullRequest) *entity.ValidatorResult
 }
 
 type Whitelist interface {

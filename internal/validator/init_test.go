@@ -1,4 +1,4 @@
-package whitelist
+package validator
 
 import (
 	"sync"
@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWhitelistGroup(t *testing.T) {
+func TestValidatorGroup(t *testing.T) {
 	clientMock := mocks.NewGithubClientMock()
 
 	prNum := 123
@@ -23,14 +23,14 @@ func TestWhitelistGroup(t *testing.T) {
 
 	wg := sync.WaitGroup{}
 
-	whitelistGroup := NewWhitelistGroup(
+	validatorGroup := NewValidatorGroup(
 		clientMock,
 		config,
 		meta,
 		&wg,
 	)
 
-	got := whitelistGroup.Process(pullRequest)
+	got := validatorGroup.Process(pullRequest)
 
-	assert.Equal(t, 3, len(got))
+	assert.Equal(t, 4, len(got))
 }

@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/Namchee/ethos/internal"
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
 	"github.com/google/go-github/v32/github"
 )
@@ -23,16 +24,19 @@ func NewCommitValidator(
 	meta *entity.Meta,
 ) internal.Validator {
 	return &commitValidator{
+		Name:   constants.CommitValidatorName,
 		client: client,
 		config: config,
 		meta:   meta,
-		Name:   "All commit(s) has valid messages",
 	}
 }
 
-func (v *commitValidator) IsValid(pullRequest *github.PullRequest) error {
+func (v *commitValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidatorResult {
 	if !v.config.Commits {
-		return nil
+		return &entity.ValidatorResult{
+			Name:   v.Name,
+			Result: nil,
+		}
 	}
 
 	ctx := context.Background()
@@ -46,17 +50,21 @@ func (v *commitValidator) IsValid(pullRequest *github.PullRequest) error {
 
 	pattern := regexp.MustCompile(v.config.Pattern)
 
-	fmt.Println(commits)
-
 	for _, commit := range commits {
 		message := commit.Commit.GetMessage()
 
 		if !pattern.Match([]byte(message)) {
-			return fmt.Errorf(
-				"commit %s does not have valid commit message", commit.GetSHA(),
-			)
+			return &entity.ValidatorResult{
+				Name: v.Name,
+				Result: fmt.Errorf(
+					"commit %s does not have valid commit message", commit.Commit.GetSHA(),
+				),
+			}
 		}
 	}
 
-	return nil
+	return &entity.ValidatorResult{
+		Name:   v.Name,
+		Result: nil,
+	}
 }

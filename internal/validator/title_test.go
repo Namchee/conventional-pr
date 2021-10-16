@@ -18,7 +18,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want error
+		want *entity.ValidatorResult
 	}{
 		{
 			name: "should allow valid commits",
@@ -26,7 +26,10 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				title:   "feat: testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: nil,
+			want: &entity.ValidatorResult{
+				Name:   constants.TitleValidatorName,
+				Result: nil,
+			},
 		},
 		{
 			name: "should allow scoped valid commits",
@@ -34,7 +37,10 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				title:   "feat(ci): testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: nil,
+			want: &entity.ValidatorResult{
+				Name:   constants.TitleValidatorName,
+				Result: nil,
+			},
 		},
 		{
 			name: "should allow breaking changes",
@@ -42,7 +48,10 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				title:   "feat(ci)!: testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: nil,
+			want: &entity.ValidatorResult{
+				Name:   constants.TitleValidatorName,
+				Result: nil,
+			},
 		},
 		{
 			name: "should allow multi line commit message",
@@ -52,7 +61,10 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				BREAKING CHANGE: foo bar`,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: nil,
+			want: &entity.ValidatorResult{
+				Name:   constants.TitleValidatorName,
+				Result: nil,
+			},
 		},
 		{
 			name: "should return an error",
@@ -60,7 +72,10 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				title:   "I'm invalid",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: constants.ErrInvalidTitle,
+			want: &entity.ValidatorResult{
+				Name:   constants.TitleValidatorName,
+				Result: constants.ErrInvalidTitle,
+			},
 		},
 	}
 

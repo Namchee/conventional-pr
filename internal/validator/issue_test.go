@@ -17,28 +17,37 @@ func TestIssueValidator_IsValid(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want error
+		want *entity.ValidatorResult
 	}{
 		{
 			name: "should allow issue references",
 			args: args{
 				body: "Closes #123",
 			},
-			want: nil,
+			want: &entity.ValidatorResult{
+				Name:   constants.IssueValidatorName,
+				Result: nil,
+			},
 		},
 		{
 			name: "should reject if no issue at all",
 			args: args{
 				body: "this is a fake body",
 			},
-			want: constants.ErrNoIssue,
+			want: &entity.ValidatorResult{
+				Name:   constants.IssueValidatorName,
+				Result: constants.ErrNoIssue,
+			},
 		},
 		{
 			name: "should distinguih false alarm",
 			args: args{
 				body: "This is a fake issue #69",
 			},
-			want: constants.ErrNoIssue,
+			want: &entity.ValidatorResult{
+				Name:   constants.IssueValidatorName,
+				Result: constants.ErrNoIssue,
+			},
 		},
 	}
 

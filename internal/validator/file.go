@@ -19,20 +19,29 @@ func NewFileValidator(
 	_ *entity.Meta,
 ) internal.Validator {
 	return &fileValidator{
+		Name:   constants.FileValidatorName,
 		client: client,
 		config: config,
-		Name:   "Pull request does not introduce too much changes",
 	}
 }
 
-func (v *fileValidator) IsValid(pullRequest *github.PullRequest) error {
-	if v.config.FileChanges <= 0 {
-		return nil
+func (v *fileValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidatorResult {
+	if v.config.FileChanges == 0 {
+		return &entity.ValidatorResult{
+			Name:   v.Name,
+			Result: nil,
+		}
 	}
 
 	if pullRequest.GetChangedFiles() <= v.config.FileChanges {
-		return nil
+		return &entity.ValidatorResult{
+			Name:   v.Name,
+			Result: nil,
+		}
 	}
 
-	return constants.ErrTooManyChanges
+	return &entity.ValidatorResult{
+		Name:   v.Name,
+		Result: constants.ErrTooManyChanges,
+	}
 }

@@ -1,8 +1,10 @@
 package validator
 
 import (
+	"errors"
 	"testing"
 
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
 	"github.com/Namchee/ethos/internal/mocks"
 	"github.com/google/go-github/v32/github"
@@ -17,9 +19,9 @@ func TestCommitValidator_IsValid(t *testing.T) {
 		pattern string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name string
+		args args
+		want *entity.ValidatorResult
 	}{
 		{
 			name: "should allow valid commits",
@@ -28,7 +30,10 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			wantErr: false,
+			want: &entity.ValidatorResult{
+				Name:   constants.CommitValidatorName,
+				Result: nil,
+			},
 		},
 		{
 			name: "should allow when config is false",
@@ -37,7 +42,10 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				config:  false,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			wantErr: false,
+			want: &entity.ValidatorResult{
+				Name:   constants.CommitValidatorName,
+				Result: nil,
+			},
 		},
 		{
 			name: "should allow when no commits",
@@ -46,7 +54,10 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			wantErr: false,
+			want: &entity.ValidatorResult{
+				Name:   constants.CommitValidatorName,
+				Result: nil,
+			},
 		},
 		{
 			name: "should reject on invalid commits",
@@ -55,7 +66,10 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			wantErr: true,
+			want: &entity.ValidatorResult{
+				Name:   constants.CommitValidatorName,
+				Result: errors.New("commit this is bad does not have valid commit message"),
+			},
 		},
 	}
 
@@ -75,7 +89,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 
 			got := validator.IsValid(pull)
 
-			assert.Equal(t, tc.wantErr, got != nil)
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }

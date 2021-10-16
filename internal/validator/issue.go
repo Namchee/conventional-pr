@@ -24,14 +24,14 @@ func NewIssueValidator(
 	meta *entity.Meta,
 ) internal.Validator {
 	return &issueValidator{
+		Name:   constants.IssueValidatorName,
 		client: client,
 		config: config,
 		meta:   meta,
-		Name:   "Pull request mentioned issue(s)",
 	}
 }
 
-func (v *issueValidator) IsValid(pullRequest *github.PullRequest) error {
+func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidatorResult {
 	ctx := context.Background()
 	pattern := regexp.MustCompile(`#(\d+)`)
 
@@ -42,9 +42,15 @@ func (v *issueValidator) IsValid(pullRequest *github.PullRequest) error {
 		issue, err := v.client.GetIssue(ctx, v.meta.Owner, v.meta.Name, num)
 
 		if err == nil && issue != nil {
-			return nil
+			return &entity.ValidatorResult{
+				Name:   v.Name,
+				Result: nil,
+			}
 		}
 	}
 
-	return constants.ErrNoIssue
+	return &entity.ValidatorResult{
+		Name:   v.Name,
+		Result: constants.ErrNoIssue,
+	}
 }

@@ -10,12 +10,23 @@ import (
 )
 
 type WhitelistGroup struct {
-	wg *sync.WaitGroup
+	client internal.GithubClient
+	config *entity.Config
+	meta   *entity.Meta
+	wg     *sync.WaitGroup
 }
 
-func NewWhitelistGroup(wg *sync.WaitGroup) *WhitelistGroup {
+func NewWhitelistGroup(
+	client internal.GithubClient,
+	config *entity.Config,
+	meta *entity.Meta,
+	wg *sync.WaitGroup,
+) *WhitelistGroup {
 	return &WhitelistGroup{
-		wg: wg,
+		client: client,
+		config: config,
+		meta:   meta,
+		wg:     wg,
 	}
 }
 
@@ -37,14 +48,11 @@ func (w *WhitelistGroup) cleanup(
 }
 
 func (w *WhitelistGroup) Process(
-	client internal.GithubClient,
-	config *entity.Config,
-	meta *entity.Meta,
 	pullRequest *github.PullRequest,
 ) []*entity.WhitelistResult {
-	bot := NewBotWhitelist(client, config, meta)
-	draft := NewDraftWhitelist(client, config, meta)
-	perms := NewPermissionWhitelist(client, config, meta)
+	bot := NewBotWhitelist(w.client, w.config, w.meta)
+	draft := NewDraftWhitelist(w.client, w.config, w.meta)
+	perms := NewPermissionWhitelist(w.client, w.config, w.meta)
 
 	channel := make(chan *entity.WhitelistResult, 3)
 
