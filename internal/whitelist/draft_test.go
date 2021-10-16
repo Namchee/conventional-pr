@@ -3,6 +3,7 @@ package whitelist
 import (
 	"testing"
 
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
 	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
@@ -25,7 +26,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				config: false,
 			},
 			want: &entity.WhitelistResult{
-				Name:   "Pull request is a draft",
+				Name:   constants.DraftWhitelistName,
 				Result: true,
 			},
 		},
@@ -36,7 +37,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				config: true,
 			},
 			want: &entity.WhitelistResult{
-				Name:   "Pull request is a draft",
+				Name:   constants.DraftWhitelistName,
 				Result: false,
 			},
 		},
@@ -47,7 +48,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				config: false,
 			},
 			want: &entity.WhitelistResult{
-				Name:   "Pull request is a draft",
+				Name:   constants.DraftWhitelistName,
 				Result: false,
 			},
 		},
@@ -58,7 +59,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				config: true,
 			},
 			want: &entity.WhitelistResult{
-				Name:   "Pull request is a draft",
+				Name:   constants.DraftWhitelistName,
 				Result: false,
 			},
 		},

@@ -23,10 +23,10 @@ func NewPermissionWhitelist(
 	meta *entity.Meta,
 ) internal.Whitelist {
 	return &permissionWhitelist{
+		Name:   constants.PermissionWhitelistName,
 		client: client,
 		config: config,
 		meta:   meta,
-		Name:   "Pull request has high privileges",
 	}
 }
 

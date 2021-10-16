@@ -2,6 +2,7 @@ package whitelist
 
 import (
 	"github.com/Namchee/ethos/internal"
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
 	"github.com/google/go-github/v32/github"
 )
@@ -17,7 +18,7 @@ func NewDraftWhitelist(
 	_ *entity.Meta,
 ) internal.Whitelist {
 	return &draftWhitelist{
-		Name:   "Pull request is a draft",
+		Name:   constants.DraftWhitelistName,
 		config: config,
 	}
 }

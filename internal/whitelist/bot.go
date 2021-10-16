@@ -22,9 +22,9 @@ func NewBotWhitelist(
 	_ *entity.Meta,
 ) internal.Whitelist {
 	return &botWhitelist{
+		Name:   constants.BotWhitelistName,
 		client: client,
 		config: config,
-		Name:   "Pull request is submitted by a bot",
 	}
 }
 

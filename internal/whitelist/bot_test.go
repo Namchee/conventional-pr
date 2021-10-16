@@ -3,6 +3,7 @@ package whitelist
 import (
 	"testing"
 
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
 	"github.com/Namchee/ethos/internal/mocks"
 	"github.com/google/go-github/v32/github"
@@ -26,7 +27,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				config: true,
 			},
 			want: &entity.WhitelistResult{
-				Name:   "Pull request is submitted by a bot",
+				Name:   constants.BotWhitelistName,
 				Result: true,
 			},
 		},
@@ -37,7 +38,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				config: false,
 			},
 			want: &entity.WhitelistResult{
-				Name:   "Pull request is submitted by a bot",
+				Name:   constants.BotWhitelistName,
 				Result: false,
 			},
 		},
@@ -48,7 +49,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				config: true,
 			},
 			want: &entity.WhitelistResult{
-				Name:   "Pull request is submitted by a bot",
+				Name:   constants.BotWhitelistName,
 				Result: false,
 			},
 		},
@@ -59,7 +60,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				config: false,
 			},
 			want: &entity.WhitelistResult{
-				Name:   "Pull request is submitted by a bot",
+				Name:   constants.BotWhitelistName,
 				Result: false,
 			},
 		},
