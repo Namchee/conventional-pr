@@ -21,10 +21,7 @@ inputs:
   template:
     description: 'Comment template on invalid PRs'
     required: false
-    default: |-
-      Thank you submitting a pull request to this repository!
-      
-      Unfortunately, this pull request doesn't meet our pull request standards by a reason we stated below. Please create another pull request that meets our standards in the future.
+    default: ""
   strict:
     description: 'Determine whether checks should also apply to repository administrators'
     required: false
