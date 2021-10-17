@@ -116,7 +116,7 @@ Pull request is invalid.
 
 **Reason**
 
-- testing`,
+- Testing`,
 		},
 	}
 

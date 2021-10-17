@@ -63,7 +63,7 @@ func formatValidationResult(
 		var reasons []string
 
 		for _, fail := range fails {
-			reasons = append(reasons, fmt.Sprintf("- %s", fail.Error()))
+			reasons = append(reasons, fmt.Sprintf("- %s", strings.Title(fail.Error())))
 		}
 		reason = fmt.Sprintf(constants.ReasonTemplate, strings.Join(reasons, "\n"))
 	}
