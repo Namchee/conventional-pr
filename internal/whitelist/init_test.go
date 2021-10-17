@@ -34,3 +34,48 @@ func TestWhitelistGroup(t *testing.T) {
 
 	assert.Equal(t, 3, len(got))
 }
+
+func TestIsWhitelisted(t *testing.T) {
+	tests := []struct {
+		name string
+		args []*entity.WhitelistResult
+		want bool
+	}{
+		{
+			name: "should return true",
+			args: []*entity.WhitelistResult{
+				{
+					Name:   "foo bar",
+					Result: false,
+				},
+				{
+					Name:   "bar baz",
+					Result: true,
+				},
+			},
+			want: true,
+		},
+		{
+			name: "should return false",
+			args: []*entity.WhitelistResult{
+				{
+					Name:   "foo bar",
+					Result: false,
+				},
+				{
+					Name:   "bar baz",
+					Result: false,
+				},
+			},
+			want: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			got := IsWhitelisted(tc.args)
+
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}

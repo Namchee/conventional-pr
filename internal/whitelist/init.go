@@ -83,3 +83,13 @@ func (w *WhitelistGroup) Process(
 
 	return results
 }
+
+func IsWhitelisted(result []*entity.WhitelistResult) bool {
+	for _, r := range result {
+		if r.Result {
+			return true
+		}
+	}
+
+	return false
+}

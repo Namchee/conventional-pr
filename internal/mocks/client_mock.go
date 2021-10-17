@@ -12,6 +12,19 @@ import (
 // GitHub's client mock. Used in testing
 type githubClientMock struct{}
 
+func (m *githubClientMock) GetPullRequest(
+	_ context.Context,
+	_ string,
+	_ string,
+	event int,
+) (*github.PullRequest, error) {
+	if event == 123 {
+		return &github.PullRequest{}, nil
+	}
+
+	return nil, errors.New("not found")
+}
+
 func (m *githubClientMock) GetUser(_ context.Context, name string) (*github.User, error) {
 	bot := constants.BotUser
 	user := "user"

@@ -10,6 +10,7 @@ import (
 // GithubClient handles all interaction with Github's API
 // Designed this way for easier software testing
 type GithubClient interface {
+	GetPullRequest(context.Context, string, string, int) (*github.PullRequest, error)
 	GetUser(context.Context, string) (*github.User, error)
 	GetIssue(context.Context, string, string, int) (*github.Issue, error)
 	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)
@@ -25,6 +26,17 @@ type githubClient struct {
 
 func NewGithubClient(client *github.Client) GithubClient {
 	return &githubClient{client: client}
+}
+
+func (cl *githubClient) GetPullRequest(
+	ctx context.Context,
+	owner string,
+	name string,
+	event int,
+) (*github.PullRequest, error) {
+	pullRequest, _, err := cl.client.PullRequests.Get(ctx, owner, name, event)
+
+	return pullRequest, err
 }
 
 func (cl *githubClient) GetUser(ctx context.Context, name string) (*github.User, error) {
