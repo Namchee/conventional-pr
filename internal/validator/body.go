@@ -21,17 +21,17 @@ func NewBodyValidator(
 	}
 }
 
-func (v *bodyValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidatorResult {
+func (v *bodyValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
 	body := pullRequest.GetBody()
 
 	if body != "" {
-		return &entity.ValidatorResult{
+		return &entity.ValidationResult{
 			Name:   v.Name,
 			Result: nil,
 		}
 	}
 
-	return &entity.ValidatorResult{
+	return &entity.ValidationResult{
 		Name:   v.Name,
 		Result: constants.ErrNoBody,
 	}

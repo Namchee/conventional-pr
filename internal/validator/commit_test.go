@@ -21,7 +21,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *entity.ValidatorResult
+		want *entity.ValidationResult
 	}{
 		{
 			name: "should allow valid commits",
@@ -30,7 +30,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
 				Result: nil,
 			},
@@ -42,7 +42,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				config:  false,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
 				Result: nil,
 			},
@@ -54,7 +54,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
 				Result: nil,
 			},
@@ -66,7 +66,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
 				Result: errors.New("commit this is bad does not have valid commit message"),
 			},

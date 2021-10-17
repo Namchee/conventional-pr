@@ -1,33 +1,44 @@
 package internal
 
 import (
-	"github.com/Namchee/ethos/internal/constants"
+	"context"
+
 	"github.com/Namchee/ethos/internal/entity"
+	"github.com/Namchee/ethos/internal/formatter"
 	"github.com/google/go-github/v32/github"
 )
 
 type GithubService struct {
 	client GithubClient
-	config *entity.Config
 	meta   *entity.Meta
 }
 
 func NewGithubService(
 	client GithubClient,
-	config *entity.Config,
 	meta *entity.Meta,
 ) *GithubService {
 	return &GithubService{
 		client: client,
-		config: config,
 		meta:   meta,
 	}
 }
 
-func (s *GithubService) Report(
+func (s *GithubService) WriteReport(
 	pullRequest *github.PullRequest,
 	whitelistResults []*entity.WhitelistResult,
-	validatorResults []*entity.ValidatorResult,
+	validationResults []*entity.ValidationResult,
 ) {
-	report := constants.ReportHeader
+	report := formatter.FormatResult(whitelistResults, validationResults)
+
+	ctx := context.Background()
+
+	s.client.Comment(
+		ctx,
+		s.meta.Owner,
+		s.meta.Name,
+		pullRequest.GetNumber(),
+		&github.PullRequestComment{
+			Body: &report,
+		},
+	)
 }

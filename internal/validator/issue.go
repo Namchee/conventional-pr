@@ -31,7 +31,7 @@ func NewIssueValidator(
 	}
 }
 
-func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidatorResult {
+func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
 	ctx := context.Background()
 	pattern := regexp.MustCompile(`#(\d+)`)
 
@@ -42,14 +42,14 @@ func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.Valida
 		issue, err := v.client.GetIssue(ctx, v.meta.Owner, v.meta.Name, num)
 
 		if err == nil && issue != nil {
-			return &entity.ValidatorResult{
+			return &entity.ValidationResult{
 				Name:   v.Name,
 				Result: nil,
 			}
 		}
 	}
 
-	return &entity.ValidatorResult{
+	return &entity.ValidationResult{
 		Name:   v.Name,
 		Result: constants.ErrNoIssue,
 	}

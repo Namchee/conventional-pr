@@ -1,6 +1,6 @@
 package entity
 
-type ValidatorResult struct {
+type ValidationResult struct {
 	Name   string
 	Result error
 }

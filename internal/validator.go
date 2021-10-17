@@ -6,5 +6,5 @@ import (
 )
 
 type Validator interface {
-	IsValid(*github.PullRequest) *entity.ValidatorResult
+	IsValid(*github.PullRequest) *entity.ValidationResult
 }

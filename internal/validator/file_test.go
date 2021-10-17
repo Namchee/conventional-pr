@@ -17,7 +17,7 @@ func TestFileValidator_IsValid(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *entity.ValidatorResult
+		want *entity.ValidationResult
 	}{
 		{
 			name: "should allow few changes",
@@ -25,7 +25,7 @@ func TestFileValidator_IsValid(t *testing.T) {
 				changes: 2,
 				config:  2,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.FileValidatorName,
 				Result: nil,
 			},
@@ -36,7 +36,7 @@ func TestFileValidator_IsValid(t *testing.T) {
 				changes: 3,
 				config:  2,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.FileValidatorName,
 				Result: constants.ErrTooManyChanges,
 			},
@@ -47,7 +47,7 @@ func TestFileValidator_IsValid(t *testing.T) {
 				changes: 10000,
 				config:  0,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.FileValidatorName,
 				Result: nil,
 			},

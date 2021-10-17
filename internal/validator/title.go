@@ -25,19 +25,19 @@ func NewTitleValidator(
 	}
 }
 
-func (v *titleValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidatorResult {
+func (v *titleValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
 	title := pullRequest.GetTitle()
 
 	pattern := regexp.MustCompile(v.config.Pattern)
 
 	if !pattern.Match([]byte(title)) {
-		return &entity.ValidatorResult{
+		return &entity.ValidationResult{
 			Name:   v.Name,
 			Result: constants.ErrInvalidTitle,
 		}
 	}
 
-	return &entity.ValidatorResult{
+	return &entity.ValidationResult{
 		Name:   v.Name,
 		Result: nil,
 	}

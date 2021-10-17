@@ -25,22 +25,22 @@ func NewFileValidator(
 	}
 }
 
-func (v *fileValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidatorResult {
+func (v *fileValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
 	if v.config.FileChanges == 0 {
-		return &entity.ValidatorResult{
+		return &entity.ValidationResult{
 			Name:   v.Name,
 			Result: nil,
 		}
 	}
 
 	if pullRequest.GetChangedFiles() <= v.config.FileChanges {
-		return &entity.ValidatorResult{
+		return &entity.ValidationResult{
 			Name:   v.Name,
 			Result: nil,
 		}
 	}
 
-	return &entity.ValidatorResult{
+	return &entity.ValidationResult{
 		Name:   v.Name,
 		Result: constants.ErrTooManyChanges,
 	}

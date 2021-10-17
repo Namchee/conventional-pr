@@ -18,7 +18,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *entity.ValidatorResult
+		want *entity.ValidationResult
 	}{
 		{
 			name: "should allow valid commits",
@@ -26,7 +26,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				title:   "feat: testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
 				Result: nil,
 			},
@@ -37,7 +37,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				title:   "feat(ci): testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
 				Result: nil,
 			},
@@ -48,7 +48,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				title:   "feat(ci)!: testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
 				Result: nil,
 			},
@@ -61,7 +61,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				BREAKING CHANGE: foo bar`,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
 				Result: nil,
 			},
@@ -72,7 +72,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				title:   "I'm invalid",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
 				Result: constants.ErrInvalidTitle,
 			},

@@ -17,14 +17,14 @@ func TestBodyValidator_IsValid(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *entity.ValidatorResult
+		want *entity.ValidationResult
 	}{
 		{
 			name: "should allow non-empty body",
 			args: args{
 				body: "foo bar",
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.BodyValidatorName,
 				Result: nil,
 			},
@@ -34,7 +34,7 @@ func TestBodyValidator_IsValid(t *testing.T) {
 			args: args{
 				body: "",
 			},
-			want: &entity.ValidatorResult{
+			want: &entity.ValidationResult{
 				Name:   constants.BodyValidatorName,
 				Result: constants.ErrNoBody,
 			},

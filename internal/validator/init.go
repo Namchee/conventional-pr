@@ -33,7 +33,7 @@ func NewValidatorGroup(
 func (v *ValidatorGroup) processValidator(
 	validator internal.Validator,
 	pullRequest *github.PullRequest,
-	pool chan *entity.ValidatorResult,
+	pool chan *entity.ValidationResult,
 ) {
 	defer v.wg.Done()
 	result := validator.IsValid(pullRequest)
@@ -41,7 +41,7 @@ func (v *ValidatorGroup) processValidator(
 }
 
 func (v *ValidatorGroup) cleanup(
-	channel chan *entity.ValidatorResult,
+	channel chan *entity.ValidationResult,
 ) {
 	v.wg.Wait()
 	close(channel)
@@ -49,13 +49,13 @@ func (v *ValidatorGroup) cleanup(
 
 func (w *ValidatorGroup) Process(
 	pullRequest *github.PullRequest,
-) []*entity.ValidatorResult {
+) []*entity.ValidationResult {
 	title := NewTitleValidator(w.client, w.config, w.meta)
 	file := NewFileValidator(w.client, w.config, w.meta)
 	issue := NewIssueValidator(w.client, w.config, w.meta)
 	commit := NewCommitValidator(w.client, w.config, w.meta)
 
-	channel := make(chan *entity.ValidatorResult, 4)
+	channel := make(chan *entity.ValidationResult, 4)
 
 	w.wg.Add(4)
 	go w.processValidator(title, pullRequest, channel)
@@ -65,7 +65,7 @@ func (w *ValidatorGroup) Process(
 
 	go w.cleanup(channel)
 
-	var results []*entity.ValidatorResult
+	var results []*entity.ValidationResult
 
 	for result := range channel {
 		results = append(results, result)
