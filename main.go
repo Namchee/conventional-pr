@@ -21,8 +21,8 @@ var (
 )
 
 func init() {
-	infoLogger = log.New(os.Stdout, "[INFO]", log.Ldate|log.Ltime)
-	errorLogger = log.New(os.Stderr, "[ERROR]", log.Ldate|log.Ltime)
+	infoLogger = log.New(os.Stdout, "[INFO]", log.Ldate|log.Ltime|log.Lmsgprefix)
+	errorLogger = log.New(os.Stderr, "[ERROR]", log.Ldate|log.Ltime|log.Lmsgprefix)
 }
 
 func main() {
@@ -70,14 +70,37 @@ func main() {
 	wg := whitelist.NewWhitelistGroup(client, config, meta, sync)
 	wgResult := wg.Process(pullRequest)
 
-	isWhitelisted := whitelist.IsWhitelisted(wgResult)
-
-	if !isWhitelisted {
+	if !whitelist.IsWhitelisted(wgResult) {
 		infoLogger.Println("Testing pull request validity")
 		vg := validator.NewValidatorGroup(client, config, meta, sync)
 		vgResult = vg.Process(pullRequest)
 	}
 
 	svc := service.NewGithubService(client, config, meta)
-	svc.WriteReport(pullRequest, wgResult, vgResult)
+
+	infoLogger.Println("Writing run report")
+	err = svc.WriteReport(pullRequest, wgResult, vgResult)
+
+	if err != nil {
+		errorLogger.Fatalln("Failed to write report")
+	}
+
+	if !validator.IsValid(vgResult) {
+		infoLogger.Println("Processing invalid pull request")
+
+		err = svc.AttachLabel(pullRequest)
+		if err != nil {
+			errorLogger.Fatalln("Failed to attach invalid pull request label")
+		}
+
+		err = svc.WriteTemplate(pullRequest)
+		if err != nil {
+			errorLogger.Fatalln("Failed to write message template")
+		}
+
+		err = svc.ClosePullRequest(pullRequest)
+		if err != nil {
+			errorLogger.Fatalln("Failed to close invalid pull request")
+		}
+	}
 }

@@ -51,14 +51,16 @@ func (w *ValidatorGroup) Process(
 	pullRequest *github.PullRequest,
 ) []*entity.ValidationResult {
 	title := NewTitleValidator(w.client, w.config, w.meta)
+	body := NewBodyValidator(w.client, w.config, w.meta)
 	file := NewFileValidator(w.client, w.config, w.meta)
 	issue := NewIssueValidator(w.client, w.config, w.meta)
 	commit := NewCommitValidator(w.client, w.config, w.meta)
 
-	channel := make(chan *entity.ValidationResult, 4)
+	channel := make(chan *entity.ValidationResult, 5)
 
-	w.wg.Add(4)
+	w.wg.Add(5)
 	go w.processValidator(title, pullRequest, channel)
+	go w.processValidator(body, pullRequest, channel)
 	go w.processValidator(file, pullRequest, channel)
 	go w.processValidator(issue, pullRequest, channel)
 	go w.processValidator(commit, pullRequest, channel)
@@ -84,4 +86,14 @@ func (w *ValidatorGroup) Process(
 	})
 
 	return results
+}
+
+func IsValid(result []*entity.ValidationResult) bool {
+	for _, r := range result {
+		if r.Result != nil {
+			return false
+		}
+	}
+
+	return true
 }
