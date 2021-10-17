@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"github.com/Namchee/ethos/internal/constants"
+	"github.com/Namchee/ethos/internal/entity"
 	"github.com/google/go-github/v32/github"
+	"golang.org/x/oauth2"
 )
 
 // GithubClient handles all interaction with Github's API
@@ -24,8 +26,14 @@ type githubClient struct {
 	client *github.Client
 }
 
-func NewGithubClient(client *github.Client) GithubClient {
-	return &githubClient{client: client}
+func NewGithubClient(config *entity.Config) GithubClient {
+	ctx := context.Background()
+
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: config.Token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	return &githubClient{client: github.NewClient(tc)}
 }
 
 func (cl *githubClient) GetPullRequest(

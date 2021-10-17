@@ -12,8 +12,6 @@ import (
 	"github.com/Namchee/ethos/internal/utils"
 	"github.com/Namchee/ethos/internal/validator"
 	"github.com/Namchee/ethos/internal/whitelist"
-	"github.com/google/go-github/v32/github"
-	"golang.org/x/oauth2"
 )
 
 // Logger
@@ -28,6 +26,8 @@ func init() {
 }
 
 func main() {
+	ctx := context.Background()
+
 	var config *entity.Config
 	var meta *entity.Meta
 	var err error
@@ -48,18 +48,13 @@ func main() {
 		errorLogger.Fatalln(err)
 	}
 
-	infoLogger.Println("Reading repository metadata")
+	infoLogger.Println("Initializing GitHub Client")
+	client := internal.NewGithubClient(config)
+
+	infoLogger.Println("Reading pull request metadata")
 	event, _ := entity.ReadEvent(
 		utils.ReadEnvString("GITHUB_EVENT_PATH"),
 	)
-
-	ctx := context.Background()
-
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: config.Token},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-	client := internal.NewGithubClient(github.NewClient(tc))
 
 	pullRequest, err := client.GetPullRequest(ctx, meta.Owner, meta.Name, event.Number)
 
@@ -71,12 +66,14 @@ func main() {
 
 	sync := &sync.WaitGroup{}
 
+	infoLogger.Println("Testing pull request for whitelists")
 	wg := whitelist.NewWhitelistGroup(client, config, meta, sync)
 	wgResult := wg.Process(pullRequest)
 
 	isWhitelisted := whitelist.IsWhitelisted(wgResult)
 
 	if !isWhitelisted {
+		infoLogger.Println("Testing pull request validity")
 		vg := validator.NewValidatorGroup(client, config, meta, sync)
 		vgResult = vg.Process(pullRequest)
 	}
