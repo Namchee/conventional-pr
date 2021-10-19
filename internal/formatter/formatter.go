@@ -6,6 +6,7 @@ import (
 
 	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
+	"github.com/Namchee/ethos/internal/utils"
 )
 
 func formatWhitelistResult(
@@ -63,7 +64,7 @@ func formatValidationResult(
 		var reasons []string
 
 		for _, fail := range fails {
-			reasons = append(reasons, fmt.Sprintf("- %s", strings.Title(fail.Error())))
+			reasons = append(reasons, fmt.Sprintf("- %s", utils.Capitalize(fail.Error())))
 		}
 		reason = fmt.Sprintf(constants.ReasonTemplate, strings.Join(reasons, "\n"))
 	}

@@ -75,10 +75,10 @@ func (w *WhitelistGroup) Process(
 		}
 
 		if results[i].Result {
-			return false
+			return true
 		}
 
-		return true
+		return false
 	})
 
 	return results

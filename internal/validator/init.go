@@ -79,10 +79,10 @@ func (w *ValidatorGroup) Process(
 		}
 
 		if results[i].Result == nil {
-			return false
+			return true
 		}
 
-		return true
+		return false
 	})
 
 	return results
