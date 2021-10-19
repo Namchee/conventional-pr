@@ -4,8 +4,7 @@ author: 'Cristopher Namchee'
 inputs:
   access_token:
     description: 'GitHub account access token'
-    required: false
-    default: "${{ secrets.GITHUB_TOKEN }}"
+    required: ''
   check_draft:
     description: 'Determine whether checks should be skipped pull request is a draft'
     required: false
