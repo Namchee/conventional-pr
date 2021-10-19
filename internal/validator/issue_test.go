@@ -12,7 +12,8 @@ import (
 
 func TestIssueValidator_IsValid(t *testing.T) {
 	type args struct {
-		body string
+		config bool
+		body   string
 	}
 	tests := []struct {
 		name string
@@ -21,6 +22,17 @@ func TestIssueValidator_IsValid(t *testing.T) {
 	}{
 		{
 			name: "should allow issue references",
+			args: args{
+				body:   "Closes #123",
+				config: true,
+			},
+			want: &entity.ValidationResult{
+				Name:   constants.IssueValidatorName,
+				Result: nil,
+			},
+		},
+		{
+			name: "should be skipped if disabled",
 			args: args{
 				body: "Closes #123",
 			},
@@ -32,7 +44,8 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should reject if no issue at all",
 			args: args{
-				body: "this is a fake body",
+				body:   "this is a fake body",
+				config: true,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
@@ -42,7 +55,8 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should distinguih false alarm",
 			args: args{
-				body: "This is a fake issue #69",
+				body:   "This is a fake issue #69",
+				config: true,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
@@ -58,8 +72,11 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			}
 
 			client := mocks.NewGithubClientMock()
+			config := &entity.Config{
+				Issue: tc.args.config,
+			}
 
-			validator := NewIssueValidator(client, nil, &entity.Meta{})
+			validator := NewIssueValidator(client, config, &entity.Meta{})
 
 			got := validator.IsValid(pull)
 

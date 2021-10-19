@@ -21,6 +21,7 @@ type Config struct {
 	Template      string
 	FileChanges   int
 	Issue         bool
+	Body          bool
 	Bot           bool
 }
 
@@ -33,12 +34,13 @@ func ReadConfig() (*Config, error) {
 		return nil, constants.ErrMissingToken
 	}
 
-	draft := utils.ReadEnvBool("INPUT_CHECK_DRAFT")
+	draft := utils.ReadEnvBool("INPUT_DRAFT")
 	close := utils.ReadEnvBool("INPUT_CLOSE")
 	strict := utils.ReadEnvBool("INPUT_STRICT")
 	assign := utils.ReadEnvBool("INPUT_ASSIGNEE")
-	issue := utils.ReadEnvBool("INPUT_LINK_ISSUE")
-	bot := utils.ReadEnvBool("INPUT_IGNORE_BOT")
+	issue := utils.ReadEnvBool("INPUT_ISSUE")
+	body := utils.ReadEnvBool("INPUT_BODY")
+	bot := utils.ReadEnvBool("INPUT_BOT")
 
 	label := utils.ReadEnvString("INPUT_LABEL")
 	template := utils.ReadEnvString("INPUT_TEMPLATE")
@@ -79,6 +81,7 @@ func ReadConfig() (*Config, error) {
 		BranchPattern: branchPattern,
 		Bot:           bot,
 		Label:         label,
+		Body:          body,
 		Template:      template,
 		FileChanges:   fileChanges,
 	}, nil

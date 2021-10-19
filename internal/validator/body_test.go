@@ -11,7 +11,8 @@ import (
 
 func TestBodyValidator_IsValid(t *testing.T) {
 	type args struct {
-		body string
+		config bool
+		body   string
 	}
 
 	tests := []struct {
@@ -22,7 +23,18 @@ func TestBodyValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow non-empty body",
 			args: args{
-				body: "foo bar",
+				config: true,
+				body:   "foo bar",
+			},
+			want: &entity.ValidationResult{
+				Name:   constants.BodyValidatorName,
+				Result: nil,
+			},
+		},
+		{
+			name: "should be skipped when disabled",
+			args: args{
+				body: "",
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.BodyValidatorName,
@@ -32,7 +44,8 @@ func TestBodyValidator_IsValid(t *testing.T) {
 		{
 			name: "should reject empty body",
 			args: args{
-				body: "",
+				config: true,
+				body:   "",
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.BodyValidatorName,
@@ -47,7 +60,11 @@ func TestBodyValidator_IsValid(t *testing.T) {
 				Body: &tc.args.body,
 			}
 
-			bodyValidator := NewBodyValidator(nil, nil, nil)
+			config := &entity.Config{
+				Body: tc.args.config,
+			}
+
+			bodyValidator := NewBodyValidator(nil, config, nil)
 
 			got := bodyValidator.IsValid(pullRequest)
 

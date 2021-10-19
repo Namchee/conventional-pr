@@ -23,9 +23,9 @@ func TestReadConfig(t *testing.T) {
 			name: "should read config correctly",
 			mocks: map[string]string{
 				"INPUT_ACCESS_TOKEN":         "foo_bar",
-				"INPUT_CHECK_DRAFT":          "false",
-				"INPUT_LINK_ISSUE":           "true",
-				"INPUT_IGNORE_BOT":           "false",
+				"INPUT_DRAFT":                "false",
+				"INPUT_ISSUE":                "true",
+				"INPUT_BOT":                  "false",
 				"INPUT_MAXIMUM_FILE_CHANGES": "11",
 			},
 			want: expected{

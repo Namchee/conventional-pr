@@ -32,6 +32,13 @@ func NewIssueValidator(
 }
 
 func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
+	if !v.config.Issue {
+		return &entity.ValidationResult{
+			Name:   v.Name,
+			Result: nil,
+		}
+	}
+
 	ctx := context.Background()
 	pattern := regexp.MustCompile(`#(\d+)`)
 

@@ -8,23 +8,25 @@ import (
 )
 
 type bodyValidator struct {
-	Name string
+	Name   string
+	config *entity.Config
 }
 
 func NewBodyValidator(
 	_ internal.GithubClient,
-	_ *entity.Config,
+	config *entity.Config,
 	_ *entity.Meta,
 ) internal.Validator {
 	return &bodyValidator{
-		Name: constants.BodyValidatorName,
+		Name:   constants.BodyValidatorName,
+		config: config,
 	}
 }
 
 func (v *bodyValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
 	body := pullRequest.GetBody()
 
-	if body != "" {
+	if body != "" || !v.config.Body {
 		return &entity.ValidationResult{
 			Name:   v.Name,
 			Result: nil,

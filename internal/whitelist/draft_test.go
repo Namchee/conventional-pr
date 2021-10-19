@@ -23,7 +23,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			name: "should be skipped if config = false, draft = true",
 			args: args{
 				draft:  true,
-				config: false,
+				config: true,
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.DraftWhitelistName,
@@ -31,10 +31,10 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			},
 		},
 		{
-			name: "should be checked if config = true, draft = true",
+			name: "should be checked if config = false, draft = true",
 			args: args{
 				draft:  true,
-				config: true,
+				config: false,
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.DraftWhitelistName,

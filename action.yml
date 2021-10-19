@@ -5,10 +5,6 @@ inputs:
   access_token:
     description: 'GitHub account access token'
     required: ''
-  check_draft:
-    description: 'Determine whether checks should be skipped pull request is a draft'
-    required: false
-    default: true
   close:
     description: 'Determine whether checks should close invalid PRs'
     required: false
@@ -21,24 +17,20 @@ inputs:
     description: 'Comment template on invalid PRs'
     required: false
     default: ''
+  draft:
+    description: 'Determine whether checks should be skipped pull request is a draft'
+    required: false
+    default: true
   strict:
     description: 'Determine whether checks should also apply to repository administrators'
     required: false
     default: true
-  maximum_file_changes:
-    description: 'Limits how many files should be changes per pull request'
-    required: false
-    default: 0
-  link_issue:
-    description: 'Determine whether a valid PR should always refer to an issue'
-    required: false
-    default: true
-  ignore_bot:
+  bot:
     description: 'Determine whether checks should be skipped if the author is a bot'
     required: false
     default: true
   title_pattern:
-    description: 'Valid pull request regex pattern in Perl syntax'
+    description: 'Valid pull request title regex pattern in Perl syntax'
     required: false
     default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
   commit_pattern:
@@ -49,6 +41,18 @@ inputs:
     description: 'Valid pull request branch name regex pattern in Perl syntax'
     required: false
     default: ''
+  issue:
+    description: 'Determine whether a valid pull request should always refer to an issue'
+    required: false
+    default: true
+  body:
+    description: 'Determine whether a valid pull request should have a non-empty body'
+    required: false
+    default: true
+  maximum_file_changes:
+    description: 'Limits how many files should be changes per pull request'
+    required: false
+    default: 0
 runs:
   using: docker
   image: 'Dockerfile'

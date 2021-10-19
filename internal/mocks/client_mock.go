@@ -90,9 +90,9 @@ func (m *githubClientMock) GetCommits(
 	if event == 69 {
 		return []*github.RepositoryCommit{
 			{
+				SHA: &bad,
 				Commit: &github.Commit{
 					Message: &bad,
-					SHA:     &bad,
 				},
 			},
 		}, nil

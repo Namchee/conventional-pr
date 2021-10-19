@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Namchee/ethos/internal"
+	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/entity"
 	"github.com/Namchee/ethos/internal/service"
 	"github.com/Namchee/ethos/internal/utils"
@@ -63,6 +64,12 @@ func main() {
 
 	if err != nil {
 		errorLogger.Fatalln(err)
+	}
+
+	infoLogger.Println("Validating pull request sub-events")
+	if !utils.ContainsString(constants.Events, event.Action) {
+		infoLogger.Println("Incompatible sub-events detected. Exiting...")
+		os.Exit(0)
 	}
 
 	pullRequest, err := client.GetPullRequest(ctx, meta.Owner, meta.Name, event.Number)
