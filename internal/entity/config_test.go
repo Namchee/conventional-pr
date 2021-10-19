@@ -41,26 +41,6 @@ func TestReadConfig(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "should fallback to github-actions account",
-			mocks: map[string]string{
-				"INPUT_ACCESS_TOKEN": "",
-				"GITHUB_TOKEN":       "baz",
-				"INPUT_CHECK_DRAFT":  "false",
-				"INPUT_LINK_ISSUE":   "true",
-				"INPUT_IGNORE_BOT":   "false",
-			},
-			want: expected{
-				config: &Config{
-					Token: "baz",
-					Draft: false,
-					Issue: true,
-					Bot:   false,
-				},
-				err: nil,
-			},
-			wantErr: false,
-		},
-		{
 			name:  "should throw an error when token is empty",
 			mocks: map[string]string{},
 			want: expected{

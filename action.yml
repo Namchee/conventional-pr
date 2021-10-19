@@ -5,7 +5,7 @@ inputs:
   access_token:
     description: 'GitHub account access token'
     required: false
-    default: ''
+    default: "${{ secrets.GITHUB_TOKEN }}"
   check_draft:
     description: 'Determine whether checks should be skipped pull request is a draft'
     required: false

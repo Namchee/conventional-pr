@@ -9,29 +9,24 @@ import (
 
 // Config is a configuration object that is parsed from the action input
 type Config struct {
-	Token         string
-	Draft         bool
-	Label         string
-	Strict        bool
-	Close         bool
-	Assign        bool
-	Pattern 	  string
-	Template      string
-	FileChanges   int
-	Issue         bool
-	Bot           bool
-	Commits       bool
+	Token       string
+	Draft       bool
+	Label       string
+	Strict      bool
+	Close       bool
+	Assign      bool
+	Pattern     string
+	Template    string
+	FileChanges int
+	Issue       bool
+	Bot         bool
+	Commits     bool
 }
 
 // ReadConfig reads environment variables for input values which are supplied
 // from an action runner and create Conventional PR's configuration from it
 func ReadConfig() (*Config, error) {
 	token := utils.ReadEnvString("INPUT_ACCESS_TOKEN")
-
-	if len(token) == 0 {
-		// Use github-actions bot account to provide message
-		token = utils.ReadEnvString("GITHUB_TOKEN")
-	}
 
 	if token == "" {
 		return nil, constants.ErrMissingToken
@@ -61,17 +56,17 @@ func ReadConfig() (*Config, error) {
 	}
 
 	return &Config{
-		Token:         token,
-		Draft:         draft,
-		Close:         close,
-		Strict:        strict,
-		Assign:        assign,
-		Issue:         issue,
-		Pattern: 	   pattern,
-		Bot:           bot,
-		Label:         label,
-		Template:      template,
-		FileChanges:   fileChanges,
-		Commits:       commits,
+		Token:       token,
+		Draft:       draft,
+		Close:       close,
+		Strict:      strict,
+		Assign:      assign,
+		Issue:       issue,
+		Pattern:     pattern,
+		Bot:         bot,
+		Label:       label,
+		Template:    template,
+		FileChanges: fileChanges,
+		Commits:     commits,
 	}, nil
 }
