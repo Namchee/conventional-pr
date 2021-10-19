@@ -27,11 +27,11 @@ func ReadEvent(path string) (*Event, error) {
 	}
 	defer file.Close()
 
-	var event *Event
+	var event Event
 
-	if err = json.NewDecoder(file).Decode(event); err != nil {
+	if err = json.NewDecoder(file).Decode(&event); err != nil {
 		return nil, constants.ErrEventFileParse
 	}
 
-	return event, nil
+	return &event, nil
 }
