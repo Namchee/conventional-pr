@@ -9,38 +9,40 @@ import (
 	"github.com/google/go-github/v32/github"
 )
 
-type titleValidator struct {
+type branchValidator struct {
 	Name   string
+	client internal.GithubClient
 	config *entity.Config
 }
 
-func NewTitleValidator(
-	_ internal.GithubClient,
+func NewBranchValidator(
+	client internal.GithubClient,
 	config *entity.Config,
 	_ *entity.Meta,
 ) internal.Validator {
-	return &titleValidator{
-		Name:   constants.TitleValidatorName,
+	return &branchValidator{
+		Name:   constants.BranchValidatorName,
+		client: client,
 		config: config,
 	}
 }
 
-func (v *titleValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
-	if v.config.TitlePattern == "" {
+func (v *branchValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
+	if v.config.BranchPattern == "" {
 		return &entity.ValidationResult{
 			Name:   v.Name,
 			Result: nil,
 		}
 	}
 
-	title := pullRequest.GetTitle()
+	branch := pullRequest.GetHead().GetRef()
 
-	pattern := regexp.MustCompile(v.config.TitlePattern)
+	pattern := regexp.MustCompile(v.config.BranchPattern)
 
-	if !pattern.Match([]byte(title)) {
+	if !pattern.Match([]byte(branch)) {
 		return &entity.ValidationResult{
 			Name:   v.Name,
-			Result: constants.ErrInvalidTitle,
+			Result: constants.ErrInvalidBranch,
 		}
 	}
 

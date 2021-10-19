@@ -33,7 +33,7 @@ func TestValidatorGroup(t *testing.T) {
 
 	got := validatorGroup.Process(pullRequest)
 
-	assert.Equal(t, 5, len(got))
+	assert.Equal(t, 6, len(got))
 }
 
 func TestIsValid(t *testing.T) {

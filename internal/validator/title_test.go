@@ -21,7 +21,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 		want *entity.ValidationResult
 	}{
 		{
-			name: "should allow valid commits",
+			name: "should allow valid title",
 			args: args{
 				title:   "feat: testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
@@ -32,7 +32,18 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			},
 		},
 		{
-			name: "should allow scoped valid commits",
+			name: "should skip if pattern is empty",
+			args: args{
+				title:   "feat: testing",
+				pattern: "",
+			},
+			want: &entity.ValidationResult{
+				Name:   constants.TitleValidatorName,
+				Result: nil,
+			},
+		},
+		{
+			name: "should allow scoped valid title",
 			args: args{
 				title:   "feat(ci): testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
@@ -43,7 +54,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			},
 		},
 		{
-			name: "should allow breaking changes",
+			name: "should allow breaking changes title",
 			args: args{
 				title:   "feat(ci)!: testing",
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
@@ -85,7 +96,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 				Title: &tc.args.title,
 			}
 			config := &entity.Config{
-				Pattern: tc.args.pattern,
+				TitlePattern: tc.args.pattern,
 			}
 
 			validator := NewTitleValidator(nil, config, nil)

@@ -37,14 +37,18 @@ inputs:
     description: 'Determine whether checks should be skipped if the author is a bot'
     required: false
     default: true
-  check_commits:
-    description: 'Determine whether checks should also be applied to all commits in the pull request'
-    required: false
-    default: false
-  pattern:
-    description: 'Valid pull request title and commit message pattern in Perl syntax'
+  title_pattern:
+    description: 'Valid pull request regex pattern in Perl syntax'
     required: false
     default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
+  commit_pattern:
+    description: 'Valid pull request commit message regex pattern in Perl syntax'
+    required: false
+    default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
+  branch_pattern:
+    description: 'Valid pull request branch name regex pattern in Perl syntax'
+    required: false
+    default: ''
 runs:
   using: docker
   image: 'Dockerfile'

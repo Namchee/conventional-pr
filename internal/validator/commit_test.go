@@ -15,7 +15,6 @@ import (
 func TestCommitValidator_IsValid(t *testing.T) {
 	type args struct {
 		number  int
-		config  bool
 		pattern string
 	}
 	tests := []struct {
@@ -27,7 +26,6 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			name: "should allow valid commits",
 			args: args{
 				number:  123,
-				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -36,11 +34,10 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			},
 		},
 		{
-			name: "should allow when config is false",
+			name: "should skip when pattern is empty",
 			args: args{
-				number:  69,
-				config:  false,
-				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
+				number:  123,
+				pattern: "",
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
@@ -51,7 +48,6 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			name: "should allow when no commits",
 			args: args{
 				number:  420,
-				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -63,7 +59,6 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			name: "should reject on invalid commits",
 			args: args{
 				number:  69,
-				config:  true,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -79,8 +74,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 				Number: &tc.args.number,
 			}
 			config := &entity.Config{
-				Commits: tc.args.config,
-				Pattern: tc.args.pattern,
+				CommitPattern: tc.args.pattern,
 			}
 
 			client := mocks.NewGithubClientMock()

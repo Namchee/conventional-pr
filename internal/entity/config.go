@@ -9,18 +9,19 @@ import (
 
 // Config is a configuration object that is parsed from the action input
 type Config struct {
-	Token       string
-	Draft       bool
-	Label       string
-	Strict      bool
-	Close       bool
-	Assign      bool
-	Pattern     string
-	Template    string
-	FileChanges int
-	Issue       bool
-	Bot         bool
-	Commits     bool
+	Token         string
+	Draft         bool
+	Label         string
+	Strict        bool
+	Close         bool
+	Assign        bool
+	TitlePattern  string
+	CommitPattern string
+	BranchPattern string
+	Template      string
+	FileChanges   int
+	Issue         bool
+	Bot           bool
 }
 
 // ReadConfig reads environment variables for input values which are supplied
@@ -38,15 +39,26 @@ func ReadConfig() (*Config, error) {
 	assign := utils.ReadEnvBool("INPUT_ASSIGNEE")
 	issue := utils.ReadEnvBool("INPUT_LINK_ISSUE")
 	bot := utils.ReadEnvBool("INPUT_IGNORE_BOT")
-	commits := utils.ReadEnvBool("INPUT_CHECK_COMMITS")
 
 	label := utils.ReadEnvString("INPUT_LABEL")
 	template := utils.ReadEnvString("INPUT_TEMPLATE")
 
-	pattern := utils.ReadEnvString("INPUT_PATTERN")
+	titlePattern := utils.ReadEnvString("INPUT_TITLE_PATTERN")
 
-	if _, err := regexp.Compile(pattern); err != nil {
-		return nil, constants.ErrInvalidTitle
+	if _, err := regexp.Compile(titlePattern); err != nil {
+		return nil, constants.ErrInvalidTitlePattern
+	}
+
+	commitPattern := utils.ReadEnvString("INPUT_COMMIT_PATTERN")
+
+	if _, err := regexp.Compile(commitPattern); err != nil {
+		return nil, constants.ErrInvalidCommitPattern
+	}
+
+	branchPattern := utils.ReadEnvString("INPUT_BRANCH_PATTERN")
+
+	if _, err := regexp.Compile(branchPattern); err != nil {
+		return nil, constants.ErrInvalidBranchPattern
 	}
 
 	fileChanges := utils.ReadEnvInt("INPUT_MAXIMUM_FILE_CHANGES")
@@ -56,17 +68,18 @@ func ReadConfig() (*Config, error) {
 	}
 
 	return &Config{
-		Token:       token,
-		Draft:       draft,
-		Close:       close,
-		Strict:      strict,
-		Assign:      assign,
-		Issue:       issue,
-		Pattern:     pattern,
-		Bot:         bot,
-		Label:       label,
-		Template:    template,
-		FileChanges: fileChanges,
-		Commits:     commits,
+		Token:         token,
+		Draft:         draft,
+		Close:         close,
+		Strict:        strict,
+		Assign:        assign,
+		Issue:         issue,
+		TitlePattern:  titlePattern,
+		CommitPattern: commitPattern,
+		BranchPattern: branchPattern,
+		Bot:           bot,
+		Label:         label,
+		Template:      template,
+		FileChanges:   fileChanges,
 	}, nil
 }

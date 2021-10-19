@@ -32,7 +32,7 @@ func NewCommitValidator(
 }
 
 func (v *commitValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
-	if !v.config.Commits {
+	if v.config.CommitPattern == "" {
 		return &entity.ValidationResult{
 			Name:   v.Name,
 			Result: nil,
@@ -48,7 +48,7 @@ func (v *commitValidator) IsValid(pullRequest *github.PullRequest) *entity.Valid
 		pullRequest.GetNumber(),
 	)
 
-	pattern := regexp.MustCompile(v.config.Pattern)
+	pattern := regexp.MustCompile(v.config.CommitPattern)
 
 	for _, commit := range commits {
 		message := commit.Commit.GetMessage()

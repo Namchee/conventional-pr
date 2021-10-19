@@ -55,15 +55,17 @@ func (w *ValidatorGroup) Process(
 	file := NewFileValidator(w.client, w.config, w.meta)
 	issue := NewIssueValidator(w.client, w.config, w.meta)
 	commit := NewCommitValidator(w.client, w.config, w.meta)
+	branch := NewBranchValidator(w.client, w.config, w.meta)
 
-	channel := make(chan *entity.ValidationResult, 5)
+	channel := make(chan *entity.ValidationResult, 6)
 
-	w.wg.Add(5)
+	w.wg.Add(6)
 	go w.processValidator(title, pullRequest, channel)
 	go w.processValidator(body, pullRequest, channel)
 	go w.processValidator(file, pullRequest, channel)
 	go w.processValidator(issue, pullRequest, channel)
 	go w.processValidator(commit, pullRequest, channel)
+	go w.processValidator(branch, pullRequest, channel)
 
 	go w.cleanup(channel)
 
