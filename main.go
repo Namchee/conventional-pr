@@ -107,5 +107,7 @@ func main() {
 		if err != nil {
 			errorLogger.Fatalln("Failed to close invalid pull request")
 		}
+
+		os.Exit(1)
 	}
 }
