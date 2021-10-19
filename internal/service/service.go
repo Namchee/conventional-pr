@@ -41,7 +41,7 @@ func (s *GithubService) WriteReport(
 		s.meta.Owner,
 		s.meta.Name,
 		pullRequest.GetNumber(),
-		&github.PullRequestComment{
+		&github.IssueComment{
 			Body: &report,
 		},
 	)
@@ -61,7 +61,7 @@ func (s *GithubService) WriteTemplate(
 		s.meta.Owner,
 		s.meta.Name,
 		pullRequest.GetNumber(),
-		&github.PullRequestComment{
+		&github.IssueComment{
 			Body: &s.config.Template,
 		},
 	)

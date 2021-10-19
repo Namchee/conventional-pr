@@ -106,7 +106,7 @@ func (m *githubClientMock) Comment(
 	_ string,
 	_ string,
 	event int,
-	comment *github.PullRequestComment,
+	_ *github.IssueComment,
 ) error {
 	if event == 123 {
 		return nil
