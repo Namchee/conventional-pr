@@ -1,11 +1,11 @@
-name: 'Ethos'
+name: Ethos
 description: "Enforce conventional commit style in your project's pull requests"
 author: 'Cristopher Namchee'
 inputs:
   access_token:
     description: 'GitHub account access token'
     required: false
-    default: ""
+    default: ''
   check_draft:
     description: 'Determine whether checks should be skipped pull request is a draft'
     required: false
@@ -21,7 +21,7 @@ inputs:
   template:
     description: 'Comment template on invalid PRs'
     required: false
-    default: ""
+    default: ''
   strict:
     description: 'Determine whether checks should also apply to repository administrators'
     required: false
@@ -45,7 +45,7 @@ inputs:
   pattern:
     description: 'Valid pull request title and commit message pattern in Perl syntax'
     required: false
-    default: "([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+"
+    default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
 runs:
   using: docker
   image: 'Dockerfile'
