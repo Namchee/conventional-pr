@@ -9,6 +9,17 @@ import (
 	"github.com/google/go-github/v32/github"
 )
 
+var (
+	validators = []func(internal.GithubClient, *entity.Config, *entity.Meta) internal.Validator{
+		NewTitleValidator,
+		NewBodyValidator,
+		NewBranchValidator,
+		NewCommitValidator,
+		NewIssueValidator,
+		NewFileValidator,
+	}
+)
+
 type ValidatorGroup struct {
 	client internal.GithubClient
 	config *entity.Config
@@ -47,27 +58,20 @@ func (v *ValidatorGroup) cleanup(
 	close(channel)
 }
 
-func (w *ValidatorGroup) Process(
+func (v *ValidatorGroup) Process(
 	pullRequest *github.PullRequest,
 ) []*entity.ValidationResult {
-	title := NewTitleValidator(w.client, w.config, w.meta)
-	body := NewBodyValidator(w.client, w.config, w.meta)
-	file := NewFileValidator(w.client, w.config, w.meta)
-	issue := NewIssueValidator(w.client, w.config, w.meta)
-	commit := NewCommitValidator(w.client, w.config, w.meta)
-	branch := NewBranchValidator(w.client, w.config, w.meta)
+	channel := make(chan *entity.ValidationResult, len(validators))
 
-	channel := make(chan *entity.ValidationResult, 6)
+	v.wg.Add(len(validators))
 
-	w.wg.Add(6)
-	go w.processValidator(title, pullRequest, channel)
-	go w.processValidator(body, pullRequest, channel)
-	go w.processValidator(file, pullRequest, channel)
-	go w.processValidator(issue, pullRequest, channel)
-	go w.processValidator(commit, pullRequest, channel)
-	go w.processValidator(branch, pullRequest, channel)
+	for _, vv := range validators {
+		va := vv(v.client, v.config, v.meta)
 
-	go w.cleanup(channel)
+		go v.processValidator(va, pullRequest, channel)
+	}
+
+	go v.cleanup(channel)
 
 	var results []*entity.ValidationResult
 

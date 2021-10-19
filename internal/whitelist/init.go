@@ -9,6 +9,14 @@ import (
 	"github.com/google/go-github/v32/github"
 )
 
+var (
+	whitelists = []func(internal.GithubClient, *entity.Config, *entity.Meta) internal.Whitelist{
+		NewBotWhitelist,
+		NewDraftWhitelist,
+		NewPermissionWhitelist,
+	}
+)
+
 type WhitelistGroup struct {
 	client internal.GithubClient
 	config *entity.Config
@@ -50,16 +58,14 @@ func (w *WhitelistGroup) cleanup(
 func (w *WhitelistGroup) Process(
 	pullRequest *github.PullRequest,
 ) []*entity.WhitelistResult {
-	bot := NewBotWhitelist(w.client, w.config, w.meta)
-	draft := NewDraftWhitelist(w.client, w.config, w.meta)
-	perms := NewPermissionWhitelist(w.client, w.config, w.meta)
+	channel := make(chan *entity.WhitelistResult, len(whitelists))
+	w.wg.Add(len(whitelists))
 
-	channel := make(chan *entity.WhitelistResult, 3)
+	for _, wv := range whitelists {
+		wl := wv(w.client, w.config, w.meta)
 
-	w.wg.Add(3)
-	go w.processWhitelist(bot, pullRequest, channel)
-	go w.processWhitelist(draft, pullRequest, channel)
-	go w.processWhitelist(perms, pullRequest, channel)
+		go w.processWhitelist(wl, pullRequest, channel)
+	}
 
 	go w.cleanup(channel)
 
