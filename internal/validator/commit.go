@@ -57,7 +57,7 @@ func (v *commitValidator) IsValid(pullRequest *github.PullRequest) *entity.Valid
 			return &entity.ValidationResult{
 				Name: v.Name,
 				Result: fmt.Errorf(
-					"commit %s does not have valid commit message", commit.Commit.GetSHA(),
+					"commit %s does not have valid commit message", commit.GetSHA(),
 				),
 			}
 		}

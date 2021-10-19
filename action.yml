@@ -44,7 +44,7 @@ inputs:
   commit_pattern:
     description: 'Valid pull request commit message regex pattern in Perl syntax'
     required: false
-    default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
+    default: ''
   branch_pattern:
     description: 'Valid pull request branch name regex pattern in Perl syntax'
     required: false
