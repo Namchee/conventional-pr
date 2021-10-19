@@ -21,8 +21,8 @@ var (
 )
 
 func init() {
-	infoLogger = log.New(os.Stdout, "[INFO]", log.Ldate|log.Ltime|log.Lmsgprefix)
-	errorLogger = log.New(os.Stderr, "[ERROR]", log.Ldate|log.Ltime|log.Lmsgprefix)
+	infoLogger = log.New(os.Stdout, "[INFO] ", log.Ldate|log.Ltime|log.Lmsgprefix)
+	errorLogger = log.New(os.Stderr, "[ERROR] ", log.Ldate|log.Ltime|log.Lmsgprefix)
 }
 
 func main() {
@@ -30,6 +30,7 @@ func main() {
 
 	var config *entity.Config
 	var meta *entity.Meta
+	var event *entity.Event
 	var err error
 
 	infoLogger.Println("Reading configuration from environment variables")
@@ -52,9 +53,13 @@ func main() {
 	client := internal.NewGithubClient(config)
 
 	infoLogger.Println("Reading pull request metadata")
-	event, _ := entity.ReadEvent(
+	event, err = entity.ReadEvent(
 		utils.ReadEnvString("GITHUB_EVENT_PATH"),
 	)
+
+	if err != nil {
+		errorLogger.Fatalln(err)
+	}
 
 	pullRequest, err := client.GetPullRequest(ctx, meta.Owner, meta.Name, event.Number)
 
