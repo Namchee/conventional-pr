@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/Namchee/ethos/internal"
 	"github.com/Namchee/ethos/internal/entity"
@@ -26,6 +27,9 @@ func init() {
 }
 
 func main() {
+	infoLogger.Println("Initializing ethos")
+	start := time.Now()
+
 	ctx := context.Background()
 
 	var config *entity.Config
@@ -108,6 +112,9 @@ func main() {
 			errorLogger.Fatalln("Failed to close invalid pull request")
 		}
 
+		infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
 		os.Exit(1)
 	}
+
+	infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
 }
