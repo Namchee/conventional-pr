@@ -16,6 +16,7 @@ type botWhitelist struct {
 	Name   string
 }
 
+// NewDraftWhitelist creates a whitelist that bypasses checks on pull request submitted by bots
 func NewBotWhitelist(
 	client internal.GithubClient,
 	config *entity.Config,

@@ -80,6 +80,7 @@ func formatValidationResult(
 	return result
 }
 
+// FormatResult formats both whitelist and validation results for workflow reporting in markdown syntax
 func FormatResult(
 	whitelistResults []*entity.WhitelistResult,
 	validationResults []*entity.ValidationResult,

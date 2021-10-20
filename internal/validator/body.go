@@ -12,6 +12,7 @@ type bodyValidator struct {
 	config *entity.Config
 }
 
+// NewBodyValidator creates a new validator that validates if a pull request has a non-empty body
 func NewBodyValidator(
 	_ internal.GithubClient,
 	config *entity.Config,

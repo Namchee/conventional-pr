@@ -14,6 +14,7 @@ type titleValidator struct {
 	config *entity.Config
 }
 
+// NewTitleValidator creates a new validator that validates a pull request title
 func NewTitleValidator(
 	_ internal.GithubClient,
 	config *entity.Config,

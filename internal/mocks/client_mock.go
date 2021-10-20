@@ -142,6 +142,7 @@ func (m *githubClientMock) Close(
 	return errors.New("Error")
 }
 
+// NewGithubClientMock creates a GitHub client mock for testing purposes
 func NewGithubClientMock() internal.GithubClient {
 	return &githubClientMock{}
 }
