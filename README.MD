@@ -1,6 +1,6 @@
 # Ethos
 
-[![Go Version Badge](https://img.shields.io/github/go-mod/go-version/namchee/conventional-pr)](https://github.com/Namchee/conventional-pr) [![Go Report Card](https://goreportcard.com/badge/github.com/Namchee/conventional-pr)](https://goreportcard.com/report/github.com/Namchee/conventional-pr) [![codecov](https://codecov.io/gh/Namchee/conventional-pr/branch/master/graph/badge.svg)](https://codecov.io/gh/Namchee/conventional-pr)
+[![Go Version Badge](https://img.shields.io/github/go-mod/go-version/namchee/ethos)](https://github.com/Namchee/ethos) [![Go Report Card](https://goreportcard.com/badge/github.com/Namchee/ethos)](https://goreportcard.com/report/github.com/Namchee/conventional-pr) [![codecov](https://codecov.io/gh/Namchee/ethos/branch/master/graph/badge.svg)](https://codecov.io/gh/Namchee/ethos)
 
 Ethos is a GitHub Action that validates all pull requests sent to a GitHub-hosted repository.
 
@@ -15,11 +15,11 @@ Ethos aims to ease your burden in managing your GitHub-hosted repository by vali
 
 ## Usage
 
-> To use `ethos`, you'll need to prepare a GitHub access token. Please refer to this [article](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) on how to generate an access token.
+> To use Ethos, you'll need to prepare a GitHub access token. Please refer to this [article](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) on how to generate an access token.
 
-You can integrate `ethos` to your existing CI/CD workflow by using `Namchee/ethos@<version>` in one of your jobs using the YAML syntax.
+You can integrate Ethos to your existing CI/CD workflow by using `Namchee/ethos@<version>` in one of your jobs using the YAML syntax.
 
-Below is the example of creating a new `ethos` workflow in your CI/CD workflow.
+Below is the example of creating a new Ethos workflow in your CI/CD workflow.
 
 ```yml
 on:
@@ -42,9 +42,9 @@ Please refer to [GitHub workflow syntax](https://docs.github.com/en/free-pro-tea
 
 ## Whitelist
 
-Whitelist is one of the features of `ethos` that allows you to bypass pull request validaton if the pull request satisfies **one or more** enabled whitelisting criteria.
+Whitelist is one of the features of Ethos that allows you to bypass pull request validaton if the pull request satisfies **one or more** enabled whitelisting criteria.
 
-Currently, there are 4 whitelisting criteria that are available in `ethos`:
+Currently, there are 3 whitelisting criteria that are available in Ethos:
 
 1. Pull request status is a `draft`.
 2. Pull request is submitted by a bot.
@@ -54,11 +54,11 @@ All whitelists are configurable. Please refer to the [inputs](#inputs) section o
 
 ## Validator
 
-Validator is the core feature of `ethos`. Validator will validate pull request that triggers the workflow according to a specified criteria. 
+Validator is the core feature of Ethos. Validator will validate pull request that triggers the workflow according to a specified criteria. 
 
 A pull request is considered to be valid if it satisfies **all** enabled validation flow.
 
-Currently, there are 6 validation flow that are available in `ethos`:
+Currently, there are 6 validation flow that are available in Ethos:
 
 1. Pull request has a valid title.
 2. Pull request has a non-empty body.
@@ -92,7 +92,7 @@ You can customize this actions with these following options (fill it on `with` s
 
 ## Supported Events
 
-Ideally, `ethos` workflow is only triggered when an event related to pull requests is fired. However, `ethos` is only able to function properly with some pull request sub-events and will ignore the rest. Below is the list of supported [GitHub Action pull request sub-events](https://docs.github.com/en/actions/reference/events-that-trigger-workflows):
+Ideally, Ethos workflow should only triggered when an event related to pull requests is fired. However, Ethos is only able to function properly with some pull request sub-events and will ignore the rest. Below is the list of supported [GitHub Action pull request sub-events](https://docs.github.com/en/actions/reference/events-that-trigger-workflows):
 
 **Name** | **Triggered On**
 ---- | ------------
