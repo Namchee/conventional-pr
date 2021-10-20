@@ -1,61 +1,61 @@
-name: Ethos
-description: "Enforce conventional commit style in your project's pull requests"
-author: 'Cristopher Namchee'
+name: Conventional PR
+description: "Validates and enforces clean pull request style in your GitHub projects without hassle"
+author: "Cristopher Namchee"
 inputs:
   access_token:
-    description: 'GitHub account access token'
-    required: ''
+    description: "GitHub account access token"
+    required: ""
   close:
-    description: 'Determine whether checks should close invalid PRs'
+    description: "Determine whether checks should close invalid PRs"
     required: false
     default: true
   label:
-    description: 'Invalid PRs label'
+    description: "Invalid PRs label"
     required: false
-    default: 'ethos:invalid'
+    default: "cpr:invalid"
   template:
-    description: 'Comment template on invalid PRs'
+    description: "Comment template on invalid PRs"
     required: false
-    default: ''
+    default: ""
   draft:
-    description: 'Determine whether checks should be skipped pull request is a draft'
+    description: "Determine whether checks should be skipped pull request is a draft"
     required: false
     default: true
   strict:
-    description: 'Determine whether checks should also apply to repository administrators'
+    description: "Determine whether checks should also apply to repository administrators"
     required: false
     default: true
   bot:
-    description: 'Determine whether checks should be skipped if the author is a bot'
+    description: "Determine whether checks should be skipped if the author is a bot"
     required: false
     default: true
   title_pattern:
-    description: 'Valid pull request title regex pattern in Perl syntax'
+    description: "Valid pull request title regex pattern in Perl syntax"
     required: false
     default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
   commit_pattern:
-    description: 'Valid pull request commit message regex pattern in Perl syntax'
+    description: "Valid pull request commit message regex pattern in Perl syntax"
     required: false
-    default: ''
+    default: ""
   branch_pattern:
-    description: 'Valid pull request branch name regex pattern in Perl syntax'
+    description: "Valid pull request branch name regex pattern in Perl syntax"
     required: false
-    default: ''
+    default: ""
   issue:
-    description: 'Determine whether a valid pull request should always refer to an issue'
+    description: "Determine whether a valid pull request should always refer to an issue"
     required: false
     default: true
   body:
-    description: 'Determine whether a valid pull request should have a non-empty body'
+    description: "Determine whether a valid pull request should have a non-empty body"
     required: false
     default: true
   maximum_file_changes:
-    description: 'Limits how many files should be changes per pull request'
+    description: "Limits how many files should be changes per pull request"
     required: false
     default: 0
 runs:
   using: docker
-  image: 'Dockerfile'
+  image: "Dockerfile"
 branding:
-  icon: 'compass'
-  color: 'gray-dark'
+  icon: "compass"
+  color: "gray-dark"
