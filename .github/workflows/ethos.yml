@@ -3,10 +3,11 @@ name: Check PR semantics
 on: pull_request
 
 jobs:
-  conventional-pr:
+  ethos:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR semantics
-        uses: Namchee/conventional-pr@master
+        uses: Namchee/ethos@master
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
+          close: false
