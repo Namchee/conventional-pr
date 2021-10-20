@@ -9,5 +9,4 @@ jobs:
       - name: Check PR semantics
         uses: Namchee/ethos@master
         with:
-          access_token: ${{ secrets.ACCESS_TOKEN }}
-          close: false
+          access_token: ${{ secrets.GITHUB_TOKEN }}

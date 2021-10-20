@@ -17,6 +17,7 @@ var (
 	}
 )
 
+// WhitelistGroup is a collection of whitelisting process, integrated in one single function call
 type WhitelistGroup struct {
 	client internal.GithubClient
 	config *entity.Config
@@ -24,6 +25,7 @@ type WhitelistGroup struct {
 	wg     *sync.WaitGroup
 }
 
+// NewWhitelistGroup creates a new WhitelistGroup
 func NewWhitelistGroup(
 	client internal.GithubClient,
 	config *entity.Config,
@@ -55,6 +57,7 @@ func (w *WhitelistGroup) cleanup(
 	close(channel)
 }
 
+// Process the pull request with all available whitelists
 func (w *WhitelistGroup) Process(
 	pullRequest *github.PullRequest,
 ) []*entity.WhitelistResult {
@@ -90,6 +93,7 @@ func (w *WhitelistGroup) Process(
 	return results
 }
 
+// IsWhitelisted checks if a pull request is whitelisted or not from whitelist results
 func IsWhitelisted(result []*entity.WhitelistResult) bool {
 	for _, r := range result {
 		if r.Result {

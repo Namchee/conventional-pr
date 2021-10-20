@@ -12,6 +12,7 @@ type draftWhitelist struct {
 	Name   string
 }
 
+// NewDraftWhitelist creates a whitelist that bypasses draft pull request checks
 func NewDraftWhitelist(
 	_ internal.GithubClient,
 	config *entity.Config,
