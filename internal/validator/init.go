@@ -20,6 +20,7 @@ var (
 	}
 )
 
+// ValidatorGroup is a collection of validation process, integrated in one function call
 type ValidatorGroup struct {
 	client internal.GithubClient
 	config *entity.Config
@@ -27,6 +28,7 @@ type ValidatorGroup struct {
 	wg     *sync.WaitGroup
 }
 
+// ValidatorGroup creates a new ValidatorGroup
 func NewValidatorGroup(
 	client internal.GithubClient,
 	config *entity.Config,
@@ -58,6 +60,7 @@ func (v *ValidatorGroup) cleanup(
 	close(channel)
 }
 
+// Process the pull request with all available validators
 func (v *ValidatorGroup) Process(
 	pullRequest *github.PullRequest,
 ) []*entity.ValidationResult {
@@ -94,6 +97,7 @@ func (v *ValidatorGroup) Process(
 	return results
 }
 
+// IsValid checks if a pull request is valid or not from validation results
 func IsValid(result []*entity.ValidationResult) bool {
 	for _, r := range result {
 		if r.Result != nil {

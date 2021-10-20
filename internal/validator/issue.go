@@ -18,6 +18,7 @@ type issueValidator struct {
 	Name   string
 }
 
+// NewIssueValidator creates a new validator that validates issue resolution
 func NewIssueValidator(
 	client internal.GithubClient,
 	config *entity.Config,

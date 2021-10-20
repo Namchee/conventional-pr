@@ -26,6 +26,7 @@ type githubClient struct {
 	client *github.Client
 }
 
+// NewGithubClient creates a GitHub API client wrapper
 func NewGithubClient(config *entity.Config) GithubClient {
 	ctx := context.Background()
 

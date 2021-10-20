@@ -15,6 +15,7 @@ type branchValidator struct {
 	config *entity.Config
 }
 
+// NewBranchValidator creates a validator that validates pull request branch name
 func NewBranchValidator(
 	client internal.GithubClient,
 	config *entity.Config,

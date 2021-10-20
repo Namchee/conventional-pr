@@ -31,7 +31,7 @@ func TestBranchValidator_IsValid(t *testing.T) {
 			},
 		},
 		{
-			name: "should skip when pattern is emtpy",
+			name: "should skip when pattern is empty",
 			args: args{
 				branch:  "invalid",
 				pattern: "",

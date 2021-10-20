@@ -15,6 +15,7 @@ type GithubService struct {
 	meta   *entity.Meta
 }
 
+// NewGithubService creates a new GitHub service that simplify API interaction with functions which is actually needed
 func NewGithubService(
 	client internal.GithubClient,
 	config *entity.Config,
@@ -27,6 +28,7 @@ func NewGithubService(
 	}
 }
 
+// WriteReport creates a new comment that contains ethos workflow report in markdown format
 func (s *GithubService) WriteReport(
 	pullRequest *github.PullRequest,
 	whitelistResults []*entity.WhitelistResult,
@@ -47,6 +49,7 @@ func (s *GithubService) WriteReport(
 	)
 }
 
+// WriteTemplate creates a new comment that contains user-desired message
 func (s *GithubService) WriteTemplate(
 	pullRequest *github.PullRequest,
 ) error {
@@ -67,6 +70,7 @@ func (s *GithubService) WriteTemplate(
 	)
 }
 
+// AttachLabel attachs label to invalid pull request
 func (s *GithubService) AttachLabel(
 	pullRequest *github.PullRequest,
 ) error {
@@ -85,6 +89,7 @@ func (s *GithubService) AttachLabel(
 	)
 }
 
+// ClosePullRequest closes invalid pull request
 func (s *GithubService) ClosePullRequest(
 	pullRequest *github.PullRequest,
 ) error {

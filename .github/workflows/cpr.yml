@@ -9,4 +9,4 @@ jobs:
       - name: Check PR semantics
         uses: Namchee/conventional-pr@master
         with:
-          access_token: ${{ secrets.ACCESS_TOKEN }}
+          access_token: ${{ secrets.GITHUB_TOKEN }}
