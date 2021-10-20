@@ -18,6 +18,7 @@ type commitValidator struct {
 	Name   string
 }
 
+// NewCommitValidator creates a new validator that will validate all commit messages in a pull request
 func NewCommitValidator(
 	client internal.GithubClient,
 	config *entity.Config,

@@ -13,6 +13,7 @@ type fileValidator struct {
 	Name   string
 }
 
+// NewFileValidator creates a new validator that validates if a pull request introduces too many file changes
 func NewFileValidator(
 	client internal.GithubClient,
 	config *entity.Config,

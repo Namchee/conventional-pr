@@ -42,7 +42,7 @@ func TestRemoveEmptyStringsFromSlice(t *testing.T) {
 func TestContains(t *testing.T) {
 	type args struct {
 		input []string
-		val string
+		val   string
 	}
 	tests := []struct {
 		name string
@@ -53,7 +53,7 @@ func TestContains(t *testing.T) {
 			name: "should return true",
 			args: args{
 				input: []string{"foo", "bar"},
-				val: "bar",
+				val:   "bar",
 			},
 			want: true,
 		},
@@ -61,7 +61,7 @@ func TestContains(t *testing.T) {
 			name: "should return false",
 			args: args{
 				input: []string{"foo", "bar"},
-				val: "baz",
+				val:   "baz",
 			},
 			want: false,
 		},
