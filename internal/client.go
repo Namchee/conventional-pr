@@ -120,8 +120,9 @@ func (cl *githubClient) Close(
 ) error {
 	state := constants.Closed
 
-	cl.client.PullRequests.Edit(ctx, owner, name, event, &github.PullRequest{
+	_, _, err := cl.client.PullRequests.Edit(ctx, owner, name, event, &github.PullRequest{
 		State: &state,
 	})
-	return nil
+
+	return err
 }
