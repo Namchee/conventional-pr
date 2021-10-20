@@ -106,12 +106,16 @@ Ideally, `ethos` workflow is only triggered when an event related to pull reques
 
 - If the issues are linked manually and are not mentioned in the pull request body, the pull request is still considered to be invalid.
 
-## Contributors
+## Contributors ✨
 
-This project won't be possible without these wonderful contributors:
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
-1. [Namchee](https://github.com/Namchee)
-2. [smutel](https://github.com/smutel)
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://allcontributors.org) specification.
+Contributions of any kind are welcome!
 
 ## License
 
