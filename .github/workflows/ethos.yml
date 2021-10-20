@@ -1,0 +1,13 @@
+name: Check PR semantics
+
+on: pull_request
+
+jobs:
+  ethos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR semantics
+        uses: Namchee/ethos@master
+        with:
+          access_token: ${{ secrets.ACCESS_TOKEN }}
+          close: false
