@@ -10,4 +10,3 @@ jobs:
         uses: Namchee/ethos@master
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
-          close: false
