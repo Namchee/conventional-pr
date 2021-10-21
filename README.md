@@ -116,7 +116,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/Namchee"><img src="https://avatars.githubusercontent.com/u/32661241?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cristopher</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/commits?author=Namchee" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Namchee"><img src="https://avatars.githubusercontent.com/u/32661241?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cristopher</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/commits?author=Namchee" title="Code">💻</a> <a href="https://github.com/Namchee/conventional-pr/issues?q=author%3ANamchee" title="Bug reports">🐛</a> <a href="https://github.com/Namchee/conventional-pr/commits?author=Namchee" title="Documentation">📖</a> <a href="#example-Namchee" title="Examples">💡</a> <a href="#ideas-Namchee" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
