@@ -17,6 +17,15 @@
         "example",
         "ideas"
       ]
+    },
+    {
+      "login": "smutel",
+      "name": "Samuel Mutel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12967891?v=4",
+      "profile": "https://github.com/smutel",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,

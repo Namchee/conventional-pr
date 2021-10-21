@@ -1,6 +1,6 @@
 # Conventional PR
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Go Version Badge](https://img.shields.io/github/go-mod/go-version/namchee/conventional-pr)](https://github.com/Namchee/conventional-pr) [![Go Report Card](https://goreportcard.com/badge/github.com/Namchee/conventional-pr)](https://goreportcard.com/report/github.com/Namchee/conventional-pr) [![codecov](https://codecov.io/gh/Namchee/conventional-pr/branch/master/graph/badge.svg)](https://codecov.io/gh/Namchee/conventional-pr)
@@ -117,6 +117,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/Namchee"><img src="https://avatars.githubusercontent.com/u/32661241?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cristopher</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/commits?author=Namchee" title="Code">💻</a> <a href="https://github.com/Namchee/conventional-pr/issues?q=author%3ANamchee" title="Bug reports">🐛</a> <a href="https://github.com/Namchee/conventional-pr/commits?author=Namchee" title="Documentation">📖</a> <a href="#example-Namchee" title="Examples">💡</a> <a href="#ideas-Namchee" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/smutel"><img src="https://avatars.githubusercontent.com/u/12967891?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Samuel Mutel</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/issues?q=author%3Asmutel" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
