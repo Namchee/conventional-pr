@@ -33,6 +33,7 @@ func NewGithubClient(config *entity.Config) GithubClient {
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: config.Token},
 	)
+
 	tc := oauth2.NewClient(ctx, ts)
 	return &githubClient{client: github.NewClient(tc)}
 }

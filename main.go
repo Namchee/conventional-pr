@@ -58,9 +58,7 @@ func main() {
 	client := internal.NewGithubClient(config)
 
 	infoLogger.Println("Reading pull request metadata")
-	event, err = entity.ReadEvent(
-		utils.ReadEnvString("GITHUB_EVENT_PATH"),
-	)
+	event, err = entity.ReadEvent(os.DirFS(""))
 
 	if err != nil {
 		errorLogger.Fatalln(err)

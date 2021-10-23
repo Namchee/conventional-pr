@@ -2,7 +2,7 @@ package entity
 
 import (
 	"encoding/json"
-	"os"
+	"io/fs"
 
 	"github.com/Namchee/ethos/internal/constants"
 	"github.com/Namchee/ethos/internal/utils"
@@ -17,19 +17,18 @@ type Event struct {
 }
 
 // ReadEvent reads and parse event meta definition
-func ReadEvent(path string) (*Event, error) {
-	file, err := os.Open(
+func ReadEvent(fsys fs.FS) (*Event, error) {
+	file, err := fsys.Open(
 		utils.ReadEnvString("GITHUB_EVENT_PATH"),
 	)
 
 	if err != nil {
 		return nil, constants.ErrEventFileRead
 	}
-	defer file.Close()
 
 	var event Event
 
-	if err = json.NewDecoder(file).Decode(&event); err != nil {
+	if err := json.NewDecoder(file).Decode(&event); err != nil {
 		return nil, constants.ErrEventFileParse
 	}
 
