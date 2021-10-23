@@ -9,6 +9,7 @@ import (
 	"github.com/google/go-github/v32/github"
 )
 
+// GithubService is a service that simplifies GitHub API interaction
 type GithubService struct {
 	client internal.GithubClient
 	config *entity.Config

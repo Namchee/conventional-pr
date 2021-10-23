@@ -6,7 +6,6 @@ import (
 )
 
 // Whitelist checks if a pull request validation may be skipped or not
-
 type Whitelist interface {
 	IsWhitelisted(*github.PullRequest) *entity.WhitelistResult
 }

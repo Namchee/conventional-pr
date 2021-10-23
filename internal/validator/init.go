@@ -28,7 +28,7 @@ type ValidatorGroup struct {
 	wg     *sync.WaitGroup
 }
 
-// ValidatorGroup creates a new ValidatorGroup
+// NewValidatorGroup creates a new ValidatorGroup
 func NewValidatorGroup(
 	client internal.GithubClient,
 	config *entity.Config,

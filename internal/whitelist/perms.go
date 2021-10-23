@@ -17,6 +17,7 @@ type permissionWhitelist struct {
 	Name   string
 }
 
+// NewPermissionWhitelist creates a whitelist that bypasses checks on pull request submitted by user with high privileges
 func NewPermissionWhitelist(
 	client internal.GithubClient,
 	config *entity.Config,
