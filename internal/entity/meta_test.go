@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Namchee/ethos/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/constants"
 )
 
 func TestCreateMeta(t *testing.T) {

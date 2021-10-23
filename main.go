@@ -7,13 +7,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Namchee/ethos/internal"
-	"github.com/Namchee/ethos/internal/constants"
-	"github.com/Namchee/ethos/internal/entity"
-	"github.com/Namchee/ethos/internal/service"
-	"github.com/Namchee/ethos/internal/utils"
-	"github.com/Namchee/ethos/internal/validator"
-	"github.com/Namchee/ethos/internal/whitelist"
+	"github.com/Namchee/conventional-pr/internal"
+	"github.com/Namchee/conventional-pr/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/service"
+	"github.com/Namchee/conventional-pr/internal/utils"
+	"github.com/Namchee/conventional-pr/internal/validator"
+	"github.com/Namchee/conventional-pr/internal/whitelist"
 )
 
 // Logger
@@ -28,7 +28,7 @@ func init() {
 }
 
 func main() {
-	infoLogger.Println("Initializing ethos")
+	infoLogger.Println("Initializing conventional-pr")
 	start := time.Now()
 
 	ctx := context.Background()

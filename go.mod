@@ -1,4 +1,4 @@
-module github.com/Namchee/ethos
+module github.com/Namchee/conventional-pr
 
 go 1.16
 

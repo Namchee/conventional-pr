@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/Namchee/ethos/internal/constants"
-	"github.com/Namchee/ethos/internal/entity"
-	"github.com/Namchee/ethos/internal/mocks"
+	"github.com/Namchee/conventional-pr/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/mocks"
 	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )

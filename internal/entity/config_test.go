@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Namchee/ethos/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/constants"
 )
 
 func TestReadConfig(t *testing.T) {

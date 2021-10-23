@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/Namchee/ethos/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 

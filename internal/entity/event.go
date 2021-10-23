@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"io/fs"
 
-	"github.com/Namchee/ethos/internal/constants"
-	"github.com/Namchee/ethos/internal/utils"
+	"github.com/Namchee/conventional-pr/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/utils"
 )
 
 // Event that triggers the action

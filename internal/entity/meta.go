@@ -3,7 +3,7 @@ package entity
 import (
 	"strings"
 
-	"github.com/Namchee/ethos/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/constants"
 )
 
 // Meta is a struct that represents repository's metadata
