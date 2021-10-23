@@ -30,8 +30,8 @@ var (
 // Emojis
 
 const (
-	// Emoji to use when a whitelist or validator pass
+	// PassEmoji is the emoji to use when a whitelist or validator pass
 	PassEmoji = "✅"
-	// Emoji to use when a whitelist or validator fails
+	// FailEmoji is the emoji to use when a whitelist or validator fails
 	FailEmoji = "❌"
 )

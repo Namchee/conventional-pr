@@ -9,8 +9,8 @@ RUN go mod download
 
 COPY . .
 
-RUN  go build -a -o ethos .
+RUN  go build -a -o cpr .
 
-RUN chmod +x /ci/ethos
+RUN chmod +x /ci/cpr
 
-CMD ["/ci/ethos"]
+CMD ["/ci/cpr"]

@@ -1,9 +1,6 @@
 # Conventional PR
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-[![Go Version Badge](https://img.shields.io/github/go-mod/go-version/namchee/conventional-pr)](https://github.com/Namchee/conventional-pr) [![Go Report Card](https://goreportcard.com/badge/github.com/Namchee/conventional-pr)](https://goreportcard.com/report/github.com/Namchee/conventional-pr) [![codecov](https://codecov.io/gh/Namchee/conventional-pr/branch/master/graph/badge.svg)](https://codecov.io/gh/Namchee/conventional-pr)
+[![Go Version Badge](https://img.shields.io/github/go-mod/go-version/namchee/conventional-pr)](https://github.com/Namchee/conventional-pr) [![Go Report Card](https://goreportcard.com/badge/github.com/Namchee/conventional-pr)](https://goreportcard.com/report/github.com/Namchee/conventional-pr) [![codecov](https://codecov.io/gh/Namchee/conventional-pr/branch/master/graph/badge.svg)](https://codecov.io/gh/Namchee/conventional-pr) [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat)](#contributors-)
 
 Conventional PR is a GitHub Action that validates all pull requests sent to a GitHub-hosted repository.
 
@@ -102,7 +99,7 @@ Ideally, Conventional PR workflow should only triggered when an event related to
 | `reopened`         | When a closed pull request is re-opened, either by the original author or by someone else. |
 | `ready_for_review` | When a draft pull request is finished and transformed into normal pull request.            |
 
-> It is recommeneded to only listen to `pull_request` events as listening to incorrect event may cause the workflow to fail.
+> It is recommeneded to only listen to `pull_request` sub-events as listening to incorrect event may cause the workflow to fail.
 
 ## Caveats
 
@@ -123,10 +120,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 

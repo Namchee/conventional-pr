@@ -1,9 +1,9 @@
 package validator
 
 import (
-	"github.com/Namchee/ethos/internal"
-	"github.com/Namchee/ethos/internal/constants"
-	"github.com/Namchee/ethos/internal/entity"
+	"github.com/Namchee/conventional-pr/internal"
+	"github.com/Namchee/conventional-pr/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/google/go-github/v32/github"
 )
 

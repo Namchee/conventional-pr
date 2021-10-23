@@ -4,8 +4,8 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/Namchee/ethos/internal"
-	"github.com/Namchee/ethos/internal/entity"
+	"github.com/Namchee/conventional-pr/internal"
+	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/google/go-github/v32/github"
 )
 
@@ -28,7 +28,7 @@ type ValidatorGroup struct {
 	wg     *sync.WaitGroup
 }
 
-// ValidatorGroup creates a new ValidatorGroup
+// NewValidatorGroup creates a new ValidatorGroup
 func NewValidatorGroup(
 	client internal.GithubClient,
 	config *entity.Config,

@@ -7,7 +7,6 @@ type ValidationResult struct {
 }
 
 // WhitelistResult represents whitelist checking result on a pull request
-
 type WhitelistResult struct {
 	Name   string
 	Result bool

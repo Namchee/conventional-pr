@@ -3,12 +3,13 @@ package service
 import (
 	"context"
 
-	"github.com/Namchee/ethos/internal"
-	"github.com/Namchee/ethos/internal/entity"
-	"github.com/Namchee/ethos/internal/formatter"
+	"github.com/Namchee/conventional-pr/internal"
+	"github.com/Namchee/conventional-pr/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/formatter"
 	"github.com/google/go-github/v32/github"
 )
 
+// GithubService is a service that simplifies GitHub API interaction
 type GithubService struct {
 	client internal.GithubClient
 	config *entity.Config
@@ -28,7 +29,7 @@ func NewGithubService(
 	}
 }
 
-// WriteReport creates a new comment that contains ethos workflow report in markdown format
+// WriteReport creates a new comment that contains conventional-pr workflow report in markdown format
 func (s *GithubService) WriteReport(
 	pullRequest *github.PullRequest,
 	whitelistResults []*entity.WhitelistResult,

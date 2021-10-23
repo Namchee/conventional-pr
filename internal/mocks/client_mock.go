@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Namchee/ethos/internal"
-	"github.com/Namchee/ethos/internal/constants"
+	"github.com/Namchee/conventional-pr/internal"
+	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/google/go-github/v32/github"
 )
 

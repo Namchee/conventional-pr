@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Namchee/ethos/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/constants"
 )
 
 func TestReadConfig(t *testing.T) {
@@ -58,6 +58,42 @@ func TestReadConfig(t *testing.T) {
 			want: expected{
 				config: nil,
 				err:    constants.ErrNegativeFileChange,
+			},
+			wantErr: true,
+		},
+		{
+			name: "should throw an error when title pattern is invalid",
+			mocks: map[string]string{
+				"INPUT_TITLE_PATTERN": "[",
+			},
+			want: expected{
+				config: nil,
+				err:    constants.ErrInvalidTitlePattern,
+			},
+			wantErr: true,
+		},
+		{
+			name: "should throw an error when commit pattern is invalid",
+			mocks: map[string]string{
+				"INPUT_TITLE_PATTERN":  "a",
+				"INPUT_COMMIT_PATTERN": "[",
+			},
+			want: expected{
+				config: nil,
+				err:    constants.ErrInvalidCommitPattern,
+			},
+			wantErr: true,
+		},
+		{
+			name: "should throw an error when branch pattern is invalid",
+			mocks: map[string]string{
+				"INPUT_TITLE_PATTERN":  "a",
+				"INPUT_COMMIT_PATTERN": "a",
+				"INPUT_BRANCH_PATTERN": "[",
+			},
+			want: expected{
+				config: nil,
+				err:    constants.ErrInvalidBranchPattern,
 			},
 			wantErr: true,
 		},

@@ -3,8 +3,8 @@ package internal
 import (
 	"context"
 
-	"github.com/Namchee/ethos/internal/constants"
-	"github.com/Namchee/ethos/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/google/go-github/v32/github"
 	"golang.org/x/oauth2"
 )
@@ -33,6 +33,7 @@ func NewGithubClient(config *entity.Config) GithubClient {
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: config.Token},
 	)
+
 	tc := oauth2.NewClient(ctx, ts)
 	return &githubClient{client: github.NewClient(tc)}
 }

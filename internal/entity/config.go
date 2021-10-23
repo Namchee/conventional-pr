@@ -3,8 +3,8 @@ package entity
 import (
 	"regexp"
 
-	"github.com/Namchee/ethos/internal/constants"
-	"github.com/Namchee/ethos/internal/utils"
+	"github.com/Namchee/conventional-pr/internal/constants"
+	"github.com/Namchee/conventional-pr/internal/utils"
 )
 
 // Config is a configuration object that is parsed from the action input
