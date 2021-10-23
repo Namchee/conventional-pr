@@ -22,7 +22,7 @@ func TestReadEvent(t *testing.T) {
 	}{
 		{
 			name:     "throw error when file cannot be read",
-			path:     `://///`,
+			path:     `/://///`,
 			mockFile: []byte(`{ "foo": "bar" }`),
 			want: want{
 				event: nil,
@@ -31,7 +31,7 @@ func TestReadEvent(t *testing.T) {
 		},
 		{
 			name:     "throw error when file cannot be parsed",
-			path:     "test.json",
+			path:     "/test.json",
 			mockFile: []byte(`{ foo: "bar" }`),
 			want: want{
 				event: nil,
@@ -40,7 +40,7 @@ func TestReadEvent(t *testing.T) {
 		},
 		{
 			name:     "should return correctly",
-			path:     "test.json",
+			path:     "/test.json",
 			mockFile: []byte(`{ "action": "opened", "number": 1 }`),
 			want: want{
 				event: &Event{
@@ -58,7 +58,7 @@ func TestReadEvent(t *testing.T) {
 			defer os.Unsetenv("GITHUB_EVENT_PATH")
 
 			mock := fstest.MapFS{
-				tc.path: {
+				tc.path[1:]: {
 					Data: tc.mockFile,
 				},
 			}
