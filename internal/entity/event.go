@@ -19,7 +19,7 @@ type Event struct {
 // ReadEvent reads and parse event meta definition
 func ReadEvent(fsys fs.FS) (*Event, error) {
 	file, err := fsys.Open(
-		utils.ReadEnvString("GITHUB_EVENT_PATH"),
+		utils.ReadEnvString("GITHUB_EVENT_PATH")[1:],
 	)
 
 	if err != nil {
