@@ -51,7 +51,7 @@ func main() {
 	)
 
 	if err != nil {
-		errorLogger.Fatalln(err)
+		errorLogger.Fatalf("Failed to read repository metadata: %s", err.Error())
 	}
 
 	infoLogger.Println("Initializing GitHub Client")
@@ -61,7 +61,7 @@ func main() {
 	event, err = entity.ReadEvent(os.DirFS("/"))
 
 	if err != nil {
-		errorLogger.Fatalln(err)
+		errorLogger.Fatalf("Failed to read repository event: %s", err.Error())
 	}
 
 	infoLogger.Println("Validating pull request sub-events")
@@ -73,7 +73,7 @@ func main() {
 	pullRequest, err := client.GetPullRequest(ctx, meta.Owner, meta.Name, event.Number)
 
 	if err != nil {
-		errorLogger.Fatalln("Failed to fetch pull request data")
+		errorLogger.Fatalf("Failed to fetch pull request data: %s", err.Error())
 	}
 
 	var vgResult []*entity.ValidationResult
@@ -96,7 +96,7 @@ func main() {
 	err = svc.WriteReport(pullRequest, wgResult, vgResult)
 
 	if err != nil {
-		errorLogger.Fatalln("Failed to write report")
+		errorLogger.Fatalf("Failed to write report: %s", err.Error())
 	}
 
 	if !validator.IsValid(vgResult) {
@@ -104,17 +104,17 @@ func main() {
 
 		err = svc.AttachLabel(pullRequest)
 		if err != nil {
-			errorLogger.Fatalln("Failed to attach invalid pull request label")
+			errorLogger.Fatalf("Failed to attach invalid pull request label: %s", err.Error())
 		}
 
 		err = svc.WriteTemplate(pullRequest)
 		if err != nil {
-			errorLogger.Fatalln("Failed to write message template")
+			errorLogger.Fatalf("Failed to write message template: %s", err.Error())
 		}
 
 		err = svc.ClosePullRequest(pullRequest)
 		if err != nil {
-			errorLogger.Fatalln("Failed to close invalid pull request")
+			errorLogger.Fatalf("Failed to close invalid pull request: %s", err.Error())
 		}
 
 		infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
