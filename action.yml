@@ -4,7 +4,7 @@ author: "Cristopher Namchee"
 inputs:
   access_token:
     description: "GitHub account access token"
-    required: ""
+    required: true
   close:
     description: "Determine whether checks should close invalid PRs"
     required: false
