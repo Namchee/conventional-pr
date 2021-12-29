@@ -23,8 +23,12 @@ Below is the example of creating a new Conventional PR workflow in your CI/CD wo
 
 ```yml
 on:
-  pull_request: # Required to only listen to pull request events, else it will always fail
-    types: [opened, reopened, ready_for_review] # Recommended
+  pull_request:
+    # You can add specific pull request types too.
+    # If this is omitted, the workflow will only executed on opened, synchronize, and reopened
+    # which is enough for generic use cases.
+    # Below is the list of supported pull request sub-events
+    # types: [opened, reopened, ready_for_review, unlocked, synchronize]
 
 jobs:
   cpr:
@@ -98,8 +102,11 @@ Ideally, Conventional PR workflow should only triggered when an event related to
 | `opened`           | When a new pull request is submitted.                                                      |
 | `reopened`         | When a closed pull request is re-opened, either by the original author or by someone else. |
 | `ready_for_review` | When a draft pull request is finished and transformed into normal pull request.            |
+| `sychronize`       | When a pull request has changes on its history, such as pushing new commits to the branch. |
+| `unlocked`         | When a pull request is unlocked.                                                           |
 
-> It is recommeneded to only listen to `pull_request` sub-events as listening to incorrect event may cause the workflow to fail.
+> Omitting `types` is enough for generic use-cases since omitting it will cause the workflow to be triggered on
+`opened`, `reopened`, and `synchronize` events.
 
 ## Caveats
 
