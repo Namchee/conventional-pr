@@ -53,6 +53,10 @@ inputs:
     description: "Limits how many files should be changes per pull request"
     required: false
     default: 0
+  verified_commits:
+    description: "Require all commits to be verified or signed with GPG keys"
+    required: false
+    default: false
 runs:
   using: docker
   image: "Dockerfile"

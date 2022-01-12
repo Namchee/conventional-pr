@@ -23,6 +23,7 @@ type Config struct {
 	Issue         bool
 	Body          bool
 	Bot           bool
+	Verified      bool
 }
 
 // ReadConfig reads environment variables for input values which are supplied
@@ -41,6 +42,7 @@ func ReadConfig() (*Config, error) {
 	issue := utils.ReadEnvBool("INPUT_ISSUE")
 	body := utils.ReadEnvBool("INPUT_BODY")
 	bot := utils.ReadEnvBool("INPUT_BOT")
+	verified := utils.ReadEnvBool("INPUT_VERIFIED_COMMITS")
 
 	label := utils.ReadEnvString("INPUT_LABEL")
 	template := utils.ReadEnvString("INPUT_TEMPLATE")
@@ -84,5 +86,6 @@ func ReadConfig() (*Config, error) {
 		Body:          body,
 		Template:      template,
 		FileChanges:   fileChanges,
+		Verified:      verified,
 	}, nil
 }
