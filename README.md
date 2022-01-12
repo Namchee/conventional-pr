@@ -92,6 +92,7 @@ You can customize this actions with these following options (fill it on `with` s
 | `body`                | `false`       | `true`                                  | Determine whether a valid pull request should always have a non-empty body.                                                                                                                                                                                                                                                |
 | `issue`               | `false`       | `true`                                  | Determine whether a valid pull request should always have an issue or pull requests references on it.                                                                                                                                                                                                                      |
 | `maximum_file_change` | `false`       | `0`                                     | Limits how many file can be changed per one pull request. Fill with zero to disable this feature.                                                                                                                                                                                                                          |
+| `verified_commits` | `false` | `false` | Require all commits on the pull request to be [signed commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) |
 
 ## Supported Events
 
