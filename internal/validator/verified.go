@@ -3,7 +3,6 @@ package validator
 import (
 	"context"
 	"fmt"
-	"regexp"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -24,16 +23,18 @@ func NewVerifiedValidator(
 	config *entity.Config,
 	meta *entity.Meta,
 ) internal.Validator {
-	return &commitValidator{
-		Name:   constants.CommitValidatorName,
+	return &verifiedValidator{
+		Name:   constants.VerifiedCommitsValidatorName,
 		client: client,
 		config: config,
 		meta:   meta,
 	}
 }
 
-func (v *verifiedValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
-	if v.config.CommitPattern == "" {
+func (v *verifiedValidator) IsValid(
+	pullRequest *github.PullRequest,
+) *entity.ValidationResult {
+	if !v.config.Verified {
 		return &entity.ValidationResult{
 			Name:   v.Name,
 			Result: nil,
@@ -49,16 +50,14 @@ func (v *verifiedValidator) IsValid(pullRequest *github.PullRequest) *entity.Val
 		pullRequest.GetNumber(),
 	)
 
-	pattern := regexp.MustCompile(v.config.CommitPattern)
-
 	for _, commit := range commits {
-		message := commit.Commit.GetMessage()
+		isVerified := commit.Commit.GetVerification().GetVerified()
 
-		if !pattern.Match([]byte(message)) {
+		if !isVerified {
 			return &entity.ValidationResult{
 				Name: v.Name,
 				Result: fmt.Errorf(
-					"commit %s does not have valid commit message", commit.GetSHA(),
+					"commit %s is not a verified commit", commit.GetSHA(),
 				),
 			}
 		}

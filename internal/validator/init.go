@@ -17,6 +17,7 @@ var (
 		NewCommitValidator,
 		NewIssueValidator,
 		NewFileValidator,
+		NewVerifiedValidator,
 	}
 )
 

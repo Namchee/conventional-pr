@@ -77,11 +77,18 @@ func (m *githubClientMock) GetCommits(
 ) ([]*github.RepositoryCommit, error) {
 	good := "feat(test): test something"
 	bad := "this is bad"
+
+	verifiedTrue := true
+	verifiedFalse := false
+
 	if event == 123 {
 		return []*github.RepositoryCommit{
 			{
 				Commit: &github.Commit{
 					Message: &good,
+					Verification: &github.SignatureVerification{
+						Verified: &verifiedTrue,
+					},
 				},
 			},
 		}, nil
@@ -93,6 +100,9 @@ func (m *githubClientMock) GetCommits(
 				SHA: &bad,
 				Commit: &github.Commit{
 					Message: &bad,
+					Verification: &github.SignatureVerification{
+						Verified: &verifiedFalse,
+					},
 				},
 			},
 		}, nil
