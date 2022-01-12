@@ -27,6 +27,7 @@ func TestReadConfig(t *testing.T) {
 				"INPUT_ISSUE":                "true",
 				"INPUT_BOT":                  "false",
 				"INPUT_MAXIMUM_FILE_CHANGES": "11",
+				"INPUT_VERIFIED_COMMITS":     "true",
 			},
 			want: expected{
 				config: &Config{
@@ -35,6 +36,7 @@ func TestReadConfig(t *testing.T) {
 					Issue:       true,
 					Bot:         false,
 					FileChanges: 11,
+					Verified:    true,
 				},
 				err: nil,
 			},
