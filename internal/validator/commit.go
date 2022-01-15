@@ -36,6 +36,7 @@ func (v *commitValidator) IsValid(pullRequest *github.PullRequest) *entity.Valid
 	if v.config.CommitPattern == "" {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: false,
 			Result: nil,
 		}
 	}
@@ -56,7 +57,8 @@ func (v *commitValidator) IsValid(pullRequest *github.PullRequest) *entity.Valid
 
 		if !pattern.Match([]byte(message)) {
 			return &entity.ValidationResult{
-				Name: v.Name,
+				Name:   v.Name,
+				Active: true,
 				Result: fmt.Errorf(
 					"commit %s does not have valid commit message", commit.GetSHA(),
 				),
@@ -66,6 +68,7 @@ func (v *commitValidator) IsValid(pullRequest *github.PullRequest) *entity.Valid
 
 	return &entity.ValidationResult{
 		Name:   v.Name,
+		Active: true,
 		Result: nil,
 	}
 }

@@ -29,17 +29,19 @@ func TestVerifiedValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.VerifiedCommitsValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
 		{
-			name: "should skip when pattern is empty",
+			name: "should skip when config = false",
 			args: args{
 				number:   69,
 				verified: false,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.VerifiedCommitsValidatorName,
+				Active: false,
 				Result: nil,
 			},
 		},
@@ -51,6 +53,7 @@ func TestVerifiedValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.VerifiedCommitsValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -62,6 +65,7 @@ func TestVerifiedValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.VerifiedCommitsValidatorName,
+				Active: true,
 				Result: errors.New("commit this is bad is not a verified commit"),
 			},
 		},

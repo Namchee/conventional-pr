@@ -27,6 +27,7 @@ func TestBranchValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.BranchValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -38,17 +39,19 @@ func TestBranchValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.BranchValidatorName,
+				Active: false,
 				Result: nil,
 			},
 		},
 		{
-			name: "should return an error",
+			name: "should reject invalid branch pattern",
 			args: args{
 				branch:  "invalid",
 				pattern: `([\w\-_]+)/[\w_\-]+`,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.BranchValidatorName,
+				Active: true,
 				Result: constants.ErrInvalidBranch,
 			},
 		},

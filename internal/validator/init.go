@@ -101,7 +101,7 @@ func (v *ValidatorGroup) Process(
 // IsValid checks if a pull request is valid or not from validation results
 func IsValid(result []*entity.ValidationResult) bool {
 	for _, r := range result {
-		if r.Result != nil {
+		if r.Active && r.Result != nil {
 			return false
 		}
 	}

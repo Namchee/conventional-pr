@@ -47,10 +47,12 @@ func TestIsValid(t *testing.T) {
 			args: []*entity.ValidationResult{
 				{
 					Name:   "foo bar",
+					Active: true,
 					Result: nil,
 				},
 				{
 					Name:   "bar baz",
+					Active: true,
 					Result: nil,
 				},
 			},
@@ -61,14 +63,32 @@ func TestIsValid(t *testing.T) {
 			args: []*entity.ValidationResult{
 				{
 					Name:   "foo bar",
+					Active: true,
 					Result: nil,
 				},
 				{
 					Name:   "bar baz",
+					Active: true,
 					Result: errors.New("testing"),
 				},
 			},
 			want: false,
+		},
+		{
+			name: "should ignore error when inactive",
+			args: []*entity.ValidationResult{
+				{
+					Name:   "foo bar",
+					Active: false,
+					Result: errors.New("foo bar"),
+				},
+				{
+					Name:   "bar baz",
+					Active: true,
+					Result: nil,
+				},
+			},
+			want: true,
 		},
 	}
 

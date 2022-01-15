@@ -30,6 +30,7 @@ func (v *titleValidator) IsValid(pullRequest *github.PullRequest) *entity.Valida
 	if v.config.TitlePattern == "" {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: false,
 			Result: nil,
 		}
 	}
@@ -41,12 +42,14 @@ func (v *titleValidator) IsValid(pullRequest *github.PullRequest) *entity.Valida
 	if !pattern.Match([]byte(title)) {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: true,
 			Result: constants.ErrInvalidTitle,
 		}
 	}
 
 	return &entity.ValidationResult{
 		Name:   v.Name,
+		Active: true,
 		Result: nil,
 	}
 }

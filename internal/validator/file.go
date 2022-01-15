@@ -30,6 +30,7 @@ func (v *fileValidator) IsValid(pullRequest *github.PullRequest) *entity.Validat
 	if v.config.FileChanges == 0 {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: false,
 			Result: nil,
 		}
 	}
@@ -37,12 +38,14 @@ func (v *fileValidator) IsValid(pullRequest *github.PullRequest) *entity.Validat
 	if pullRequest.GetChangedFiles() <= v.config.FileChanges {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: true,
 			Result: nil,
 		}
 	}
 
 	return &entity.ValidationResult{
 		Name:   v.Name,
+		Active: true,
 		Result: constants.ErrTooManyChanges,
 	}
 }

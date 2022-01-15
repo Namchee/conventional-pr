@@ -37,6 +37,7 @@ func (v *verifiedValidator) IsValid(
 	if !v.config.Verified {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: false,
 			Result: nil,
 		}
 	}
@@ -55,7 +56,8 @@ func (v *verifiedValidator) IsValid(
 
 		if !isVerified {
 			return &entity.ValidationResult{
-				Name: v.Name,
+				Name:   v.Name,
+				Active: true,
 				Result: fmt.Errorf(
 					"commit %s is not a verified commit", commit.GetSHA(),
 				),
@@ -65,6 +67,7 @@ func (v *verifiedValidator) IsValid(
 
 	return &entity.ValidationResult{
 		Name:   v.Name,
+		Active: true,
 		Result: nil,
 	}
 }

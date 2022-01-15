@@ -30,6 +30,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -41,6 +42,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
+				Active: false,
 				Result: nil,
 			},
 		},
@@ -52,6 +54,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -63,6 +66,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
+				Active: true,
 				Result: errors.New("commit this is bad does not have valid commit message"),
 			},
 		},
