@@ -96,7 +96,7 @@ func (w *WhitelistGroup) Process(
 // IsWhitelisted checks if a pull request is whitelisted or not from whitelist results
 func IsWhitelisted(result []*entity.WhitelistResult) bool {
 	for _, r := range result {
-		if r.Result {
+		if r.Active && r.Result {
 			return true
 		}
 	}

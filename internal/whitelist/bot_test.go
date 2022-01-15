@@ -28,6 +28,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.BotWhitelistName,
+				Active: true,
 				Result: true,
 			},
 		},
@@ -39,6 +40,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.BotWhitelistName,
+				Active: false,
 				Result: false,
 			},
 		},
@@ -50,6 +52,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.BotWhitelistName,
+				Active: true,
 				Result: false,
 			},
 		},
@@ -61,6 +64,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.BotWhitelistName,
+				Active: false,
 				Result: false,
 			},
 		},

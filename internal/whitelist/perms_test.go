@@ -28,6 +28,7 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.PermissionWhitelistName,
+				Active: true,
 				Result: true,
 			},
 		},
@@ -39,6 +40,7 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.PermissionWhitelistName,
+				Active: false,
 				Result: false,
 			},
 		},
@@ -50,6 +52,7 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.PermissionWhitelistName,
+				Active: false,
 				Result: false,
 			},
 		},
@@ -61,6 +64,7 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.PermissionWhitelistName,
+				Active: true,
 				Result: false,
 			},
 		},
