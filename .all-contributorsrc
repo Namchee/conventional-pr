@@ -26,6 +26,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "BinToss",
+      "name": "Noah Sherwin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7243190?v=4",
+      "profile": "https://github.com/BinToss",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
