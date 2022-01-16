@@ -46,10 +46,12 @@ func TestIsWhitelisted(t *testing.T) {
 			args: []*entity.WhitelistResult{
 				{
 					Name:   "foo bar",
+					Active: true,
 					Result: false,
 				},
 				{
 					Name:   "bar baz",
+					Active: true,
 					Result: true,
 				},
 			},
@@ -60,10 +62,28 @@ func TestIsWhitelisted(t *testing.T) {
 			args: []*entity.WhitelistResult{
 				{
 					Name:   "foo bar",
+					Active: true,
 					Result: false,
 				},
 				{
 					Name:   "bar baz",
+					Active: true,
+					Result: false,
+				},
+			},
+			want: false,
+		},
+		{
+			name: "should ignore whitelist if inactive",
+			args: []*entity.WhitelistResult{
+				{
+					Name:   "foo bar",
+					Active: false,
+					Result: true,
+				},
+				{
+					Name:   "bar baz",
+					Active: true,
 					Result: false,
 				},
 			},

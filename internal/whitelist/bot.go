@@ -30,6 +30,14 @@ func NewBotWhitelist(
 }
 
 func (w *botWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
+	if !w.config.Bot {
+		return &entity.WhitelistResult{
+			Name:   w.Name,
+			Active: false,
+			Result: false,
+		}
+	}
+
 	user, _ := w.client.GetUser(
 		context.Background(),
 		pullRequest.GetUser().GetLogin(),
@@ -40,6 +48,7 @@ func (w *botWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.Wh
 
 	return &entity.WhitelistResult{
 		Name:   w.Name,
+		Active: true,
 		Result: result,
 	}
 }

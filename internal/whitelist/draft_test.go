@@ -27,6 +27,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.DraftWhitelistName,
+				Active: true,
 				Result: true,
 			},
 		},
@@ -38,6 +39,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.DraftWhitelistName,
+				Active: false,
 				Result: false,
 			},
 		},
@@ -49,6 +51,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.DraftWhitelistName,
+				Active: false,
 				Result: false,
 			},
 		},
@@ -60,6 +63,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			},
 			want: &entity.WhitelistResult{
 				Name:   constants.DraftWhitelistName,
+				Active: true,
 				Result: false,
 			},
 		},

@@ -12,66 +12,91 @@ import (
 func formatWhitelistResult(
 	whitelistResults []*entity.WhitelistResult,
 ) string {
+	header := "| Whitelist | Active | Result |"
+	separator := "| - | :-: | :-: |"
+
 	flag := false
-	var resultList []string
+	results := []string{
+		header,
+		separator,
+	}
 
-	for _, result := range whitelistResults {
-		wResult := constants.FailEmoji
+	for _, r := range whitelistResults {
+		active := constants.FailEmoji
+		verdict := constants.FailEmoji
 
-		if result.Result {
-			flag = true
-			wResult = constants.PassEmoji
+		if r.Active {
+			active = constants.PassEmoji
 		}
 
-		wResult = fmt.Sprintf("- %s %s", wResult, result.Name)
-		resultList = append(resultList, wResult)
+		if r.Result {
+			flag = true
+			verdict = constants.PassEmoji
+		}
+
+		result := fmt.Sprintf("| %s | %s | %s |", r.Name, active, verdict)
+		results = append(results, result)
 	}
 
-	report := constants.WhitelistFail
-
+	summary := constants.WhitelistFail
 	if flag {
-		report = constants.WhitelistPass
+		summary = constants.WhitelistPass
 	}
 
-	resultReport := fmt.Sprintf(constants.ResultTemplate, report)
+	report := fmt.Sprintf(constants.ResultTemplate, summary)
 
-	return fmt.Sprintf(constants.WhitelistTemplate, strings.Join(resultList, "\n"), resultReport)
+	return fmt.Sprintf(
+		constants.WhitelistTemplate,
+		strings.Join(results, "\n"),
+		report,
+	)
 }
 
 func formatValidationResult(
 	validationResults []*entity.ValidationResult,
 ) string {
-	var fails []error
-	var resultList []string
+	header := "| Validation | Active | Result |"
+	separator := "| - | :-: | :-: |"
 
-	for _, result := range validationResults {
-		vResult := constants.PassEmoji
+	var errors []error
+	results := []string{
+		header,
+		separator,
+	}
 
-		if result.Result != nil {
-			fails = append(fails, result.Result)
-			vResult = constants.FailEmoji
+	for _, r := range validationResults {
+		active := constants.PassEmoji
+		verdict := constants.PassEmoji
+
+		if !r.Active {
+			active = constants.FailEmoji
 		}
 
-		vResult = fmt.Sprintf("- %s %s", vResult, result.Name)
-		resultList = append(resultList, vResult)
+		if r.Result != nil {
+			errors = append(errors, r.Result)
+			verdict = constants.FailEmoji
+		}
+
+		result := fmt.Sprintf("| %s | %s | %s |", r.Name, active, verdict)
+		results = append(results, result)
 	}
 
 	var reason string
-	report := constants.ValidationPass
+	verdict := constants.ValidationPass
 
-	if len(fails) > 0 {
-		report = constants.ValidationFail
+	if len(errors) > 0 {
+		verdict = constants.ValidationFail
 		var reasons []string
 
-		for _, fail := range fails {
+		for _, fail := range errors {
 			reasons = append(reasons, fmt.Sprintf("- %s", utils.Capitalize(fail.Error())))
 		}
 		reason = fmt.Sprintf(constants.ReasonTemplate, strings.Join(reasons, "\n"))
 	}
 
-	resultReport := fmt.Sprintf(constants.ResultTemplate, report)
+	report := fmt.Sprintf(constants.ResultTemplate, verdict)
 
-	result := fmt.Sprintf(constants.ValidatorTemplate, strings.Join(resultList, "\n"), resultReport)
+	result := fmt.Sprintf(constants.ValidatorTemplate, strings.Join(results, "\n"), report)
 
 	if reason != "" {
 		result = fmt.Sprintf("%s\n\n%s", result, reason)

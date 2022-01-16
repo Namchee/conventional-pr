@@ -27,6 +27,7 @@ func TestFileValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.FileValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -38,6 +39,7 @@ func TestFileValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.FileValidatorName,
+				Active: true,
 				Result: constants.ErrTooManyChanges,
 			},
 		},
@@ -49,6 +51,7 @@ func TestFileValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.FileValidatorName,
+				Active: false,
 				Result: nil,
 			},
 		},

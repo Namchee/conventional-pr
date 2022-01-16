@@ -32,6 +32,14 @@ func NewPermissionWhitelist(
 }
 
 func (w *permissionWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
+	if w.config.Strict {
+		return &entity.WhitelistResult{
+			Name:   w.Name,
+			Active: false,
+			Result: false,
+		}
+	}
+
 	ctx := context.Background()
 
 	perms, _ := w.client.GetPermissionLevel(
@@ -41,11 +49,11 @@ func (w *permissionWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *en
 		pullRequest.GetUser().GetLogin(),
 	)
 
-	result := strings.ToLower(perms.GetPermission()) == constants.AdminUser &&
-		!w.config.Strict
+	result := strings.ToLower(perms.GetPermission()) == constants.AdminUser
 
 	return &entity.WhitelistResult{
 		Name:   w.Name,
+		Active: true,
 		Result: result,
 	}
 }

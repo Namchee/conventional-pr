@@ -36,6 +36,7 @@ func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.Valida
 	if !v.config.Issue {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: false,
 			Result: nil,
 		}
 	}
@@ -52,6 +53,7 @@ func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.Valida
 		if err == nil && issue != nil {
 			return &entity.ValidationResult{
 				Name:   v.Name,
+				Active: true,
 				Result: nil,
 			}
 		}
@@ -59,6 +61,7 @@ func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.Valida
 
 	return &entity.ValidationResult{
 		Name:   v.Name,
+		Active: true,
 		Result: constants.ErrNoIssue,
 	}
 }

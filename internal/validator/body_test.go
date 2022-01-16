@@ -28,6 +28,7 @@ func TestBodyValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.BodyValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -38,6 +39,7 @@ func TestBodyValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.BodyValidatorName,
+				Active: false,
 				Result: nil,
 			},
 		},
@@ -49,6 +51,7 @@ func TestBodyValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.BodyValidatorName,
+				Active: true,
 				Result: constants.ErrNoBody,
 			},
 		},

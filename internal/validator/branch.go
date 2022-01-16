@@ -32,6 +32,7 @@ func (v *branchValidator) IsValid(pullRequest *github.PullRequest) *entity.Valid
 	if v.config.BranchPattern == "" {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: false,
 			Result: nil,
 		}
 	}
@@ -43,12 +44,14 @@ func (v *branchValidator) IsValid(pullRequest *github.PullRequest) *entity.Valid
 	if !pattern.Match([]byte(branch)) {
 		return &entity.ValidationResult{
 			Name:   v.Name,
+			Active: true,
 			Result: constants.ErrInvalidBranch,
 		}
 	}
 
 	return &entity.ValidationResult{
 		Name:   v.Name,
+		Active: true,
 		Result: nil,
 	}
 }

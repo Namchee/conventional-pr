@@ -28,6 +28,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -38,6 +39,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
+				Active: false,
 				Result: nil,
 			},
 		},
@@ -49,6 +51,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
+				Active: true,
 				Result: constants.ErrNoIssue,
 			},
 		},
@@ -60,6 +63,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
+				Active: true,
 				Result: constants.ErrNoIssue,
 			},
 		},

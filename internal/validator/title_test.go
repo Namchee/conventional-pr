@@ -28,6 +28,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -39,6 +40,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
+				Active: false,
 				Result: nil,
 			},
 		},
@@ -50,6 +52,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -61,6 +64,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -74,6 +78,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
+				Active: true,
 				Result: nil,
 			},
 		},
@@ -85,6 +90,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.TitleValidatorName,
+				Active: true,
 				Result: constants.ErrInvalidTitle,
 			},
 		},

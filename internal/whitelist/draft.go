@@ -25,8 +25,17 @@ func NewDraftWhitelist(
 }
 
 func (w *draftWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
+	if !w.config.Draft {
+		return &entity.WhitelistResult{
+			Name:   w.Name,
+			Active: false,
+			Result: false,
+		}
+	}
+
 	return &entity.WhitelistResult{
 		Name:   w.Name,
-		Result: pullRequest.GetDraft() && w.config.Draft,
+		Active: true,
+		Result: pullRequest.GetDraft(),
 	}
 }
