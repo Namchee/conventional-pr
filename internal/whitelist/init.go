@@ -14,6 +14,7 @@ var (
 		NewBotWhitelist,
 		NewDraftWhitelist,
 		NewPermissionWhitelist,
+		NewUsernameWhitelist,
 	}
 )
 

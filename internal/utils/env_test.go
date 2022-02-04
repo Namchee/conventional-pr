@@ -119,3 +119,38 @@ func TestReadEnvInt(t *testing.T) {
 		})
 	}
 }
+
+func TestReadEnvStringArray(t *testing.T) {
+	tests := []struct {
+		name      string
+		mockValue string
+		want      []string
+	}{
+		{
+			name:      "should return an empty array",
+			mockValue: "",
+			want:      []string{},
+		},
+		{
+			name:      "should return an array with one member",
+			mockValue: "Namchee",
+			want:      []string{"Namchee"},
+		},
+		{
+			name:      "should return an array",
+			mockValue: "Namchee, Foo, Bar",
+			want:      []string{"Namchee", "Foo", "Bar"},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			os.Setenv("TEST", tc.mockValue)
+			defer os.Unsetenv("TEST")
+
+			got := ReadEnvStringArray("TEST")
+
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}

@@ -16,4 +16,5 @@ const (
 	BotWhitelistName        = "Pull request is submitted by a bot and should be ignored"
 	DraftWhitelistName      = "Pull request is a draft and should be ignored"
 	PermissionWhitelistName = "Pull request is submitted by administrators and should be ignored"
+	UsernameWhitelistName   = "Pull request is made by a whitelisted user and should be ignored"
 )

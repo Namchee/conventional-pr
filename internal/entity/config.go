@@ -24,6 +24,7 @@ type Config struct {
 	Body          bool
 	Bot           bool
 	Verified      bool
+	IgnoredUsers  []string
 }
 
 // ReadConfig reads environment variables for input values which are supplied
@@ -71,6 +72,8 @@ func ReadConfig() (*Config, error) {
 		return nil, constants.ErrNegativeFileChange
 	}
 
+	ignoredUsers := utils.ReadEnvStringArray("INPUT_IGNORED_USERS")
+
 	return &Config{
 		Token:         token,
 		Draft:         draft,
@@ -87,5 +90,6 @@ func ReadConfig() (*Config, error) {
 		Template:      template,
 		FileChanges:   fileChanges,
 		Verified:      verified,
+		IgnoredUsers:  ignoredUsers,
 	}, nil
 }
