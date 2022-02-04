@@ -6,7 +6,7 @@ inputs:
     description: "GitHub account access token"
     required: true
   close:
-    description: "Determine whether checks should close invalid PRs"
+    description: "Determine whether checks should close invalid pull requests"
     required: false
     default: true
   label:
@@ -32,7 +32,7 @@ inputs:
   title_pattern:
     description: "Valid pull request title regex pattern in Perl syntax"
     required: false
-    default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
+    default: "([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+"
   commit_pattern:
     description: "Valid pull request commit message regex pattern in Perl syntax"
     required: false
@@ -57,6 +57,10 @@ inputs:
     description: "Require all commits to be verified or signed with GPG keys"
     required: false
     default: false
+  ignored_users:
+    description: "GitHub usernames to be whitelisted from pull request validation"
+    required: false
+    default: ""
 runs:
   using: docker
   image: "Dockerfile"

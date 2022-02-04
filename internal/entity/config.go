@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -24,6 +25,7 @@ type Config struct {
 	Body          bool
 	Bot           bool
 	Verified      bool
+	IgnoredUsers  []string
 }
 
 // ReadConfig reads environment variables for input values which are supplied
@@ -71,6 +73,10 @@ func ReadConfig() (*Config, error) {
 		return nil, constants.ErrNegativeFileChange
 	}
 
+	ignoredUsers := utils.ReadEnvString("INPUT_IGNORED_USERS")
+
+	fmt.Println(ignoredUsers)
+
 	return &Config{
 		Token:         token,
 		Draft:         draft,
@@ -87,5 +93,6 @@ func ReadConfig() (*Config, error) {
 		Template:      template,
 		FileChanges:   fileChanges,
 		Verified:      verified,
+		IgnoredUsers:  []string{},
 	}, nil
 }
