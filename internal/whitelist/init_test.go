@@ -32,7 +32,7 @@ func TestWhitelistGroup(t *testing.T) {
 
 	got := whitelistGroup.Process(pullRequest)
 
-	assert.Equal(t, 3, len(got))
+	assert.Equal(t, 4, len(got))
 }
 
 func TestIsWhitelisted(t *testing.T) {
