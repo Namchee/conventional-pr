@@ -10,11 +10,11 @@ inputs:
     required: false
     default: true
   label:
-    description: "Invalid PRs label"
+    description: "Invalid pull requests label"
     required: false
     default: "cpr:invalid"
   template:
-    description: "Comment template on invalid PRs"
+    description: "Comment template on invalid pull requests"
     required: false
     default: ""
   draft:
@@ -32,7 +32,7 @@ inputs:
   title_pattern:
     description: "Valid pull request title regex pattern in Perl syntax"
     required: false
-    default: "([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+"
+    default: '([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+'
   commit_pattern:
     description: "Valid pull request commit message regex pattern in Perl syntax"
     required: false
