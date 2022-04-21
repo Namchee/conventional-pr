@@ -25,6 +25,10 @@ var (
 	WhitelistFail  = "Pull request does not satisfy any enabled whitelist criteria. Pull request will be validated."
 	ValidationPass = "Pull request satisfies all enabled pull request rules."
 	ValidationFail = "Pull request is invalid."
+
+	LogHeader     = "Pull request validation report"
+	ActiveLabel   = "ACTIVE"
+	InactiveLabel = "INACTIVE"
 )
 
 // Emojis

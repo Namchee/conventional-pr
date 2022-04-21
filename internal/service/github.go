@@ -35,7 +35,7 @@ func (s *GithubService) WriteReport(
 	whitelistResults []*entity.WhitelistResult,
 	validationResults []*entity.ValidationResult,
 ) error {
-	report := formatter.FormatResult(whitelistResults, validationResults)
+	report := formatter.FormatResultToTables(whitelistResults, validationResults)
 
 	ctx := context.Background()
 

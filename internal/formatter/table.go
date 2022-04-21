@@ -9,7 +9,7 @@ import (
 	"github.com/Namchee/conventional-pr/internal/utils"
 )
 
-func formatWhitelistResult(
+func formatWhitelistResultToTable(
 	whitelistResults []*entity.WhitelistResult,
 ) string {
 	header := "| Whitelist | Active | Result |"
@@ -52,7 +52,7 @@ func formatWhitelistResult(
 	)
 }
 
-func formatValidationResult(
+func formatValidationResultToTable(
 	validationResults []*entity.ValidationResult,
 ) string {
 	header := "| Validation | Active | Result |"
@@ -105,17 +105,17 @@ func formatValidationResult(
 	return result
 }
 
-// FormatResult formats both whitelist and validation results for workflow reporting in markdown syntax
-func FormatResult(
+// FormatResultToTables formats both whitelist and validation results for workflow reporting in markdown syntax
+func FormatResultToTables(
 	whitelistResults []*entity.WhitelistResult,
 	validationResults []*entity.ValidationResult,
 ) string {
 	report := constants.ReportHeader
 
-	report = fmt.Sprintf("%s\n\n%s", report, formatWhitelistResult(whitelistResults))
+	report = fmt.Sprintf("%s\n\n%s", report, formatWhitelistResultToTable(whitelistResults))
 
 	if len(validationResults) > 0 {
-		report = fmt.Sprintf("%s\n\n%s", report, formatValidationResult(validationResults))
+		report = fmt.Sprintf("%s\n\n%s", report, formatValidationResultToTable(validationResults))
 	}
 
 	return report

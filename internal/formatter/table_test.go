@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFormatResult(t *testing.T) {
+func TestFormatResultToTable(t *testing.T) {
 	type args struct {
 		whitelist  []*entity.WhitelistResult
 		validation []*entity.ValidationResult
@@ -195,7 +195,7 @@ Pull request is invalid.
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got := FormatResult(tc.args.whitelist, tc.args.validation)
+			got := FormatResultToTables(tc.args.whitelist, tc.args.validation)
 
 			assert.Equal(t, tc.want, got)
 		})
