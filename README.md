@@ -94,6 +94,7 @@ You can customize this actions with these following options (fill it on `with` s
 | `maximum_file_change` | `false`       | `0`                                     | Limits how many file can be changed per one pull request. Fill with zero to disable this feature.                                                                                                                                                                                                                          |
 | `verified_commits` | `false` | `false` | Require all commits on the pull request to be [signed commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) |
 | `ignored_users` | `false` | `''` | GitHub usernames to be whitelisted from pull request validation. Must be a comma-separated string. Example: `Namchee, foo, bar` will bypass pull request validation for users `Namchee`, `foo`, `bar`. Case-sensitive.
+| `report` | `false` | `true` | Determines whether pull request report should be written as a pull request comment
 
 ## Supported Events
 
@@ -113,6 +114,7 @@ Ideally, Conventional PR workflow should only triggered when an event related to
 ## Caveats
 
 - If the issues are linked manually and are not mentioned in the pull request body, the pull request is still considered to be invalid.
+- Due to [GitHub limitations](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/), it is not possible to modify the state of the pull request from a forked repository. To address this issue, you have to set `close` to `false` and `report` to `false` to prevent the workflow from closing the pull request and creating new comment.
 
 ## Contributors ✨
 

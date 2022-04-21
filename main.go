@@ -10,6 +10,7 @@ import (
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/formatter"
 	"github.com/Namchee/conventional-pr/internal/service"
 	"github.com/Namchee/conventional-pr/internal/utils"
 	"github.com/Namchee/conventional-pr/internal/validator"
@@ -93,7 +94,12 @@ func main() {
 	svc := service.NewGithubService(client, config, meta)
 
 	infoLogger.Println("Writing run report")
-	err = svc.WriteReport(pullRequest, wgResult, vgResult)
+
+	if config.Report {
+		err = svc.WriteReport(pullRequest, wgResult, vgResult)
+	} else {
+		formatter.FormatResultToConsole(wgResult, vgResult, infoLogger)
+	}
 
 	if err != nil {
 		errorLogger.Fatalf("Failed to write report: %s", err.Error())

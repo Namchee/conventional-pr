@@ -29,6 +29,7 @@ func TestReadConfig(t *testing.T) {
 				"INPUT_MAXIMUM_FILE_CHANGES": "11",
 				"INPUT_VERIFIED_COMMITS":     "true",
 				"INPUT_IGNORED_USERS":        "Namchee, snyk-bot",
+				"INPUT_REPORT":               "false",
 			},
 			want: expected{
 				config: &Config{
@@ -39,6 +40,7 @@ func TestReadConfig(t *testing.T) {
 					FileChanges:  11,
 					Verified:     true,
 					IgnoredUsers: []string{"Namchee", "snyk-bot"},
+					Report:       false,
 				},
 				err: nil,
 			},

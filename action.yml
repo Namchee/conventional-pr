@@ -61,6 +61,10 @@ inputs:
     description: "GitHub usernames to be whitelisted from pull request validation"
     required: false
     default: ""
+  report:
+    description: "Determines whether pull request report should be written as a pull request comment"
+    required: false
+    default: true
 runs:
   using: docker
   image: "Dockerfile"
