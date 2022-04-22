@@ -26,9 +26,12 @@ var (
 	ValidationPass = "Pull request satisfies all enabled pull request rules."
 	ValidationFail = "Pull request is invalid."
 
-	LogHeader     = "Pull request validation report"
+	LogHeader = "Pull request validation report"
+
 	ActiveLabel   = "ACTIVE"
 	InactiveLabel = "INACTIVE"
+	PassLabel     = "PASS"
+	FailLabel     = "FAIL"
 )
 
 // Emojis
