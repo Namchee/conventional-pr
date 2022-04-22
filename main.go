@@ -97,15 +97,15 @@ func main() {
 
 	if config.Report {
 		err = svc.WriteReport(pullRequest, wgResult, vgResult)
+
+		if err != nil {
+			errorLogger.Fatalf("Failed to write report: %s", err.Error())
+		}
 	} else {
 		formatter.FormatResultToConsole(wgResult, vgResult, infoLogger)
 	}
 
-	if err != nil {
-		errorLogger.Fatalf("Failed to write report: %s", err.Error())
-	}
-
-	if !validator.IsValid(vgResult) {
+	if !config.Report && !validator.IsValid(vgResult) {
 		infoLogger.Println("Processing invalid pull request")
 
 		err = svc.AttachLabel(pullRequest)
