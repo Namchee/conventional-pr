@@ -17,7 +17,7 @@ func formatWhitelistResultToConsole(
 
 	for _, r := range whitelistResults {
 		active := constants.InactiveLabel
-		verdict := constants.FailEmoji
+		verdict := constants.FailLabel
 
 		if r.Active {
 			active = constants.ActiveLabel
@@ -25,7 +25,7 @@ func formatWhitelistResultToConsole(
 
 		if r.Result {
 			flag = true
-			verdict = constants.PassEmoji
+			verdict = constants.PassLabel
 		}
 
 		logger.Printf("%s — %s — %s\n", r.Name, active, verdict)
@@ -46,16 +46,16 @@ func formatValidationResultToConsole(
 	var errors []error
 
 	for _, r := range validationResults {
-		active := constants.PassEmoji
-		verdict := constants.PassEmoji
+		active := constants.ActiveLabel
+		verdict := constants.PassLabel
 
 		if !r.Active {
-			active = constants.FailEmoji
+			active = constants.InactiveLabel
 		}
 
 		if r.Result != nil {
 			errors = append(errors, r.Result)
-			verdict = constants.FailEmoji
+			verdict = constants.FailLabel
 		}
 
 		logger.Printf("%s — %s — %s\n", r.Name, active, verdict)

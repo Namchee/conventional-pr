@@ -12,7 +12,7 @@ inputs:
   label:
     description: "Invalid pull requests label"
     required: false
-    default: "cpr:invalid"
+    default: ""
   template:
     description: "Comment template on invalid pull requests"
     required: false
