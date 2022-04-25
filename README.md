@@ -62,7 +62,7 @@ Validator is the core feature of Conventional PR. Validator will validate pull r
 
 A pull request is considered to be valid if it satisfies **all** enabled validation flow.
 
-Currently, there are 6 validation flow that are available in Conventional PR:
+Currently, there are 7 validation flow that are available in Conventional PR:
 
 1. Pull request has a valid title.
 2. Pull request has a non-empty body.
@@ -70,6 +70,7 @@ Currently, there are 6 validation flow that are available in Conventional PR:
 4. Pull request does not introduce too many file changes.
 5. All commits in the pull request have valid messages.
 6. Pull request has a valid branch name.
+7. All commits in the pull request must be signed.
 
 All validators are configurable. Please refer to the [inputs](#inputs) section on how to configure whitelists.
 
@@ -79,7 +80,7 @@ You can customize this actions with these following options (fill it on `with` s
 
 | **Name**              | **Required?** | **Default Value**                       | **Description**                                                                                                                                                                                                                                                                                                            |
 | --------------------- | ------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `access_token`        | `true`        |                                         | [GitHub access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) to interact with the GitHub API. It is recommended to store this token with [GitHub Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets). |
+| `access_token`        | `true`        |                                         | [GitHub access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) to interact with the GitHub API. It is recommended to store this token with [GitHub Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets). **To support automatic close, labeling, and comment report, please grant a write access to the token** |
 | `close`               | `false`       | `true`                                  | Determine whether `conventional pr` should attempt to automatically close invalid pull requests.                                                                                                                                                                                                                           |
 | `template`            | `false`       | `''`                                      | Comment template to use when commenting on invalid pull requests. Fill with an empty string to disable further comments.                                                                                                                                                                                                   |
 | `label`               | `false`       | `''`               | Label to use when marking invalid pull requests. If it doesn't exist, this action will automatically create it. Fill with an empty string to disable labeling.                                                                                                                                                             |
@@ -113,8 +114,29 @@ Ideally, Conventional PR workflow should only triggered when an event related to
 
 ## Caveats
 
-- If the issues are linked manually and are not mentioned in the pull request body, the pull request is still considered to be invalid.
-- Due to [GitHub limitations](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/), it is not possible to modify the state of the pull request from a forked repository. To address this issue, you have to set `close` to `false` and `report` to `false` to prevent the workflow from closing the pull request and creating new comment.
+- If the issues are linked manually and are not mentioned in the pull request body, the pull request is still considered to be invalid. Currently, there is no way to avoid this issue.
+
+## Forked Repository
+
+Conventional PR is designed to be executed on internal environment, where only authorized users are allowed create pull request. With that design philosophy, Conventional PR is not designed to be executed on a forked repository in mind. Moreover, granting a token with write access to unauthorized user may lead to [GitHub repository access exploit via GitHub Action](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/).  However, this limitation proves to be discouraging for open source project management. As an open-source project itself, it becomes a hinderance if Conventional PR cannot be used to manage itself.
+
+To circumvent this issue, you must change the [event target](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows) from `pull_request` to `pull_request_target` which changes the execution context from the fork to the base repository. Below is the example of action configuration using `pull_request_target`
+
+```yml
+on:
+  pull_request_target:
+
+jobs:
+  cpr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validates the pull request
+        uses: Namchee/conventional-pr@v(version)
+        with:
+          access_token: YOUR_GITHUB_ACCESS_TOKEN_HERE
+```
+
+Do note that `pull_request_target` allows unsafe code to be executed from the head of the pull request that could alter your repository or steal any secrets you use in your repository. Avoid using `pull_request_event` if you need to build or run code from the pull request.
 
 ## Contributors ✨
 
