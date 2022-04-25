@@ -124,6 +124,7 @@ To circumvent this issue, you must change the [event target](https://docs.github
 
 ```yml
 on:
+  pull_request:
   pull_request_target:
 
 jobs:
