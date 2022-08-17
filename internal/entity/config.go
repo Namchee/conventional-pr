@@ -25,6 +25,7 @@ type Config struct {
 	Bot           bool
 	Verified      bool
 	Report        bool
+	Edit          bool
 	IgnoredUsers  []string
 }
 
@@ -46,6 +47,7 @@ func ReadConfig() (*Config, error) {
 	bot := utils.ReadEnvBool("INPUT_BOT")
 	verified := utils.ReadEnvBool("INPUT_VERIFIED_COMMITS")
 	report := utils.ReadEnvBool("INPUT_REPORT")
+	edit := utils.ReadEnvBool("INPUT_EDIT")
 
 	label := utils.ReadEnvString("INPUT_LABEL")
 	template := utils.ReadEnvString("INPUT_TEMPLATE")
@@ -80,6 +82,7 @@ func ReadConfig() (*Config, error) {
 		Token:         token,
 		Draft:         draft,
 		Close:         close,
+		Edit:          edit,
 		Strict:        strict,
 		Assign:        assign,
 		Issue:         issue,
