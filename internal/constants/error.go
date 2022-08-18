@@ -30,3 +30,8 @@ var (
 	ErrTooManyChanges = errors.New("pull request introduces too many changes")
 	ErrInvalidBranch  = errors.New("pull request branch name does not follow the desired pattern")
 )
+
+// GitHub API error
+var (
+	ErrFirstComment = errors.New("no existing report was found")
+)

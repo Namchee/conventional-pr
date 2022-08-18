@@ -36,6 +36,19 @@ func (m *githubClientMock) GetUser(_ context.Context, name string) (*github.User
 	return &github.User{Type: &user}, nil
 }
 
+func (m *githubClientMock) GetComments(_ context.Context, _ string, _ string, number int) ([]*github.IssueComment, error) {
+	if number == 1 {
+		return nil, errors.New("error")
+	}
+
+	return []*github.IssueComment{
+		{
+			ID:   github.Int64(2),
+			Body: github.String("foo bar"),
+		},
+	}, nil
+}
+
 func (m *githubClientMock) GetIssue(
 	ctx context.Context,
 	_ string,

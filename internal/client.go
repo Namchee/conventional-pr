@@ -15,6 +15,7 @@ type GithubClient interface {
 	GetPullRequest(context.Context, string, string, int) (*github.PullRequest, error)
 	GetUser(context.Context, string) (*github.User, error)
 	GetIssue(context.Context, string, string, int) (*github.Issue, error)
+	GetComments(context.Context, string, string, int) ([]*github.IssueComment, error)
 	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)
 	GetCommits(context.Context, string, string, int) ([]*github.RepositoryCommit, error)
 	Comment(context.Context, string, string, int, *github.IssueComment) error
@@ -34,8 +35,10 @@ func NewGithubClient(config *entity.Config) GithubClient {
 		&oauth2.Token{AccessToken: config.Token},
 	)
 
-	tc := oauth2.NewClient(ctx, ts)
-	return &githubClient{client: github.NewClient(tc)}
+	oauth := oauth2.NewClient(ctx, ts)
+	github := github.NewClient(oauth)
+
+	return &githubClient{client: github}
 }
 
 func (cl *githubClient) GetPullRequest(
@@ -75,6 +78,23 @@ func (cl *githubClient) GetPermissionLevel(
 	perms, _, err := cl.client.Repositories.GetPermissionLevel(ctx, owner, name, user)
 
 	return perms, err
+}
+
+func (cl *githubClient) GetComments(
+	ctx context.Context,
+	owner string,
+	name string,
+	number int,
+) ([]*github.IssueComment, error) {
+	comments, _, err := cl.client.Issues.ListComments(
+		ctx,
+		owner,
+		name,
+		number,
+		&github.IssueListCommentsOptions{},
+	)
+
+	return comments, err
 }
 
 func (cl *githubClient) GetCommits(
