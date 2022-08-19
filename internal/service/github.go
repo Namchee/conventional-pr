@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Namchee/conventional-pr/internal"
+	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/formatter"
 	"github.com/google/go-github/v32/github"
@@ -42,14 +43,18 @@ func (s *GithubService) WriteReport(
 		validationResults,
 	)
 
-	return s.client.Comment(
+	if s.config.Edit {
+		return s.editComment(
+			ctx,
+			pullRequest.GetNumber(),
+			report,
+		)
+	}
+
+	return s.createComment(
 		ctx,
-		s.meta.Owner,
-		s.meta.Name,
 		pullRequest.GetNumber(),
-		&github.IssueComment{
-			Body: &report,
-		},
+		report,
 	)
 }
 
@@ -58,7 +63,7 @@ func (s *GithubService) createComment(
 	number int,
 	body string,
 ) error {
-	return s.client.Comment(
+	return s.client.CreateComment(
 		ctx,
 		s.meta.Owner,
 		s.meta.Name,
@@ -71,7 +76,8 @@ func (s *GithubService) createComment(
 
 func (s *GithubService) editComment(
 	ctx context.Context,
-	number int,
+	prNumber int,
+	body string,
 ) error {
 	var prev *github.IssueComment
 
@@ -79,7 +85,7 @@ func (s *GithubService) editComment(
 		ctx,
 		s.meta.Owner,
 		s.meta.Name,
-		number,
+		prNumber,
 	)
 	if err != nil {
 		return err
@@ -98,8 +104,18 @@ func (s *GithubService) editComment(
 	}
 
 	if prev == nil {
-		return
+		return constants.ErrFirstComment
 	}
+
+	return s.client.EditComment(
+		ctx,
+		s.meta.Owner,
+		s.meta.Name,
+		prev.GetID(),
+		&github.IssueComment{
+			Body: github.String(body),
+		},
+	)
 }
 
 // WriteTemplate creates a new comment that contains user-desired message
@@ -112,7 +128,7 @@ func (s *GithubService) WriteTemplate(
 
 	ctx := context.Background()
 
-	return s.client.Comment(
+	return s.client.CreateComment(
 		ctx,
 		s.meta.Owner,
 		s.meta.Name,
