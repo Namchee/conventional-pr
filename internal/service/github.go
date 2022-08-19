@@ -35,9 +35,12 @@ func (s *GithubService) WriteReport(
 	whitelistResults []*entity.WhitelistResult,
 	validationResults []*entity.ValidationResult,
 ) error {
-	report := formatter.FormatResultToTables(whitelistResults, validationResults)
-
 	ctx := context.Background()
+
+	report := formatter.FormatResultToTables(
+		whitelistResults,
+		validationResults,
+	)
 
 	return s.client.Comment(
 		ctx,
@@ -48,6 +51,55 @@ func (s *GithubService) WriteReport(
 			Body: &report,
 		},
 	)
+}
+
+func (s *GithubService) createComment(
+	ctx context.Context,
+	number int,
+	body string,
+) error {
+	return s.client.Comment(
+		ctx,
+		s.meta.Owner,
+		s.meta.Name,
+		number,
+		&github.IssueComment{
+			Body: github.String(body),
+		},
+	)
+}
+
+func (s *GithubService) editComment(
+	ctx context.Context,
+	number int,
+) error {
+	var prev *github.IssueComment
+
+	comments, err := s.client.GetComments(
+		ctx,
+		s.meta.Owner,
+		s.meta.Name,
+		number,
+	)
+	if err != nil {
+		return err
+	}
+
+	user, err := s.client.GetUser(ctx, "")
+	if err != nil {
+		return err
+	}
+
+	for _, comment := range comments {
+		if comment.GetUser().GetID() == user.GetID() {
+			prev = comment
+			break
+		}
+	}
+
+	if prev == nil {
+		return
+	}
 }
 
 // WriteTemplate creates a new comment that contains user-desired message

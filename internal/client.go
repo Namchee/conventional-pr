@@ -18,7 +18,8 @@ type GithubClient interface {
 	GetComments(context.Context, string, string, int) ([]*github.IssueComment, error)
 	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)
 	GetCommits(context.Context, string, string, int) ([]*github.RepositoryCommit, error)
-	Comment(context.Context, string, string, int, *github.IssueComment) error
+	CreateComment(context.Context, string, string, int, *github.IssueComment) error
+	EditComment(context.Context, string, string, int64, *github.IssueComment) error
 	Label(context.Context, string, string, int, string) error
 	Close(context.Context, string, string, int) error
 }
@@ -108,7 +109,25 @@ func (cl *githubClient) GetCommits(
 	return commits, err
 }
 
-func (cl *githubClient) Comment(
+func (cl *githubClient) EditComment(
+	ctx context.Context,
+	owner string,
+	name string,
+	id int64,
+	comment *github.IssueComment,
+) error {
+	_, _, err := cl.client.Issues.EditComment(
+		ctx,
+		owner,
+		name,
+		id,
+		comment,
+	)
+
+	return err
+}
+
+func (cl *githubClient) CreateComment(
 	ctx context.Context,
 	owner string,
 	name string,
