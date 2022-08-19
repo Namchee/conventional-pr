@@ -3,6 +3,7 @@ package formatter
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -112,11 +113,26 @@ func FormatResultToTables(
 ) string {
 	report := constants.ReportHeader
 
-	report = fmt.Sprintf("%s\n\n%s", report, formatWhitelistResultToTable(whitelistResults))
+	report = fmt.Sprintf(
+		"%s\n\n%s",
+		report,
+		formatWhitelistResultToTable(whitelistResults),
+	)
 
 	if len(validationResults) > 0 {
-		report = fmt.Sprintf("%s\n\n%s", report, formatValidationResultToTable(validationResults))
+		report = fmt.Sprintf(
+			"%s\n\n%s",
+			report,
+			formatValidationResultToTable(validationResults),
+		)
 	}
+
+	now := time.Now()
+	report = fmt.Sprintf(
+		"%s\n\nLast Modified at %s",
+		report,
+		now.Format(time.RFC822),
+	)
 
 	return report
 }
