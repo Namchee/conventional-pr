@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,7 +44,9 @@ func TestFormatResultToTable(t *testing.T) {
 
 **Result**
 
-Pull request matches with one (or more) enabled whitelist criteria. Pull request validation is skipped.`,
+Pull request matches with one (or more) enabled whitelist criteria. Pull request validation is skipped.
+
+Last Modified at 01 Jan 70 01:02 UTC`,
 		},
 		{
 			name: "formats valid pull request correctly",
@@ -85,7 +88,9 @@ Pull request does not satisfy any enabled whitelist criteria. Pull request will 
 
 **Result**
 
-Pull request satisfies all enabled pull request rules.`,
+Pull request satisfies all enabled pull request rules.
+
+Last Modified at 01 Jan 70 01:02 UTC`,
 		},
 		{
 			name: "format invalid pull request correctly",
@@ -131,7 +136,9 @@ Pull request is invalid.
 
 **Reason**
 
-- Testing`,
+- Testing
+
+Last Modified at 01 Jan 70 01:02 UTC`,
 		},
 		{
 			name: "able to format inactive whitelist and validator",
@@ -189,13 +196,23 @@ Pull request is invalid.
 
 **Reason**
 
-- Testing`,
+- Testing
+
+Last Modified at 01 Jan 70 01:02 UTC`,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got := FormatResultToTables(tc.args.whitelist, tc.args.validation)
+			results := &entity.PullRequestResult{
+				Whitelist:  tc.args.whitelist,
+				Validation: tc.args.validation,
+			}
+
+			got := FormatResultToTables(
+				results,
+				mocks.ClockMock{}.Now(),
+			)
 
 			assert.Equal(t, tc.want, got)
 		})

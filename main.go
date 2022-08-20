@@ -95,8 +95,13 @@ func main() {
 
 	infoLogger.Println("Writing run report")
 
+	results := &entity.PullRequestResult{
+		Whitelist:  wgResult,
+		Validation: vgResult,
+	}
+
 	if config.Report {
-		err = svc.WriteReport(pullRequest, wgResult, vgResult)
+		err = svc.WriteReport(pullRequest, results, time.Now())
 	} else {
 		formatter.FormatResultToConsole(wgResult, vgResult, infoLogger)
 	}

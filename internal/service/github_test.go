@@ -63,7 +63,16 @@ func TestGithubClient_WriteReport(t *testing.T) {
 
 			service := NewGithubService(client, config, meta)
 
-			got := service.WriteReport(pullRequest, tc.args.whitelist, tc.args.validation)
+			results := &entity.PullRequestResult{
+				Whitelist:  tc.args.whitelist,
+				Validation: tc.args.validation,
+			}
+
+			got := service.WriteReport(
+				pullRequest,
+				results,
+				mocks.ClockMock{}.Now(),
+			)
 
 			assert.Equal(t, tc.wantErr, got != nil)
 		})

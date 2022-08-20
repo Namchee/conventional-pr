@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -33,14 +34,14 @@ func NewGithubService(
 // WriteReport creates a new comment that contains conventional-pr workflow report in markdown format
 func (s *GithubService) WriteReport(
 	pullRequest *github.PullRequest,
-	whitelistResults []*entity.WhitelistResult,
-	validationResults []*entity.ValidationResult,
+	results *entity.PullRequestResult,
+	time time.Time,
 ) error {
 	ctx := context.Background()
 
 	report := formatter.FormatResultToTables(
-		whitelistResults,
-		validationResults,
+		results,
+		time,
 	)
 
 	if s.config.Edit {

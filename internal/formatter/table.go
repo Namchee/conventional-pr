@@ -108,26 +108,29 @@ func formatValidationResultToTable(
 
 // FormatResultToTables formats both whitelist and validation results for workflow reporting in markdown syntax
 func FormatResultToTables(
-	whitelistResults []*entity.WhitelistResult,
-	validationResults []*entity.ValidationResult,
+	results *entity.PullRequestResult,
+	now time.Time,
 ) string {
 	report := constants.ReportHeader
 
 	report = fmt.Sprintf(
 		"%s\n\n%s",
 		report,
-		formatWhitelistResultToTable(whitelistResults),
+		formatWhitelistResultToTable(
+			results.Whitelist,
+		),
 	)
 
-	if len(validationResults) > 0 {
+	if len(results.Validation) > 0 {
 		report = fmt.Sprintf(
 			"%s\n\n%s",
 			report,
-			formatValidationResultToTable(validationResults),
+			formatValidationResultToTable(
+				results.Validation,
+			),
 		)
 	}
 
-	now := time.Now()
 	report = fmt.Sprintf(
 		"%s\n\nLast Modified at %s",
 		report,
