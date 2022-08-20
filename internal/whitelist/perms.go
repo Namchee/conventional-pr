@@ -12,7 +12,7 @@ import (
 
 type permissionWhitelist struct {
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 	meta   *entity.Meta
 	Name   string
 }
@@ -20,7 +20,7 @@ type permissionWhitelist struct {
 // NewPermissionWhitelist creates a whitelist that bypasses checks on pull request submitted by user with high privileges
 func NewPermissionWhitelist(
 	client internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	meta *entity.Meta,
 ) internal.Whitelist {
 	return &permissionWhitelist{

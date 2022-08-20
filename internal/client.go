@@ -29,7 +29,7 @@ type githubClient struct {
 }
 
 // NewGithubClient creates a GitHub API client wrapper
-func NewGithubClient(config *entity.Config) GithubClient {
+func NewGithubClient(config *entity.Configuration) GithubClient {
 	ctx := context.Background()
 
 	ts := oauth2.StaticTokenSource(

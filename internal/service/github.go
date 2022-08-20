@@ -14,14 +14,14 @@ import (
 // GithubService is a service that simplifies GitHub API interaction
 type GithubService struct {
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 	meta   *entity.Meta
 }
 
 // NewGithubService creates a new GitHub service that simplify API interaction with functions which is actually needed
 func NewGithubService(
 	client internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	meta *entity.Meta,
 ) *GithubService {
 	return &GithubService{

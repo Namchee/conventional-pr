@@ -7,8 +7,8 @@ import (
 	"github.com/Namchee/conventional-pr/internal/utils"
 )
 
-// Config is a configuration object that is parsed from the action input
-type Config struct {
+// Configuration is a configuration object that is parsed from the action input
+type Configuration struct {
 	Token         string
 	Draft         bool
 	Label         string
@@ -31,7 +31,7 @@ type Config struct {
 
 // ReadConfig reads environment variables for input values which are supplied
 // from an action runner and create Conventional PR's configuration from it
-func ReadConfig() (*Config, error) {
+func ReadConfig() (*Configuration, error) {
 	token := utils.ReadEnvString("INPUT_ACCESS_TOKEN")
 
 	if token == "" {
@@ -78,7 +78,7 @@ func ReadConfig() (*Config, error) {
 
 	ignoredUsers := utils.ReadEnvStringArray("INPUT_IGNORED_USERS")
 
-	return &Config{
+	return &Configuration{
 		Token:         token,
 		Draft:         draft,
 		Close:         close,

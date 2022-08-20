@@ -10,12 +10,12 @@ import (
 
 type usernameWhitelist struct {
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 	Name   string
 }
 
 // NewUsernameWhitelist creates a whitelist that bypasses checks for certain usernames
-func NewUsernameWhitelist(client internal.GithubClient, config *entity.Config, _ *entity.Meta) internal.Whitelist {
+func NewUsernameWhitelist(client internal.GithubClient, config *entity.Configuration, _ *entity.Meta) internal.Whitelist {
 	return &usernameWhitelist{
 		client: client,
 		config: config,

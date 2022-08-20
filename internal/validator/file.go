@@ -9,14 +9,14 @@ import (
 
 type fileValidator struct {
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 	Name   string
 }
 
 // NewFileValidator creates a new validator that validates if a pull request introduces too many file changes
 func NewFileValidator(
 	client internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	_ *entity.Meta,
 ) internal.Validator {
 	return &fileValidator{

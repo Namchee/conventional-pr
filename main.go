@@ -34,7 +34,7 @@ func main() {
 
 	ctx := context.Background()
 
-	var config *entity.Config
+	var config *entity.Configuration
 	var meta *entity.Meta
 	var event *entity.Event
 	var err error

@@ -64,7 +64,7 @@ func TestBranchValidator_IsValid(t *testing.T) {
 					Ref: &tc.args.branch,
 				},
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				BranchPattern: tc.args.pattern,
 			}
 

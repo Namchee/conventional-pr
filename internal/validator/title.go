@@ -11,13 +11,13 @@ import (
 
 type titleValidator struct {
 	Name   string
-	config *entity.Config
+	config *entity.Configuration
 }
 
 // NewTitleValidator creates a new validator that validates a pull request title
 func NewTitleValidator(
 	_ internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	_ *entity.Meta,
 ) internal.Validator {
 	return &titleValidator{

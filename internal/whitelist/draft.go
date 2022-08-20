@@ -8,14 +8,14 @@ import (
 )
 
 type draftWhitelist struct {
-	config *entity.Config
+	config *entity.Configuration
 	Name   string
 }
 
 // NewDraftWhitelist creates a whitelist that bypasses draft pull request checks
 func NewDraftWhitelist(
 	_ internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	_ *entity.Meta,
 ) internal.Whitelist {
 	return &draftWhitelist{

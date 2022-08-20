@@ -18,6 +18,7 @@ func TestGithubClient_WriteReport(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
+		config  entity.Configuration
 		wantErr bool
 	}{
 		{
@@ -58,7 +59,7 @@ func TestGithubClient_WriteReport(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Config{}
+			config := &entity.Configuration{}
 			meta := &entity.Meta{}
 
 			service := NewGithubService(client, config, meta)
@@ -123,7 +124,7 @@ func TestGithubClient_WriteTemplate(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Template: tc.args.template,
 			}
 			meta := &entity.Meta{}
@@ -181,7 +182,7 @@ func TestGithubClient_AttachLabel(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Label: tc.args.label,
 			}
 			meta := &entity.Meta{}
@@ -239,7 +240,7 @@ func TestGithubClient_ClosePullRequest(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Close: tc.args.close,
 			}
 			meta := &entity.Meta{}

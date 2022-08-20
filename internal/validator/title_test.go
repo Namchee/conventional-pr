@@ -101,7 +101,7 @@ func TestTitleValidator_IsValid(t *testing.T) {
 			pull := &github.PullRequest{
 				Title: &tc.args.title,
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				TitlePattern: tc.args.pattern,
 			}
 

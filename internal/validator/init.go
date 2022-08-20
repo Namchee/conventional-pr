@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	validators = []func(internal.GithubClient, *entity.Config, *entity.Meta) internal.Validator{
+	validators = []func(internal.GithubClient, *entity.Configuration, *entity.Meta) internal.Validator{
 		NewTitleValidator,
 		NewBodyValidator,
 		NewBranchValidator,
@@ -24,7 +24,7 @@ var (
 // ValidatorGroup is a collection of validation process, integrated in one function call
 type ValidatorGroup struct {
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 	meta   *entity.Meta
 	wg     *sync.WaitGroup
 }
@@ -32,7 +32,7 @@ type ValidatorGroup struct {
 // NewValidatorGroup creates a new ValidatorGroup
 func NewValidatorGroup(
 	client internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	meta *entity.Meta,
 	wg *sync.WaitGroup,
 ) *ValidatorGroup {

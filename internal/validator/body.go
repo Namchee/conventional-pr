@@ -9,13 +9,13 @@ import (
 
 type bodyValidator struct {
 	Name   string
-	config *entity.Config
+	config *entity.Configuration
 }
 
 // NewBodyValidator creates a new validator that validates if a pull request has a non-empty body
 func NewBodyValidator(
 	_ internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	_ *entity.Meta,
 ) internal.Validator {
 	return &bodyValidator{

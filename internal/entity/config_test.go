@@ -10,7 +10,7 @@ import (
 
 func TestReadConfig(t *testing.T) {
 	type expected struct {
-		config *Config
+		config *Configuration
 		err    error
 	}
 	tests := []struct {
@@ -33,7 +33,7 @@ func TestReadConfig(t *testing.T) {
 				"INPUT_EDIT":                 "true",
 			},
 			want: expected{
-				config: &Config{
+				config: &Configuration{
 					Token:        "foo_bar",
 					Draft:        false,
 					Issue:        true,
