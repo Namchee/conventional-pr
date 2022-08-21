@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/Namchee/conventional-pr/internal"
@@ -104,8 +103,6 @@ func (s *GithubService) editComment(
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("here")
 
 	user, err := s.client.GetUser(ctx, "")
 	if err != nil {
