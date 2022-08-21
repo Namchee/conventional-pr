@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Namchee/conventional-pr/internal"
@@ -45,11 +47,22 @@ func (s *GithubService) WriteReport(
 	)
 
 	if s.config.Edit {
-		return s.editComment(
+		err := s.editComment(
 			ctx,
 			pullRequest.GetNumber(),
 			report,
 		)
+
+		if err != nil &&
+			errors.Is(err, constants.ErrFirstComment) {
+			return s.createComment(
+				ctx,
+				pullRequest.GetNumber(),
+				report,
+			)
+		}
+
+		return err
 	}
 
 	return s.createComment(
@@ -91,6 +104,8 @@ func (s *GithubService) editComment(
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("here")
 
 	user, err := s.client.GetUser(ctx, "")
 	if err != nil {

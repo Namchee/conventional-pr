@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -11,41 +12,121 @@ import (
 
 func TestGithubClient_WriteReport(t *testing.T) {
 	type args struct {
-		number     int
-		whitelist  []*entity.WhitelistResult
-		validation []*entity.ValidationResult
+		number  int
+		results *entity.PullRequestResult
 	}
 	tests := []struct {
 		name    string
 		args    args
-		config  entity.Configuration
+		config  *entity.Configuration
 		wantErr bool
 	}{
 		{
-			name: "should return error",
+			name: "new comment - should return error",
 			args: args{
 				number: 1,
-				whitelist: []*entity.WhitelistResult{
-					{
-						Name:   "foo",
-						Result: true,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
 					},
+					Validation: []*entity.ValidationResult{},
 				},
-				validation: []*entity.ValidationResult{},
 			},
 			wantErr: true,
 		},
 		{
-			name: "should not return error",
+			name: "new comment - should not return error",
 			args: args{
 				number: 123,
-				whitelist: []*entity.WhitelistResult{
-					{
-						Name:   "foo",
-						Result: true,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
 					},
+					Validation: []*entity.ValidationResult{},
 				},
-				validation: []*entity.ValidationResult{},
+			},
+			config:  &entity.Configuration{},
+			wantErr: false,
+		},
+		{
+			name: "edit - error cannot get comments",
+			args: args{
+				number: 1,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config: &entity.Configuration{
+				Edit: true,
+			},
+			wantErr: true,
+		},
+		{
+			name: "edit - cannot find comment",
+			args: args{
+				number: 2,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config: &entity.Configuration{
+				Edit: true,
+			},
+			wantErr: true,
+		},
+		{
+			name: "edit - cannot find comment",
+			args: args{
+				number: 2,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config: &entity.Configuration{
+				Edit: true,
+			},
+			wantErr: true,
+		},
+		{
+			name: "edit - success",
+			args: args{
+				number: 123,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config: &entity.Configuration{
+				Edit: true,
 			},
 			wantErr: false,
 		},
@@ -64,16 +145,13 @@ func TestGithubClient_WriteReport(t *testing.T) {
 
 			service := NewGithubService(client, config, meta)
 
-			results := &entity.PullRequestResult{
-				Whitelist:  tc.args.whitelist,
-				Validation: tc.args.validation,
-			}
-
 			got := service.WriteReport(
 				pullRequest,
-				results,
+				tc.args.results,
 				mocks.ClockMock{}.Now(),
 			)
+
+			fmt.Println(got)
 
 			assert.Equal(t, tc.wantErr, got != nil)
 		})

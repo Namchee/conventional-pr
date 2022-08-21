@@ -26,14 +26,14 @@ func (m *githubClientMock) GetPullRequest(
 }
 
 func (m *githubClientMock) GetUser(_ context.Context, name string) (*github.User, error) {
-	bot := constants.BotUser
-	user := "user"
-
 	if name == "foo" {
-		return &github.User{Type: &bot}, nil
+		return &github.User{Type: github.String(constants.BotUser)}, nil
 	}
 
-	return &github.User{Type: &user}, nil
+	return &github.User{
+		Type: github.String(constants.NormalUser),
+		ID:   github.Int64(123),
+	}, nil
 }
 
 func (m *githubClientMock) GetComments(_ context.Context, _ string, _ string, number int) ([]*github.IssueComment, error) {
@@ -41,10 +41,17 @@ func (m *githubClientMock) GetComments(_ context.Context, _ string, _ string, nu
 		return nil, errors.New("error")
 	}
 
+	if number == 2 {
+		return []*github.IssueComment{}, nil
+	}
+
 	return []*github.IssueComment{
 		{
-			ID:   github.Int64(2),
+			ID:   github.Int64(3),
 			Body: github.String("foo bar"),
+			User: &github.User{
+				ID: github.Int64(123),
+			},
 		},
 	}, nil
 }
