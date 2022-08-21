@@ -2,6 +2,7 @@ package whitelist
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/Namchee/conventional-pr/internal"
@@ -38,10 +39,12 @@ func (w *botWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.Wh
 		}
 	}
 
-	user, _ := w.client.GetUser(
+	user, err := w.client.GetUser(
 		context.Background(),
 		pullRequest.GetUser().GetLogin(),
 	)
+
+	fmt.Println(err)
 
 	result := strings.ToLower(user.GetType()) == constants.BotUser &&
 		w.config.Bot
