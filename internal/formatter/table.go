@@ -132,7 +132,7 @@ func FormatResultToTables(
 	}
 
 	report = fmt.Sprintf(
-		"%s\n\nLast Modified at %s",
+		"%s\n\n<sub>Last Modified at %s</sub>",
 		report,
 		now.Format(time.RFC822),
 	)

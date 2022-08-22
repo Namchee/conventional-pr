@@ -46,7 +46,7 @@ func TestFormatResultToTable(t *testing.T) {
 
 Pull request matches with one (or more) enabled whitelist criteria. Pull request validation is skipped.
 
-Last Modified at 01 Jan 70 01:02 UTC`,
+<sub>Last Modified at 01 Jan 70 01:02 UTC</sub>`,
 		},
 		{
 			name: "formats valid pull request correctly",
@@ -90,7 +90,7 @@ Pull request does not satisfy any enabled whitelist criteria. Pull request will 
 
 Pull request satisfies all enabled pull request rules.
 
-Last Modified at 01 Jan 70 01:02 UTC`,
+<sub>Last Modified at 01 Jan 70 01:02 UTC</sub>`,
 		},
 		{
 			name: "format invalid pull request correctly",
@@ -138,7 +138,7 @@ Pull request is invalid.
 
 - Testing
 
-Last Modified at 01 Jan 70 01:02 UTC`,
+<sub>Last Modified at 01 Jan 70 01:02 UTC</sub>`,
 		},
 		{
 			name: "able to format inactive whitelist and validator",
@@ -198,7 +198,7 @@ Pull request is invalid.
 
 - Testing
 
-Last Modified at 01 Jan 70 01:02 UTC`,
+<sub>Last Modified at 01 Jan 70 01:02 UTC</sub>`,
 		},
 	}
 
