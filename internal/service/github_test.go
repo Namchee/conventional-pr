@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -38,7 +37,7 @@ func TestGithubClient_WriteReport(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "new comment - should not return error",
+			name: "new comment - success",
 			args: args{
 				number: 123,
 				results: &entity.PullRequestResult{
@@ -93,25 +92,6 @@ func TestGithubClient_WriteReport(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "edit - cannot find comment",
-			args: args{
-				number: 2,
-				results: &entity.PullRequestResult{
-					Whitelist: []*entity.WhitelistResult{
-						{
-							Name:   "foo",
-							Result: true,
-						},
-					},
-					Validation: []*entity.ValidationResult{},
-				},
-			},
-			config: &entity.Configuration{
-				Edit: true,
-			},
-			wantErr: true,
-		},
-		{
 			name: "edit - success",
 			args: args{
 				number: 123,
@@ -128,7 +108,7 @@ func TestGithubClient_WriteReport(t *testing.T) {
 			config: &entity.Configuration{
 				Edit: true,
 			},
-			wantErr: false,
+			wantErr: true,
 		},
 	}
 
@@ -140,18 +120,15 @@ func TestGithubClient_WriteReport(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Configuration{}
 			meta := &entity.Meta{}
 
-			service := NewGithubService(client, config, meta)
+			service := NewGithubService(client, tc.config, meta)
 
 			got := service.WriteReport(
 				pullRequest,
 				tc.args.results,
 				mocks.ClockMock{}.Now(),
 			)
-
-			fmt.Println(got)
 
 			assert.Equal(t, tc.wantErr, got != nil)
 		})
