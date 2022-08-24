@@ -118,7 +118,7 @@ Ideally, Conventional PR workflow should only triggered when an event related to
 ## Caveats
 
 - If the issues are linked manually and are not mentioned in the pull request body, the pull request is still considered to be invalid. Currently, there is no way to avoid this issue.
-- `edit` feature cannot be used with `github-actions` credentials as it [doesn't have the `user` scope](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token). If you want to use the `edit` feature, please generate a [personal access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) instead with `read:user` scope.
+- `edit` feature cannot be used with `github-actions` credentials as it [doesn't have the `user` scope](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token). If you want to use the `edit` feature, please generate a [personal access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) instead with `read:user` scope. `edit` **cannot** be combined with `report`.
 
 ## Forked Repository
 
