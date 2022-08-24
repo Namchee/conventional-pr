@@ -66,7 +66,7 @@ func TestUsernameWhitelist_IsWhitelisted(t *testing.T) {
 			pull := &github.PullRequest{
 				User: user,
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				IgnoredUsers: tc.args.config,
 			}
 			client := mocks.NewGithubClientMock()

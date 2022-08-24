@@ -2,7 +2,8 @@ package constants
 
 // User types
 const (
-	BotUser = "bot"
+	BotUser    = "bot"
+	NormalUser = "user"
 )
 
 // Permission levels

@@ -74,7 +74,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			pull := &github.PullRequest{
 				Draft: &tc.args.draft,
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Draft: tc.args.config,
 			}
 

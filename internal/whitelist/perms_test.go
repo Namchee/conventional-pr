@@ -78,7 +78,7 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 			pull := &github.PullRequest{
 				User: user,
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Strict: tc.args.config,
 			}
 			meta := &entity.Meta{}

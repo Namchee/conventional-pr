@@ -13,7 +13,7 @@ import (
 
 type issueValidator struct {
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 	meta   *entity.Meta
 	Name   string
 }
@@ -21,7 +21,7 @@ type issueValidator struct {
 // NewIssueValidator creates a new validator that validates issue resolution
 func NewIssueValidator(
 	client internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	meta *entity.Meta,
 ) internal.Validator {
 	return &issueValidator{

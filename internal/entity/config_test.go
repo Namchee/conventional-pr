@@ -10,7 +10,7 @@ import (
 
 func TestReadConfig(t *testing.T) {
 	type expected struct {
-		config *Config
+		config *Configuration
 		err    error
 	}
 	tests := []struct {
@@ -30,9 +30,10 @@ func TestReadConfig(t *testing.T) {
 				"INPUT_VERIFIED_COMMITS":     "true",
 				"INPUT_IGNORED_USERS":        "Namchee, snyk-bot",
 				"INPUT_REPORT":               "false",
+				"INPUT_EDIT":                 "true",
 			},
 			want: expected{
-				config: &Config{
+				config: &Configuration{
 					Token:        "foo_bar",
 					Draft:        false,
 					Issue:        true,
@@ -41,6 +42,7 @@ func TestReadConfig(t *testing.T) {
 					Verified:     true,
 					IgnoredUsers: []string{"Namchee", "snyk-bot"},
 					Report:       false,
+					Edit:         true,
 				},
 				err: nil,
 			},

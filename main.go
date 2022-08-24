@@ -34,7 +34,7 @@ func main() {
 
 	ctx := context.Background()
 
-	var config *entity.Config
+	var config *entity.Configuration
 	var meta *entity.Meta
 	var event *entity.Event
 	var err error
@@ -95,8 +95,13 @@ func main() {
 
 	infoLogger.Println("Writing run report")
 
+	results := &entity.PullRequestResult{
+		Whitelist:  wgResult,
+		Validation: vgResult,
+	}
+
 	if config.Report {
-		err = svc.WriteReport(pullRequest, wgResult, vgResult)
+		err = svc.WriteReport(pullRequest, results, time.Now())
 	} else {
 		formatter.FormatResultToConsole(wgResult, vgResult, infoLogger)
 	}

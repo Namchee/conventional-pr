@@ -12,13 +12,13 @@ import (
 type branchValidator struct {
 	Name   string
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 }
 
 // NewBranchValidator creates a validator that validates pull request branch name
 func NewBranchValidator(
 	client internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	_ *entity.Meta,
 ) internal.Validator {
 	return &branchValidator{

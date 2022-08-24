@@ -44,7 +44,7 @@ jobs:
 
 Please refer to [GitHub workflow syntax](https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#about-yaml-syntax-for-workflows) for more advanced usage.
 
-> Access token is **required**. Please generate one or use `${{ secrets.GITHUB_TOKEN }}` as your access token and the `github-actions` bot will run the job for you.
+> Access token is **required**. Please generate one or use `${{ secrets.GITHUB_TOKEN }}` as your access token and the `github-actions` bot will run the job for you. Do note that the `github-actions` bot has [more limited functionalities](#caveats)
 
 ## Whitelist
 
@@ -98,6 +98,7 @@ You can customize this actions with these following options (fill it on `with` s
 | `verified_commits` | `false` | `false` | Require all commits on the pull request to be [signed commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) |
 | `ignored_users` | `false` | `''` | GitHub usernames to be whitelisted from pull request validation. Must be a comma-separated string. Example: `Namchee, foo, bar` will bypass pull request validation for users `Namchee`, `foo`, `bar`. Case-sensitive.
 | `report` | `false` | `true` | Determines whether pull request validation report should be written as a pull request comment.
+| `edit` | `false` | `false` | Allow `conventional-pr` to update previous pull request validation report whenever a new validation is executed instead of creating a new pull request comment.
 
 ## Supported Events
 
@@ -117,6 +118,7 @@ Ideally, Conventional PR workflow should only triggered when an event related to
 ## Caveats
 
 - If the issues are linked manually and are not mentioned in the pull request body, the pull request is still considered to be invalid. Currently, there is no way to avoid this issue.
+- `edit` feature cannot be used with `github-actions` credentials as it [doesn't have the `user` scope](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token). If you want to use the `edit` feature, please generate a [personal access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) instead with `read:user` scope. `edit` **cannot** be combined with `report`.
 
 ## Forked Repository
 

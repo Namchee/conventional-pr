@@ -19,7 +19,7 @@ func TestValidatorGroup(t *testing.T) {
 		Number: &prNum,
 	}
 
-	config := &entity.Config{}
+	config := &entity.Configuration{}
 	meta := &entity.Meta{}
 
 	wg := sync.WaitGroup{}

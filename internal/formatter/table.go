@@ -3,6 +3,7 @@ package formatter
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -107,16 +108,34 @@ func formatValidationResultToTable(
 
 // FormatResultToTables formats both whitelist and validation results for workflow reporting in markdown syntax
 func FormatResultToTables(
-	whitelistResults []*entity.WhitelistResult,
-	validationResults []*entity.ValidationResult,
+	results *entity.PullRequestResult,
+	now time.Time,
 ) string {
 	report := constants.ReportHeader
 
-	report = fmt.Sprintf("%s\n\n%s", report, formatWhitelistResultToTable(whitelistResults))
+	report = fmt.Sprintf(
+		"%s\n\n%s",
+		report,
+		formatWhitelistResultToTable(
+			results.Whitelist,
+		),
+	)
 
-	if len(validationResults) > 0 {
-		report = fmt.Sprintf("%s\n\n%s", report, formatValidationResultToTable(validationResults))
+	if len(results.Validation) > 0 {
+		report = fmt.Sprintf(
+			"%s\n\n%s",
+			report,
+			formatValidationResultToTable(
+				results.Validation,
+			),
+		)
 	}
+
+	report = fmt.Sprintf(
+		"%s\n\n<sub>Last Modified at %s</sub>",
+		report,
+		now.Format(time.RFC822),
+	)
 
 	return report
 }

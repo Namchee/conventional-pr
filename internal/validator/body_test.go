@@ -63,7 +63,7 @@ func TestBodyValidator_IsValid(t *testing.T) {
 				Body: &tc.args.body,
 			}
 
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Body: tc.args.config,
 			}
 

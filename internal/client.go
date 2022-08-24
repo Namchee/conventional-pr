@@ -15,9 +15,11 @@ type GithubClient interface {
 	GetPullRequest(context.Context, string, string, int) (*github.PullRequest, error)
 	GetUser(context.Context, string) (*github.User, error)
 	GetIssue(context.Context, string, string, int) (*github.Issue, error)
+	GetComments(context.Context, string, string, int) ([]*github.IssueComment, error)
 	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)
 	GetCommits(context.Context, string, string, int) ([]*github.RepositoryCommit, error)
-	Comment(context.Context, string, string, int, *github.IssueComment) error
+	CreateComment(context.Context, string, string, int, *github.IssueComment) error
+	EditComment(context.Context, string, string, int64, *github.IssueComment) error
 	Label(context.Context, string, string, int, string) error
 	Close(context.Context, string, string, int) error
 }
@@ -27,15 +29,17 @@ type githubClient struct {
 }
 
 // NewGithubClient creates a GitHub API client wrapper
-func NewGithubClient(config *entity.Config) GithubClient {
+func NewGithubClient(config *entity.Configuration) GithubClient {
 	ctx := context.Background()
 
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: config.Token},
 	)
 
-	tc := oauth2.NewClient(ctx, ts)
-	return &githubClient{client: github.NewClient(tc)}
+	oauth := oauth2.NewClient(ctx, ts)
+	github := github.NewClient(oauth)
+
+	return &githubClient{client: github}
 }
 
 func (cl *githubClient) GetPullRequest(
@@ -77,6 +81,23 @@ func (cl *githubClient) GetPermissionLevel(
 	return perms, err
 }
 
+func (cl *githubClient) GetComments(
+	ctx context.Context,
+	owner string,
+	name string,
+	number int,
+) ([]*github.IssueComment, error) {
+	comments, _, err := cl.client.Issues.ListComments(
+		ctx,
+		owner,
+		name,
+		number,
+		&github.IssueListCommentsOptions{},
+	)
+
+	return comments, err
+}
+
 func (cl *githubClient) GetCommits(
 	ctx context.Context,
 	owner string,
@@ -88,7 +109,25 @@ func (cl *githubClient) GetCommits(
 	return commits, err
 }
 
-func (cl *githubClient) Comment(
+func (cl *githubClient) EditComment(
+	ctx context.Context,
+	owner string,
+	name string,
+	id int64,
+	comment *github.IssueComment,
+) error {
+	_, _, err := cl.client.Issues.EditComment(
+		ctx,
+		owner,
+		name,
+		id,
+		comment,
+	)
+
+	return err
+}
+
+func (cl *githubClient) CreateComment(
 	ctx context.Context,
 	owner string,
 	name string,

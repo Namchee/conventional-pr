@@ -13,3 +13,9 @@ type WhitelistResult struct {
 	Active bool
 	Result bool
 }
+
+// PullRequestResult is intermediary type to combine validation and whitelist results
+type PullRequestResult struct {
+	Validation []*ValidationResult
+	Whitelist  []*WhitelistResult
+}

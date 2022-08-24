@@ -62,7 +62,7 @@ func TestFileValidator_IsValid(t *testing.T) {
 			pull := &github.PullRequest{
 				ChangedFiles: &tc.args.changes,
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				FileChanges: tc.args.config,
 			}
 

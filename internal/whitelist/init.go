@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	whitelists = []func(internal.GithubClient, *entity.Config, *entity.Meta) internal.Whitelist{
+	whitelists = []func(internal.GithubClient, *entity.Configuration, *entity.Meta) internal.Whitelist{
 		NewBotWhitelist,
 		NewDraftWhitelist,
 		NewPermissionWhitelist,
@@ -21,7 +21,7 @@ var (
 // WhitelistGroup is a collection of whitelisting process, integrated in one single function call
 type WhitelistGroup struct {
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 	meta   *entity.Meta
 	wg     *sync.WaitGroup
 }
@@ -29,7 +29,7 @@ type WhitelistGroup struct {
 // NewWhitelistGroup creates a new WhitelistGroup
 func NewWhitelistGroup(
 	client internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	meta *entity.Meta,
 	wg *sync.WaitGroup,
 ) *WhitelistGroup {

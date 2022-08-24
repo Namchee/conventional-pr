@@ -25,15 +25,35 @@ func (m *githubClientMock) GetPullRequest(
 	return nil, errors.New("not found")
 }
 
-func (m *githubClientMock) GetUser(_ context.Context, name string) (*github.User, error) {
-	bot := constants.BotUser
-	user := "user"
-
+func (m *githubClientMock) GetUser(ctx context.Context, name string) (*github.User, error) {
 	if name == "foo" {
-		return &github.User{Type: &bot}, nil
+		return &github.User{Type: github.String(constants.BotUser)}, nil
 	}
 
-	return &github.User{Type: &user}, nil
+	return &github.User{
+		Type: github.String(constants.NormalUser),
+		ID:   github.Int64(123),
+	}, nil
+}
+
+func (m *githubClientMock) GetComments(_ context.Context, _ string, _ string, number int) ([]*github.IssueComment, error) {
+	if number == 1 {
+		return nil, errors.New("error")
+	}
+
+	if number == 2 {
+		return []*github.IssueComment{}, nil
+	}
+
+	return []*github.IssueComment{
+		{
+			ID:   github.Int64(3),
+			Body: github.String("foo bar"),
+			User: &github.User{
+				ID: github.Int64(123),
+			},
+		},
+	}, nil
 }
 
 func (m *githubClientMock) GetIssue(
@@ -111,7 +131,7 @@ func (m *githubClientMock) GetCommits(
 	return []*github.RepositoryCommit{}, nil
 }
 
-func (m *githubClientMock) Comment(
+func (m *githubClientMock) CreateComment(
 	_ context.Context,
 	_ string,
 	_ string,
@@ -119,6 +139,20 @@ func (m *githubClientMock) Comment(
 	_ *github.IssueComment,
 ) error {
 	if event == 123 {
+		return nil
+	}
+
+	return errors.New("Error")
+}
+
+func (m *githubClientMock) EditComment(
+	_ context.Context,
+	_ string,
+	_ string,
+	id int64,
+	_ *github.IssueComment,
+) error {
+	if id == 123 {
 		return nil
 	}
 

@@ -65,6 +65,10 @@ inputs:
     description: "Determines whether pull request report should be written as a pull request comment"
     required: false
     default: true
+  edit:
+    description: "Determines if subsequent report should be made in the existing comment or not"
+    required: false
+    default: false
 runs:
   using: docker
   image: "Dockerfile"

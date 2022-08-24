@@ -77,7 +77,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			pull := &github.PullRequest{
 				Number: &tc.args.number,
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				CommitPattern: tc.args.pattern,
 			}
 

@@ -78,7 +78,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			pull := &github.PullRequest{
 				User: user,
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Bot: tc.args.config,
 			}
 			client := mocks.NewGithubClientMock()

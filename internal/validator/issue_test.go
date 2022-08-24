@@ -76,7 +76,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			}
 
 			client := mocks.NewGithubClientMock()
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Issue: tc.args.config,
 			}
 

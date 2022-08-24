@@ -76,7 +76,7 @@ func TestVerifiedValidator_IsValid(t *testing.T) {
 			pull := &github.PullRequest{
 				Number: &tc.args.number,
 			}
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Verified: tc.args.verified,
 			}
 

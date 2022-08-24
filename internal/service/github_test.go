@@ -11,42 +11,105 @@ import (
 
 func TestGithubClient_WriteReport(t *testing.T) {
 	type args struct {
-		number     int
-		whitelist  []*entity.WhitelistResult
-		validation []*entity.ValidationResult
+		number  int
+		results *entity.PullRequestResult
 	}
 	tests := []struct {
 		name    string
 		args    args
+		config  *entity.Configuration
 		wantErr bool
 	}{
 		{
-			name: "should return error",
+			name: "new comment - should return error",
 			args: args{
 				number: 1,
-				whitelist: []*entity.WhitelistResult{
-					{
-						Name:   "foo",
-						Result: true,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
 					},
+					Validation: []*entity.ValidationResult{},
 				},
-				validation: []*entity.ValidationResult{},
+			},
+			config:  &entity.Configuration{},
+			wantErr: true,
+		},
+		{
+			name: "new comment - success",
+			args: args{
+				number: 123,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config:  &entity.Configuration{},
+			wantErr: false,
+		},
+		{
+			name: "edit - error cannot get comments",
+			args: args{
+				number: 1,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config: &entity.Configuration{
+				Edit: true,
 			},
 			wantErr: true,
 		},
 		{
-			name: "should not return error",
+			name: "edit - cannot find comment",
+			args: args{
+				number: 2,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config: &entity.Configuration{
+				Edit: true,
+			},
+			wantErr: true,
+		},
+		{
+			name: "edit - success",
 			args: args{
 				number: 123,
-				whitelist: []*entity.WhitelistResult{
-					{
-						Name:   "foo",
-						Result: true,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
 					},
+					Validation: []*entity.ValidationResult{},
 				},
-				validation: []*entity.ValidationResult{},
 			},
-			wantErr: false,
+			config: &entity.Configuration{
+				Edit: true,
+			},
+			wantErr: true,
 		},
 	}
 
@@ -58,12 +121,15 @@ func TestGithubClient_WriteReport(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Config{}
 			meta := &entity.Meta{}
 
-			service := NewGithubService(client, config, meta)
+			service := NewGithubService(client, tc.config, meta)
 
-			got := service.WriteReport(pullRequest, tc.args.whitelist, tc.args.validation)
+			got := service.WriteReport(
+				pullRequest,
+				tc.args.results,
+				mocks.ClockMock{}.Now(),
+			)
 
 			assert.Equal(t, tc.wantErr, got != nil)
 		})
@@ -114,7 +180,7 @@ func TestGithubClient_WriteTemplate(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Template: tc.args.template,
 			}
 			meta := &entity.Meta{}
@@ -172,7 +238,7 @@ func TestGithubClient_AttachLabel(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Label: tc.args.label,
 			}
 			meta := &entity.Meta{}
@@ -230,7 +296,7 @@ func TestGithubClient_ClosePullRequest(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			config := &entity.Config{
+			config := &entity.Configuration{
 				Close: tc.args.close,
 			}
 			meta := &entity.Meta{}

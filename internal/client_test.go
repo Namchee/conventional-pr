@@ -9,7 +9,7 @@ import (
 
 func TestNewGithubClient(t *testing.T) {
 	assert.NotPanics(t, func() {
-		config := &entity.Config{
+		config := &entity.Configuration{
 			Token: "abcde",
 		}
 

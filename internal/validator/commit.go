@@ -13,7 +13,7 @@ import (
 
 type commitValidator struct {
 	client internal.GithubClient
-	config *entity.Config
+	config *entity.Configuration
 	meta   *entity.Meta
 	Name   string
 }
@@ -21,7 +21,7 @@ type commitValidator struct {
 // NewCommitValidator creates a new validator that will validate all commit messages in a pull request
 func NewCommitValidator(
 	client internal.GithubClient,
-	config *entity.Config,
+	config *entity.Configuration,
 	meta *entity.Meta,
 ) internal.Validator {
 	return &commitValidator{
