@@ -3,7 +3,7 @@ codecov:
 
 coverage:
   precision: 2
-  round: up
+  round: nearest
   range: "60...80"
 
 parsers:
@@ -18,3 +18,7 @@ comment:
   layout: "reach,diff,flags,files,footer"
   behavior: default
   require_changes: no
+
+ignore:
+  - internal/client.go
+  - internal/mocks/*.go

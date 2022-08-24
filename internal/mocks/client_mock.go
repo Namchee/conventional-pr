@@ -25,7 +25,7 @@ func (m *githubClientMock) GetPullRequest(
 	return nil, errors.New("not found")
 }
 
-func (m *githubClientMock) GetUser(_ context.Context, name string) (*github.User, error) {
+func (m *githubClientMock) GetUser(ctx context.Context, name string) (*github.User, error) {
 	if name == "foo" {
 		return &github.User{Type: github.String(constants.BotUser)}, nil
 	}
