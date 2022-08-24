@@ -34,6 +34,7 @@ func TestGithubClient_WriteReport(t *testing.T) {
 					Validation: []*entity.ValidationResult{},
 				},
 			},
+			config:  &entity.Configuration{},
 			wantErr: true,
 		},
 		{
