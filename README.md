@@ -1,7 +1,7 @@
 # Conventional PR
 
 [![Go Version Badge](https://img.shields.io/github/go-mod/go-version/namchee/conventional-pr)](https://github.com/Namchee/conventional-pr) [![Go Report Card](https://goreportcard.com/badge/github.com/Namchee/conventional-pr)](https://goreportcard.com/report/github.com/Namchee/conventional-pr) [![codecov](https://codecov.io/gh/Namchee/conventional-pr/branch/master/graph/badge.svg)](https://codecov.io/gh/Namchee/conventional-pr) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-blue.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END --> 
 
 Conventional PR is a GitHub Action that validates all pull requests sent to a GitHub-hosted repository.
@@ -154,6 +154,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/Namchee"><img src="https://avatars.githubusercontent.com/u/32661241?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cristopher</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/commits?author=Namchee" title="Code">💻</a> <a href="https://github.com/Namchee/conventional-pr/issues?q=author%3ANamchee" title="Bug reports">🐛</a> <a href="https://github.com/Namchee/conventional-pr/commits?author=Namchee" title="Documentation">📖</a> <a href="#example-Namchee" title="Examples">💡</a> <a href="#ideas-Namchee" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/smutel"><img src="https://avatars.githubusercontent.com/u/12967891?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Samuel Mutel</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/issues?q=author%3Asmutel" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/BinToss"><img src="https://avatars.githubusercontent.com/u/7243190?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Noah Sherwin</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/issues?q=author%3ABinToss" title="Bug reports">🐛</a> <a href="#ideas-BinToss" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/avorima"><img src="https://avatars.githubusercontent.com/u/15158349?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mario Valderrama</b></sub></a><br /><a href="#ideas-avorima" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
