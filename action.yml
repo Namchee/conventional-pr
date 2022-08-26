@@ -3,30 +3,30 @@ description: "Validates and enforces clean pull request style in your GitHub pro
 author: "Cristopher Namchee"
 inputs:
   access_token:
-    description: "GitHub account access token"
+    description: "GitHub access token"
     required: true
   close:
-    description: "Determine whether checks should close invalid pull requests"
+    description: "Immediately close invalid pull request"
     required: false
     default: true
   label:
     description: "Invalid pull requests label"
     required: false
     default: ""
-  template:
-    description: "Comment template on invalid pull requests"
+  message:
+    description: "Extra message to be posted on validation failure"
     required: false
     default: ""
   draft:
-    description: "Determine whether checks should be skipped pull request is a draft"
+    description: "Skip pull request validation if the pull request is a draft"
     required: false
     default: true
   strict:
-    description: "Determine whether checks should also apply to repository administrators"
+    description: "Enforce validation rules to repository administrators"
     required: false
     default: true
   bot:
-    description: "Determine whether checks should be skipped if the author is a bot"
+    description: "Skip pull request validation if the author is a bot"
     required: false
     default: true
   title_pattern:
@@ -42,31 +42,31 @@ inputs:
     required: false
     default: ""
   issue:
-    description: "Determine whether a valid pull request should always refer to an issue"
+    description: "Require all pull request to reference an existing issue"
     required: false
     default: true
   body:
-    description: "Determine whether a valid pull request should have a non-empty body"
+    description: "Require all pull request to have a non-empty body"
     required: false
     default: true
-  maximum_file_changes:
-    description: "Limits how many files should be changes per pull request"
+  maximum_changes:
+    description: "Limits file changes per pull request"
     required: false
     default: 0
   verified_commits:
-    description: "Require all commits to be verified or signed with GPG keys"
+    description: "Require all commits to be signed"
     required: false
     default: false
   ignored_users:
     description: "GitHub usernames to be whitelisted from pull request validation"
     required: false
     default: ""
-  report:
-    description: "Determines whether pull request report should be written as a pull request comment"
-    required: false
-    default: true
   edit:
-    description: "Determines if subsequent report should be made in the existing comment or not"
+    description: "Edit existing validation report instead of creating a new comment"
+    required: false
+    default: false
+  verbose:
+    describe: "Post validation report on every pull request validation flow"
     required: false
     default: false
 runs:
