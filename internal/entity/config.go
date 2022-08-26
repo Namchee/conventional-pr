@@ -14,17 +14,16 @@ type Configuration struct {
 	Label         string
 	Strict        bool
 	Close         bool
-	Assign        bool
 	TitlePattern  string
 	CommitPattern string
 	BranchPattern string
-	Template      string
+	Message       string
 	FileChanges   int
 	Issue         bool
 	Body          bool
 	Bot           bool
-	Verified      bool
-	Report        bool
+	Signed        bool
+	Verbose       bool
 	Edit          bool
 	IgnoredUsers  []string
 }
@@ -41,16 +40,15 @@ func ReadConfig() (*Configuration, error) {
 	draft := utils.ReadEnvBool("INPUT_DRAFT")
 	close := utils.ReadEnvBool("INPUT_CLOSE")
 	strict := utils.ReadEnvBool("INPUT_STRICT")
-	assign := utils.ReadEnvBool("INPUT_ASSIGNEE")
 	issue := utils.ReadEnvBool("INPUT_ISSUE")
 	body := utils.ReadEnvBool("INPUT_BODY")
 	bot := utils.ReadEnvBool("INPUT_BOT")
-	verified := utils.ReadEnvBool("INPUT_VERIFIED_COMMITS")
-	report := utils.ReadEnvBool("INPUT_REPORT")
+	signed := utils.ReadEnvBool("INPUT_SIGNED")
 	edit := utils.ReadEnvBool("INPUT_EDIT")
+	verbose := utils.ReadEnvBool("INPUT_VERBOSE")
 
 	label := utils.ReadEnvString("INPUT_LABEL")
-	template := utils.ReadEnvString("INPUT_TEMPLATE")
+	message := utils.ReadEnvString("INPUT_MESSAGE")
 
 	titlePattern := utils.ReadEnvString("INPUT_TITLE_PATTERN")
 
@@ -70,7 +68,7 @@ func ReadConfig() (*Configuration, error) {
 		return nil, constants.ErrInvalidBranchPattern
 	}
 
-	fileChanges := utils.ReadEnvInt("INPUT_MAXIMUM_FILE_CHANGES")
+	fileChanges := utils.ReadEnvInt("INPUT_MAXIMUM_CHANGES")
 
 	if fileChanges < 0 {
 		return nil, constants.ErrNegativeFileChange
@@ -84,7 +82,6 @@ func ReadConfig() (*Configuration, error) {
 		Close:         close,
 		Edit:          edit,
 		Strict:        strict,
-		Assign:        assign,
 		Issue:         issue,
 		TitlePattern:  titlePattern,
 		CommitPattern: commitPattern,
@@ -92,10 +89,10 @@ func ReadConfig() (*Configuration, error) {
 		Bot:           bot,
 		Label:         label,
 		Body:          body,
-		Template:      template,
+		Message:       message,
 		FileChanges:   fileChanges,
-		Verified:      verified,
+		Signed:        signed,
 		IgnoredUsers:  ignoredUsers,
-		Report:        report,
+		Verbose:       verbose,
 	}, nil
 }

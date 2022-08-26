@@ -181,13 +181,13 @@ func TestGithubClient_WriteTemplate(t *testing.T) {
 			client := mocks.NewGithubClientMock()
 
 			config := &entity.Configuration{
-				Template: tc.args.template,
+				Message: tc.args.template,
 			}
 			meta := &entity.Meta{}
 
 			service := NewGithubService(client, config, meta)
 
-			got := service.WriteTemplate(pullRequest)
+			got := service.WriteMessage(pullRequest)
 
 			assert.Equal(t, tc.wantErr, got != nil)
 		})

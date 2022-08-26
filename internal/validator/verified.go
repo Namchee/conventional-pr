@@ -34,7 +34,7 @@ func NewVerifiedValidator(
 func (v *verifiedValidator) IsValid(
 	pullRequest *github.PullRequest,
 ) *entity.ValidationResult {
-	if !v.config.Verified {
+	if !v.config.Signed {
 		return &entity.ValidationResult{
 			Name:   v.Name,
 			Active: false,

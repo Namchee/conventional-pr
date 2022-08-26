@@ -131,11 +131,11 @@ func (s *GithubService) editComment(
 	)
 }
 
-// WriteTemplate creates a new comment that contains user-desired message
-func (s *GithubService) WriteTemplate(
+// WriteMessage creates a new comment that contains user-desired message
+func (s *GithubService) WriteMessage(
 	pullRequest *github.PullRequest,
 ) error {
-	if s.config.Template == "" {
+	if s.config.Message == "" {
 		return nil
 	}
 
@@ -147,7 +147,7 @@ func (s *GithubService) WriteTemplate(
 		s.meta.Name,
 		pullRequest.GetNumber(),
 		&github.IssueComment{
-			Body: &s.config.Template,
+			Body: &s.config.Message,
 		},
 	)
 }

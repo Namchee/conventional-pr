@@ -53,7 +53,7 @@ inputs:
     description: "Limits file changes per pull request"
     required: false
     default: 0
-  verified_commits:
+  signed:
     description: "Require all commits to be signed"
     required: false
     default: false

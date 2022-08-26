@@ -2,108 +2,97 @@ package entity
 
 import (
 	"os"
-	"reflect"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReadConfig(t *testing.T) {
-	type expected struct {
-		config *Configuration
-		err    error
-	}
 	tests := []struct {
 		name    string
 		mocks   map[string]string
-		want    expected
-		wantErr bool
+		want    *Configuration
+		wantErr error
 	}{
 		{
 			name: "should read config correctly",
 			mocks: map[string]string{
-				"INPUT_ACCESS_TOKEN":         "foo_bar",
-				"INPUT_DRAFT":                "false",
-				"INPUT_ISSUE":                "true",
-				"INPUT_BOT":                  "false",
-				"INPUT_MAXIMUM_FILE_CHANGES": "11",
-				"INPUT_VERIFIED_COMMITS":     "true",
-				"INPUT_IGNORED_USERS":        "Namchee, snyk-bot",
-				"INPUT_REPORT":               "false",
-				"INPUT_EDIT":                 "true",
+				"INPUT_ACCESS_TOKEN":    "foo_bar",
+				"INPUT_DRAFT":           "false",
+				"INPUT_CLOSE":           "true",
+				"INPUT_ISSUE":           "true",
+				"INPUT_BODY":            "true",
+				"INPUT_BOT":             "false",
+				"INPUT_MAXIMUM_CHANGES": "11",
+				"INPUT_SIGNED":          "true",
+				"INPUT_IGNORED_USERS":   "Namchee, snyk-bot",
+				"INPUT_EDIT":            "true",
+				"INPUT_LABEL":           "cpr:invalid",
+				"INPUT_VERBOSE":         "true",
+				"INPUT_MESSAGE":         "foo bar",
 			},
-			want: expected{
-				config: &Configuration{
-					Token:        "foo_bar",
-					Draft:        false,
-					Issue:        true,
-					Bot:          false,
-					FileChanges:  11,
-					Verified:     true,
-					IgnoredUsers: []string{"Namchee", "snyk-bot"},
-					Report:       false,
-					Edit:         true,
-				},
-				err: nil,
+			want: &Configuration{
+				Token:        "foo_bar",
+				Draft:        false,
+				Issue:        true,
+				Close:        true,
+				Body:         true,
+				Bot:          false,
+				FileChanges:  11,
+				Signed:       true,
+				Label:        "cpr:invalid",
+				IgnoredUsers: []string{"Namchee", "snyk-bot"},
+				Edit:         true,
+				Verbose:      true,
+				Message:      "foo bar",
 			},
-			wantErr: false,
+			wantErr: nil,
 		},
 		{
-			name:  "should throw an error when token is empty",
-			mocks: map[string]string{},
-			want: expected{
-				config: nil,
-				err:    constants.ErrMissingToken,
-			},
-			wantErr: true,
+			name:    "should throw an error when token is empty",
+			mocks:   map[string]string{},
+			want:    nil,
+			wantErr: constants.ErrMissingToken,
 		},
 		{
 			name: "should throw an error when fileChanges is negative",
 			mocks: map[string]string{
-				"INPUT_ACCESS_TOKEN":         "foo",
-				"INPUT_MAXIMUM_FILE_CHANGES": "-1",
+				"INPUT_ACCESS_TOKEN":    "foo",
+				"INPUT_MAXIMUM_CHANGES": "-1",
 			},
-			want: expected{
-				config: nil,
-				err:    constants.ErrNegativeFileChange,
-			},
-			wantErr: true,
+			want:    nil,
+			wantErr: constants.ErrNegativeFileChange,
 		},
 		{
 			name: "should throw an error when title pattern is invalid",
 			mocks: map[string]string{
+				"INPUT_ACCESS_TOKEN":  "a",
 				"INPUT_TITLE_PATTERN": "[",
 			},
-			want: expected{
-				config: nil,
-				err:    constants.ErrInvalidTitlePattern,
-			},
-			wantErr: true,
+			want:    nil,
+			wantErr: constants.ErrInvalidTitlePattern,
 		},
 		{
 			name: "should throw an error when commit pattern is invalid",
 			mocks: map[string]string{
+				"INPUT_ACCESS_TOKEN":   "b",
 				"INPUT_TITLE_PATTERN":  "a",
 				"INPUT_COMMIT_PATTERN": "[",
 			},
-			want: expected{
-				config: nil,
-				err:    constants.ErrInvalidCommitPattern,
-			},
-			wantErr: true,
+			want:    nil,
+			wantErr: constants.ErrInvalidCommitPattern,
 		},
 		{
 			name: "should throw an error when branch pattern is invalid",
 			mocks: map[string]string{
+				"INPUT_ACCESS_TOKEN":   "token",
 				"INPUT_TITLE_PATTERN":  "a",
 				"INPUT_COMMIT_PATTERN": "a",
 				"INPUT_BRANCH_PATTERN": "[",
 			},
-			want: expected{
-				config: nil,
-				err:    constants.ErrInvalidBranchPattern,
-			},
-			wantErr: true,
+			want:    nil,
+			wantErr: constants.ErrInvalidBranchPattern,
 		},
 	}
 
@@ -116,13 +105,8 @@ func TestReadConfig(t *testing.T) {
 
 			got, err := ReadConfig()
 
-			if tc.wantErr && err == nil {
-				t.Fatalf("ReadConfig() err = %v, wantErr = %v", err, tc.wantErr)
-			}
-
-			if !reflect.DeepEqual(got, tc.want.config) {
-				t.Fatalf("ReadConfig() = %v, want = %v", got, tc.want)
-			}
+			assert.Equal(t, tc.want, got)
+			assert.Equal(t, tc.wantErr, err)
 		})
 	}
 }

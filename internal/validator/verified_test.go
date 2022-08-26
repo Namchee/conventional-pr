@@ -77,7 +77,7 @@ func TestVerifiedValidator_IsValid(t *testing.T) {
 				Number: &tc.args.number,
 			}
 			config := &entity.Configuration{
-				Verified: tc.args.verified,
+				Signed: tc.args.verified,
 			}
 
 			client := mocks.NewGithubClientMock()
