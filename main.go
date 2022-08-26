@@ -100,14 +100,14 @@ func main() {
 		Validation: vgResult,
 	}
 
-	if config.Report {
-		err = svc.WriteReport(pullRequest, results, time.Now())
-	} else {
-		formatter.FormatResultToConsole(wgResult, vgResult, infoLogger)
-	}
+	formatter.FormatResultToConsole(wgResult, vgResult, infoLogger)
 
-	if err != nil {
-		errorLogger.Fatalf("Failed to write report: %s", err.Error())
+	if config.Verbose {
+		err = svc.WriteReport(pullRequest, results, time.Now())
+
+		if err != nil {
+			errorLogger.Fatalf("Failed to write report: %s", err.Error())
+		}
 	}
 
 	if !validator.IsValid(vgResult) {
@@ -118,9 +118,9 @@ func main() {
 			errorLogger.Fatalf("Failed to attach invalid pull request label: %s", err.Error())
 		}
 
-		err = svc.WriteTemplate(pullRequest)
+		err = svc.WriteMessage(pullRequest)
 		if err != nil {
-			errorLogger.Fatalf("Failed to write message template: %s", err.Error())
+			errorLogger.Fatalf("Failed to write message: %s", err.Error())
 		}
 
 		err = svc.ClosePullRequest(pullRequest)

@@ -1,7 +1,6 @@
 name: Check PR semantics
 
 on:
-  pull_request:
   pull_request_target:
 
 jobs:
@@ -11,4 +10,5 @@ jobs:
       - name: Check PR semantics
         uses: Namchee/conventional-pr@master
         with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
+          access_token: ${{ secrets.ACCESS_TOKEN }}
+          edit: true
