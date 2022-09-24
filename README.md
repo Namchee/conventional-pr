@@ -47,39 +47,15 @@ Please refer to [GitHub workflow syntax](https://docs.github.com/en/free-pro-tea
 
 > Access token is **required**. Please generate one or use `${{ secrets.GITHUB_TOKEN }}` as your access token and the `github-actions` bot will run the job for you. Do note that the `github-actions` bot has [more limited functionalities](#caveats)
 
-## Whitelist
+## Whitelist & Validators
 
-Whitelist is one of the features of Conventional PR that allows you to bypass pull request validaton if the pull request satisfies **one or more** enabled whitelisting criteria.
+Whitelist and validator are the core functionality of `conventional-pr` that determines the validity of the triggering pull request.
 
-Currently, there are 3 whitelisting criteria that are available in Conventional PR:
-
-1. Pull request status is a `draft`.
-2. Pull request is submitted by a bot.
-3. Pull request is submitted by a user with high administrative privileges.
-
-All whitelists are configurable. Please refer to the [inputs](#inputs) section on how to configure whitelists.
-
-## Validator
-
-Validator is the core feature of Conventional PR. Validator will validate pull request that triggers the workflow according to a specified criteria.
-
-A pull request is considered to be valid if it satisfies **all** enabled validation flow.
-
-Currently, there are 7 validation flow that are available in Conventional PR:
-
-1. Pull request has a valid title.
-2. Pull request has a non-empty body.
-3. Pull request mentioned one or more issue.
-4. Pull request does not introduce too many file changes.
-5. All commits in the pull request have valid messages.
-6. Pull request has a valid branch name.
-7. All commits in the pull request must be signed.
-
-All validators are configurable. Please refer to the [inputs](#inputs) section on how to configure whitelists.
+For more information about all available whitelists and validators, what they do, and how to enable or disable them, please refer to [this document](./docs/README.md).
 
 ## Inputs
 
-You can customize this actions with these following options (fill it on `with` section):
+Below are the list of all possible inputs for `conventional-pr`. Please refer to [this official GitHub documentation](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith) for how to use inputs in GitHub workflows.
 
 | **Name**              | **Required?** | **Default Value**                       | **Description**                                                                                                                                                                                                                                                                                                            |
 | --------------------- | ------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
