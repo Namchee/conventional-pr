@@ -11,6 +11,7 @@ Conventional PR aims to ease your burden in managing your GitHub-hosted reposito
 ## Features
 
 - ✨ Configurable, tune Conventional PR easily to suit your needs.
+- 🤫 Silent by default, while still trackable by the logs.
 - 💡 Sensible defaults, validates pull request with out-of-the-box sensibility.
 - ♿ Whitelisting, validates pull request that actually matters.
 - 📈 Transparent reporting, see what Conventional PR is actually doing.
