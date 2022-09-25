@@ -1,10 +1,6 @@
 package validator
 
 import (
-	"context"
-	"regexp"
-	"strconv"
-
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -41,21 +37,13 @@ func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.Valida
 		}
 	}
 
-	ctx := context.Background()
-	pattern := regexp.MustCompile(`#(\d+)`)
+	issue := pullRequest.GetLinks().GetIssue()
 
-	mentions := pattern.FindAllStringSubmatch(pullRequest.GetBody(), -1)
-
-	for _, mention := range mentions {
-		num, _ := strconv.Atoi(mention[1])
-		issue, err := v.client.GetIssue(ctx, v.meta.Owner, v.meta.Name, num)
-
-		if err == nil && issue != nil {
-			return &entity.ValidationResult{
-				Name:   v.Name,
-				Active: true,
-				Result: nil,
-			}
+	if issue != nil {
+		return &entity.ValidationResult{
+			Name:   v.Name,
+			Active: true,
+			Result: nil,
 		}
 	}
 

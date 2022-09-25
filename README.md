@@ -200,7 +200,7 @@ This validator checks if the branch name of the pull request satisfies the regul
 
 Filling the input with an empty string will disabled this validator.
 
-### Pull request refers to an issue
+### Pull request links to an issue
 
 <table>
   <tr>
@@ -213,9 +213,9 @@ Filling the input with an empty string will disabled this validator.
   </tr>
 </table>
 
-This validator checks if the pull request mentions one or more issues in the pull request body.
+This validator checks if the pull request is linked one or more issues.
 
-Do note that linking the issue directly on the pull request is currently unsupported and does not considered as issue mentions.
+Do note that linking the issue using [special keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue) only works when the target branch is the default branch.
 
 ### Pull request does not introduce too many changes
 
@@ -292,7 +292,6 @@ Ideally, Conventional PR workflow should only triggered when an event related to
 
 ## Caveats
 
-- If the issues are linked manually and are not mentioned in the pull request body, the pull request is still considered to be invalid. Currently, there is no way to avoid this issue.
 - `edit` feature cannot be used with `github-actions` credentials as it [doesn't have the `user` scope](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token). If you want to use the `edit` feature, please generate a [personal access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) instead with `read:user` scope. `edit` **cannot** be combined with `report`.
 - It is recommended to use a dedicated dummy account if you want to use the `edit` feature as it may lead to unintended edits.
 
