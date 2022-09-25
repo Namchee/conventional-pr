@@ -12,8 +12,8 @@ import (
 
 func TestIssueValidator_IsValid(t *testing.T) {
 	type args struct {
-		config bool
-		body   string
+		config      bool
+		pullRequest *github.PullRequest
 	}
 	tests := []struct {
 		name string
@@ -23,7 +23,13 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow issue references",
 			args: args{
-				body:   "Closes #123",
+				pullRequest: &github.PullRequest{
+					Links: &github.PRLinks{
+						Issue: &github.PRLink{
+							HRef: github.String("abc"),
+						},
+					},
+				},
 				config: true,
 			},
 			want: &entity.ValidationResult{
@@ -35,7 +41,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should be skipped if disabled",
 			args: args{
-				body: "Closes #123",
+				pullRequest: &github.PullRequest{},
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
@@ -46,20 +52,8 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should reject if no issue at all",
 			args: args{
-				body:   "this is a fake body",
-				config: true,
-			},
-			want: &entity.ValidationResult{
-				Name:   constants.IssueValidatorName,
-				Active: true,
-				Result: constants.ErrNoIssue,
-			},
-		},
-		{
-			name: "should distinguih false alarm",
-			args: args{
-				body:   "This is a fake issue #69",
-				config: true,
+				pullRequest: &github.PullRequest{},
+				config:      true,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
@@ -71,10 +65,6 @@ func TestIssueValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				Body: &tc.args.body,
-			}
-
 			client := mocks.NewGithubClientMock()
 			config := &entity.Configuration{
 				Issue: tc.args.config,
@@ -82,7 +72,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 
 			validator := NewIssueValidator(client, config, &entity.Meta{})
 
-			got := validator.IsValid(pull)
+			got := validator.IsValid(tc.args.pullRequest)
 
 			assert.Equal(t, got, tc.want)
 		})
