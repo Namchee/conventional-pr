@@ -10,6 +10,25 @@ Do note that this whitelist only works on GitHub-recognized bot accounts. For us
 
 ## Example
 
-Below is the example of a pull request made by a bot.
+`conventional-pr` is executed with the following inputs.
 
-![Pull request made by a bot](./bot.png)
+```yml
+on:
+  pull_request:
+
+jobs:
+  cpr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validates the pull request
+        uses: Namchee/conventional-pr@master
+        with:
+          access_token: access_token
+          bot: true
+```
+
+Bot account `allcontributors` submitted the following pull request.
+
+![Pull request by allcontributors](./bot.png)
+
+Since `allcontributors` is marked as a bot account GitHub, the pull request will automatically be marked as a valid pull request.

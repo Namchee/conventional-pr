@@ -11,8 +11,7 @@ Conventional PR aims to ease your burden in managing your GitHub-hosted reposito
 ## Features
 
 - ✨ Configurable, tune Conventional PR easily to suit your needs.
-- 🤫 Silent by default, while still trackable by the logs.
-- 💡 Sensible defaults, validates pull request with out-of-the-box sensibility.
+- 💡 Sensible defaults, validates pull request with out-of-the-box sensibility while doesn't generate too much noise.
 - ♿ Whitelisting, validates pull request that actually matters.
 - 📈 Transparent reporting, see what Conventional PR is actually doing.
 
@@ -47,30 +46,229 @@ Please refer to [GitHub workflow syntax](https://docs.github.com/en/free-pro-tea
 
 > Access token is **required**. Please generate one or use `${{ secrets.GITHUB_TOKEN }}` as your access token and the `github-actions` bot will run the job for you. Do note that the `github-actions` bot has [more limited functionalities](#caveats)
 
-## Whitelist & Validators
+## Whitelist
 
-Whitelist and validator are the core functionality of `conventional-pr` that determines the validity of the triggering pull request.
+Whitelist is one of the features of `conventional-pr` that allows any pull requests that satisfies the whitelist criterion to be marked as stable regardless whether the pull request itself determined as valid by the actual validation logic or not.
 
-For more information about all available whitelists and validators, what they do, and how to enable or disable them, please refer to [this document](./docs/README.md).
+A pull request will be whitelisted and marked as valid if the pull request satisfies **one or more** enabled whitelisting criteria.
+
+The following are all available whitelists criteria in `conventional-pr`.
+
+### Pull request is still on the draft phase
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Enabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>draft</code></td>
+  </tr>
+</table>
+
+This whitelist checks if the pull request status is `draft`. If the pull request status is `draft`, it will be marked as stable for the time being.
+
+Do note that once the pull request has been marked as ready for review, the workflow will re-trigger the validation flow unless by default.
+
+### Pull request is created by a bot
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Enabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>bot</code></td>
+  </tr>
+</table>
+
+This whitelist checks if the pull request author is a bot account. If the author is a bot account, the pull request will be marked as valid.
+
+Do note that this option only recognized accounts that are officialy recognized as a GitHub bot account and not an user-automated accounts. For this usecase, please whitelist the username instead.
+
+### Pull request is created by an administrators
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Disabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>strict</code></td>
+  </tr>
+</table>
+
+This whitelist checks if the pull request author has administrator privileges in the current repository. If the author has administrator privileges in the repository, the pull request will be marked as valid.
+
+If set to `false`, any pull requests made by repository administrators will automatically be marked as valid.
+
+### Pull request is created by a whitelisted user
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Disabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>ignored_users</code></td>
+  </tr>
+</table>
+
+This whitelist checks if the pull request author username is in the list of names provided in the `ignored_users` input. If the author is in the list, the pull request will be marked as valid.
+
+The list of names must be provided in a comma-separated GitHub username string.
+
+## Validator
+ 
+Validator is the core feature of Conventional PR. Validator will validate any pull requests that triggers the workflow according to a specified criteria.
+
+A pull request is considered to be valid if it satisfies **all** enabled validation flow.
+
+The following are all available whitelists criteria in `conventional-pr`.
+
+### Pull request has a valid title
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Enabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>title_pattern</code></td>
+  </tr>
+</table>
+
+This validator checks if the pull request title satisfies the regular expression provided in the `title_pattern` input.
+
+The regular expression must be provided in Perl syntax. Defaults to [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) message structure.
+
+Do note that this validator only validates the pull request title and does not validate any titles in the pull request body.
+
+Filling the input with an empty string will disable this validator.
+
+### Pull request has a body
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Enabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>body</code></td>
+  </tr>
+</table>
+
+This validator checks if the pull request has a non-empty body text.
+
+### All commits have valid message
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Disabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>commit_pattern</code></td>
+  </tr>
+</table>
+
+This validator checks if all commits on the pull request satisfies the regular expression provided in the `commit_pattern` input. The regular expression must be provided in Perl syntax.
+
+Filling the input with an empty string will disabled this validator.
+
+### The pull request have a valid branch name
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Disabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>branch_pattern</code></td>
+  </tr>
+</table>
+
+This validator checks if the branch name of the pull request satisfies the regular expression provided in the `branch_pattern` input. The regular expression must be provided in Perl syntax.
+
+Filling the input with an empty string will disabled this validator.
+
+### Pull request refers to an issue
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Enabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>issue</code></td>
+  </tr>
+</table>
+
+This validator checks if the pull request mentions one or more issues in the pull request body.
+
+Do note that linking the issue directly on the pull request is currently unsupported and does not considered as issue mentions.
+
+### Pull request does not introduce too many changes
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Enabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>maximum_changes</code></td>
+  </tr>
+</table>
+
+This validator checks if the pull request introduces too many changes to the base branch. A pull request that changes more files than the predetermined value will be considered as invalid.
+
+Filling the input with zero will disable this validator.
+
+### All commits in the pull request are signed
+
+<table>
+  <tr>
+    <th>Default</th>
+    <td>Disabled</td>
+  </tr>
+  <tr>
+    <th>Input</th>
+    <td><code>signed</code></td>
+  </tr>
+</table>
+
+This validator checks if all commits in the pull request is [signed commits](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work).
+
+Please refer to [this document](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) on how signed commits work on GitHub.
 
 ## Inputs
 
-Below are the list of all possible inputs for `conventional-pr`. Please refer to [this official GitHub documentation](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith) for how to use inputs in GitHub workflows.
+You can customize this actions with these following options (fill it on `with` section):
 
 | **Name**              | **Required?** | **Default Value**                       | **Description**                                                                                                                                                                                                                                                                                                            |
 | --------------------- | ------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `access_token`        | `true`        |                                         | [GitHub access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) to interact with the GitHub API. It is recommended to store this token with [GitHub Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets). **To support automatic close, labeling, and comment report, please grant a write access to the token** |
 | `close`               | `false`       | `true`                                  | Immediately close invalid pull request.                                                                                                                                                                                                                           |
-| `message`            | `false`       | `''`                                      | Extra message to be posted on validation failure                                                                                                                                                                                           |
+| `message`            | `false`       | `''`                                      | Extra message to be posted when the pull request is invalid.                                                                                                                                                                                       |
 | `label`               | `false`       | `''`               | Invalid pull requests label. Fill with an empty string to disable labeling.                                                                                                                                                             |
 | `draft`               | `false`       | `true`                                  | Skip pull request validation if the pull request is a draft.                                                                                                                                                                                                                                            |
 | `strict`              | `false`       | `true`                                  | Enforce validation rules to repository administrators.                                                                                                                                                                                                                                              |
-| `bot`                 | `false`       | `true`                                  | Skip pull request validation if the author is a bot. Useful when the repository relying on bots like [dependabot](https://github.com/dependabot)                                                                                                                                                                   |
+| `bot`                 | `false`       | `true`                                  | Skip pull request validation if the author is a bot.                                                                                                                                                                   |
 | `title_pattern`       | `false`       | `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+` | Valid pull request title regex pattern in Perl syntax. Defaults to the [conventional commit style](https://www.conventionalcommits.org/en/v1.0.0/) commit messages. Fill with an empty string to disabled pull request title validation.                                                                                   |
 | `commit_pattern`      | `false`       | `''`                                      | Valid pull request commit messages regex pattern in Perl syntax. Fill with an empty string to disabled commit message validation.                                                                                                                                                                                      |
 | `branch_pattern`      | `false`       | `''`                                      | Valid pull request branch name regex pattern in Perl syntax. Fill with an empty string to disabled branch name validation.                                                                                                                                                                                          |
 | `body`                | `false`       | `true`                                  | Require all pull request to have a non-empty body.                                                                                                                                                                                                                                                |
-| `issue`               | `false`       | `true`                                  | Require all pull request to reference an existing issue. Do note that the issue must be referenced inside the pull request body.                                                                                                                                                                                                                     |
+| `issue`               | `false`       | `true`                                  | Require all pull request to reference an existing issue.                                                                                                                                                                                                                     |
 | `maximum_changes` | `false`       | `0`                                     | Limits file changes per one pull request. Fill with zero to disable this feature.                                                                                                                                                                                                                          |
 | `signed` | `false` | `false` | Require all commits on the pull request to be [signed commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) |
 | `ignored_users` | `false` | `''` | GitHub usernames to be whitelisted from pull request validation. Must be a comma-separated string. Example: `Namchee, foo, bar` will bypass pull request validation for users `Namchee`, `foo`, `bar`. Case-sensitive.
