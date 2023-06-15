@@ -3,32 +3,40 @@ package formatter
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/utils"
+	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 func formatWhitelistResultToConsole(
 	whitelistResults []*entity.WhitelistResult,
 	logger *log.Logger,
 ) {
+
+	t := table.NewWriter()
+
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"Whitelist", "Active", "Result"})
+
 	flag := false
 
 	for _, r := range whitelistResults {
-		active := constants.InactiveLabel
-		verdict := constants.FailLabel
+		active := constants.FailEmoji
+		verdict := constants.FailEmoji
 
 		if r.Active {
-			active = constants.ActiveLabel
+			active = constants.PassEmoji
 		}
 
 		if r.Result {
 			flag = true
-			verdict = constants.PassLabel
+			verdict = constants.PassEmoji
 		}
 
-		logger.Printf("%s — %s — %s\n", r.Name, active, verdict)
+		t.AppendRow(table.Row{r.Name, active, verdict})
 	}
 
 	summary := constants.WhitelistFail
@@ -36,7 +44,10 @@ func formatWhitelistResultToConsole(
 		summary = constants.WhitelistPass
 	}
 
-	logger.Println(summary)
+	t.Render()
+
+	logger.Println()
+	logger.Printf("Result: %s\n", summary)
 }
 
 func formatValidationResultToConsole(
@@ -45,20 +56,25 @@ func formatValidationResultToConsole(
 ) {
 	var errors []error
 
+	t := table.NewWriter()
+
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"Validation", "Active", "Result"})
+
 	for _, r := range validationResults {
-		active := constants.ActiveLabel
-		verdict := constants.PassLabel
+		active := constants.PassEmoji
+		verdict := constants.PassEmoji
 
 		if !r.Active {
-			active = constants.InactiveLabel
+			active = constants.FailEmoji
 		}
 
 		if r.Result != nil {
 			errors = append(errors, r.Result)
-			verdict = constants.FailLabel
+			verdict = constants.FailEmoji
 		}
 
-		logger.Printf("%s — %s — %s\n", r.Name, active, verdict)
+		t.AppendRow(table.Row{r.Name, active, verdict})
 	}
 
 	var reasons []string
@@ -72,6 +88,9 @@ func formatValidationResultToConsole(
 		}
 	}
 
+	t.Render()
+
+	logger.Println()
 	logger.Printf("Result: %s\n", verdict)
 
 	for _, reason := range reasons {
@@ -86,10 +105,14 @@ func FormatResultToConsole(
 	logger *log.Logger,
 ) {
 	logger.Println(constants.LogHeader)
+	logger.Println("------------------------------")
+	logger.Println(constants.LogSubtitle)
+	logger.Println()
 
 	formatWhitelistResultToConsole(whitelistResults, logger)
 
 	if len(validationResults) > 0 {
+		logger.Println()
 		formatValidationResultToConsole(validationResults, logger)
 	}
 }
