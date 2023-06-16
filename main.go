@@ -17,15 +17,17 @@ import (
 	"github.com/Namchee/conventional-pr/internal/whitelist"
 )
 
-// Logger
 var (
 	infoLogger  *log.Logger
 	errorLogger *log.Logger
+
+	defaultLogger *log.Logger
 )
 
 func init() {
 	infoLogger = log.New(os.Stdout, "[INFO] ", log.Ldate|log.Ltime|log.Lmsgprefix)
 	errorLogger = log.New(os.Stderr, "[ERROR] ", log.Ldate|log.Ltime|log.Lmsgprefix)
+	defaultLogger = log.New(os.Stdout, "", 0)
 }
 
 func main() {
@@ -100,7 +102,7 @@ func main() {
 		Validation: vgResult,
 	}
 
-	formatter.FormatResultToConsole(wgResult, vgResult, infoLogger)
+	formatter.FormatResultToConsole(wgResult, vgResult, defaultLogger)
 
 	if config.Verbose {
 		err = svc.WriteReport(pullRequest, results, time.Now())
