@@ -102,7 +102,8 @@ func main() {
 		Validation: vgResult,
 	}
 
-	formatter.FormatResultToConsole(wgResult, vgResult, defaultLogger)
+	resultLog := formatter.FormatResultToConsole(results)
+	defaultLogger.Println(resultLog)
 
 	if config.Verbose {
 		err = svc.WriteReport(pullRequest, results, time.Now())

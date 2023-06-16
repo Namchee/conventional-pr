@@ -2,7 +2,6 @@ package formatter
 
 import (
 	"errors"
-	"log"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -18,6 +17,7 @@ func TestFormatResultToConsole(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
+		want string
 	}{
 		{
 			name: "formats whitelisted pull request correctly",
@@ -31,6 +31,22 @@ func TestFormatResultToConsole(t *testing.T) {
 				},
 				validation: []*entity.ValidationResult{},
 			},
+			want: `
+ ____                            _   _                   _ ____  ____  
+/ ___| ___  _ ____   _____ _ __ | |_(_) ___  _ __   __ _| |  _ \|  _ \ 
+| |   / _ \| '_ \ \ / / _ \ '_ \| __| |/ _ \| '_ \ / _ || | |_) | |_) |
+| |__| (_) | | | \ V /  __/ | | | |_| | (_) | | | | (_||| |  __/|  _ < 
+\____ \___/|_| |_|\_/ \___|_| |_|\__|_|\___/|_| |_|\__,_|_|_|   |_| \_\
+
+┌─────────────────────────────┐
+│ Whitelist Result            │
+├───────────┬────────┬────────┤
+│ WHITELIST │ ACTIVE │ RESULT │
+├───────────┼────────┼────────┤
+│ foo bar   │ ✅     │ ✅     │
+└───────────┴────────┴────────┘
+
+Result: Pull request matches with one (or more) enabled whitelist criteria. Pull request validation is skipped.`,
 		},
 		{
 			name: "formats valid pull request correctly",
@@ -50,6 +66,32 @@ func TestFormatResultToConsole(t *testing.T) {
 					},
 				},
 			},
+			want: `
+ ____                            _   _                   _ ____  ____  
+/ ___| ___  _ ____   _____ _ __ | |_(_) ___  _ __   __ _| |  _ \|  _ \ 
+| |   / _ \| '_ \ \ / / _ \ '_ \| __| |/ _ \| '_ \ / _ || | |_) | |_) |
+| |__| (_) | | | \ V /  __/ | | | |_| | (_) | | | | (_||| |  __/|  _ < 
+\____ \___/|_| |_|\_/ \___|_| |_|\__|_|\___/|_| |_|\__,_|_|_|   |_| \_\
+
+┌─────────────────────────────┐
+│ Whitelist Result            │
+├───────────┬────────┬────────┤
+│ WHITELIST │ ACTIVE │ RESULT │
+├───────────┼────────┼────────┤
+│ foo bar   │ ✅     │ ❌     │
+└───────────┴────────┴────────┘
+
+Result: Pull request does not satisfy any enabled whitelist criteria. Pull request will be validated.
+
+┌──────────────────────────────┐
+│ Validation Result            │
+├────────────┬────────┬────────┤
+│ VALIDATION │ ACTIVE │ RESULT │
+├────────────┼────────┼────────┤
+│ bar baz    │ ✅     │ ✅     │
+└────────────┴────────┴────────┘
+
+Result: Pull request satisfies all enabled pull request rules.`,
 		},
 		{
 			name: "format invalid pull request correctly",
@@ -69,6 +111,35 @@ func TestFormatResultToConsole(t *testing.T) {
 					},
 				},
 			},
+			want: `
+ ____                            _   _                   _ ____  ____  
+/ ___| ___  _ ____   _____ _ __ | |_(_) ___  _ __   __ _| |  _ \|  _ \ 
+| |   / _ \| '_ \ \ / / _ \ '_ \| __| |/ _ \| '_ \ / _ || | |_) | |_) |
+| |__| (_) | | | \ V /  __/ | | | |_| | (_) | | | | (_||| |  __/|  _ < 
+\____ \___/|_| |_|\_/ \___|_| |_|\__|_|\___/|_| |_|\__,_|_|_|   |_| \_\
+
+┌─────────────────────────────┐
+│ Whitelist Result            │
+├───────────┬────────┬────────┤
+│ WHITELIST │ ACTIVE │ RESULT │
+├───────────┼────────┼────────┤
+│ foo bar   │ ✅     │ ❌     │
+└───────────┴────────┴────────┘
+
+Result: Pull request does not satisfy any enabled whitelist criteria. Pull request will be validated.
+
+┌──────────────────────────────┐
+│ Validation Result            │
+├────────────┬────────┬────────┤
+│ VALIDATION │ ACTIVE │ RESULT │
+├────────────┼────────┼────────┤
+│ bar baz    │ ✅     │ ❌     │
+└────────────┴────────┴────────┘
+
+Result: Pull request is invalid.
+
+Reason:
+- Testing`,
 		},
 		{
 			name: "able to format inactive whitelist and validator",
@@ -92,22 +163,63 @@ func TestFormatResultToConsole(t *testing.T) {
 						Result: errors.New("testing"),
 					},
 					{
+						Name:   "fuuu",
+						Active: true,
+						Result: errors.New("This is testing"),
+					},
+					{
 						Name:   "def",
 						Active: false,
 						Result: nil,
 					},
 				},
 			},
+			want: `
+ ____                            _   _                   _ ____  ____  
+/ ___| ___  _ ____   _____ _ __ | |_(_) ___  _ __   __ _| |  _ \|  _ \ 
+| |   / _ \| '_ \ \ / / _ \ '_ \| __| |/ _ \| '_ \ / _ || | |_) | |_) |
+| |__| (_) | | | \ V /  __/ | | | |_| | (_) | | | | (_||| |  __/|  _ < 
+\____ \___/|_| |_|\_/ \___|_| |_|\__|_|\___/|_| |_|\__,_|_|_|   |_| \_\
+
+┌─────────────────────────────┐
+│ Whitelist Result            │
+├───────────┬────────┬────────┤
+│ WHITELIST │ ACTIVE │ RESULT │
+├───────────┼────────┼────────┤
+│ foo bar   │ ✅     │ ❌     │
+│ abc       │ ❌     │ ❌     │
+└───────────┴────────┴────────┘
+
+Result: Pull request does not satisfy any enabled whitelist criteria. Pull request will be validated.
+
+┌──────────────────────────────┐
+│ Validation Result            │
+├────────────┬────────┬────────┤
+│ VALIDATION │ ACTIVE │ RESULT │
+├────────────┼────────┼────────┤
+│ bar baz    │ ✅     │ ❌     │
+│ fuuu       │ ✅     │ ❌     │
+│ def        │ ❌     │ ✅     │
+└────────────┴────────┴────────┘
+
+Result: Pull request is invalid.
+
+Reason:
+- Testing
+- This is testing`,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			logger := log.Default()
+			results := &entity.PullRequestResult{
+				Whitelist:  tc.args.whitelist,
+				Validation: tc.args.validation,
+			}
 
-			assert.NotPanics(t, func() {
-				FormatResultToConsole(tc.args.whitelist, tc.args.validation, logger)
-			})
+			got := FormatResultToConsole(results)
+
+			assert.Equal(t, tc.want, got)
 		})
 	}
 }

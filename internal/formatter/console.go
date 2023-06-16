@@ -2,8 +2,7 @@ package formatter
 
 import (
 	"fmt"
-	"log"
-	"os"
+	"strings"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -13,12 +12,12 @@ import (
 
 func formatWhitelistResultToConsole(
 	whitelistResults []*entity.WhitelistResult,
-	logger *log.Logger,
-) {
+) string {
 
 	t := table.NewWriter()
 
-	t.SetOutputMirror(os.Stdout)
+	t.SetStyle(table.StyleLight)
+	t.SetTitle("Whitelist Result")
 	t.AppendHeader(table.Row{"Whitelist", "Active", "Result"})
 
 	flag := false
@@ -44,21 +43,22 @@ func formatWhitelistResultToConsole(
 		summary = constants.WhitelistPass
 	}
 
-	t.Render()
-
-	logger.Println()
-	logger.Printf("Result: %s\n", summary)
+	return fmt.Sprintf(
+		"%s\n\nResult: %s",
+		t.Render(),
+		summary,
+	)
 }
 
 func formatValidationResultToConsole(
 	validationResults []*entity.ValidationResult,
-	logger *log.Logger,
-) {
+) string {
 	var errors []error
 
 	t := table.NewWriter()
 
-	t.SetOutputMirror(os.Stdout)
+	t.SetStyle(table.StyleLight)
+	t.SetTitle("Validation Result")
 	t.AppendHeader(table.Row{"Validation", "Active", "Result"})
 
 	for _, r := range validationResults {
@@ -88,31 +88,40 @@ func formatValidationResultToConsole(
 		}
 	}
 
-	t.Render()
+	report := fmt.Sprintf(
+		"%s\n\nResult: %s",
+		t.Render(),
+		verdict,
+	)
 
-	logger.Println()
-	logger.Printf("Result: %s\n", verdict)
-
-	for _, reason := range reasons {
-		logger.Println(reason)
+	if len(reasons) > 0 {
+		report = fmt.Sprintf(
+			"%s\n\nReason:\n%s",
+			report,
+			strings.Join(reasons, "\n"),
+		)
 	}
+
+	return report
 }
 
 // FormatResultToTables formats both whitelist and validation results for workflow reporting to console
 func FormatResultToConsole(
-	whitelistResults []*entity.WhitelistResult,
-	validationResults []*entity.ValidationResult,
-	logger *log.Logger,
-) {
-	logger.Println(constants.LogHeader)
-	logger.Println("------------------------------")
-	logger.Println(constants.LogSubtitle)
-	logger.Println()
+	results *entity.PullRequestResult,
+) string {
+	report := fmt.Sprintf(
+		"%s\n\n%s",
+		constants.LogHeader,
+		formatWhitelistResultToConsole(results.Whitelist),
+	)
 
-	formatWhitelistResultToConsole(whitelistResults, logger)
-
-	if len(validationResults) > 0 {
-		logger.Println()
-		formatValidationResultToConsole(validationResults, logger)
+	if len(results.Validation) > 0 {
+		report = fmt.Sprintf(
+			"%s\n\n%s",
+			report,
+			formatValidationResultToConsole(results.Validation),
+		)
 	}
+
+	return report
 }

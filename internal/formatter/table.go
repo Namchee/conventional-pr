@@ -111,11 +111,9 @@ func FormatResultToTables(
 	results *entity.PullRequestResult,
 	now time.Time,
 ) string {
-	report := constants.ReportHeader
-
-	report = fmt.Sprintf(
+	report := fmt.Sprintf(
 		"%s\n\n%s",
-		report,
+		constants.ReportHeader,
 		formatWhitelistResultToTable(
 			results.Whitelist,
 		),
@@ -131,11 +129,9 @@ func FormatResultToTables(
 		)
 	}
 
-	report = fmt.Sprintf(
+	return fmt.Sprintf(
 		"%s\n\n<sub>Last Modified at %s</sub>",
 		report,
 		now.Format(time.RFC822),
 	)
-
-	return report
 }
