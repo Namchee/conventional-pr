@@ -1,7 +1,9 @@
 package entity
 
 import (
+	"net/url"
 	"regexp"
+	"strings"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/utils"
@@ -26,6 +28,7 @@ type Configuration struct {
 	Verbose       bool
 	Edit          bool
 	IgnoredUsers  []string
+	BaseURL       *url.URL
 }
 
 // ReadConfig reads environment variables for input values which are supplied
@@ -76,6 +79,16 @@ func ReadConfig() (*Configuration, error) {
 
 	ignoredUsers := utils.ReadEnvStringArray("INPUT_IGNORED_USERS")
 
+	apiUrl := utils.ReadEnvString("GITHUB_API_URL")
+	if !strings.HasSuffix(apiUrl, "/") {
+		apiUrl += "/"
+	}
+
+	baseUrl, err := url.Parse(apiUrl)
+	if err != nil {
+		return nil, constants.ErrInvalidBaseURL
+	}
+
 	return &Configuration{
 		Token:         token,
 		Draft:         draft,
@@ -94,5 +107,6 @@ func ReadConfig() (*Configuration, error) {
 		Signed:        signed,
 		IgnoredUsers:  ignoredUsers,
 		Verbose:       verbose,
+		BaseURL:       baseUrl,
 	}, nil
 }
