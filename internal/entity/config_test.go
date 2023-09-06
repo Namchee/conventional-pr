@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"net/url"
 	"os"
 	"testing"
 
@@ -9,6 +10,8 @@ import (
 )
 
 func TestReadConfig(t *testing.T) {
+	baseUrl, _ := url.Parse("https://api.github.com/")
+
 	tests := []struct {
 		name    string
 		mocks   map[string]string
@@ -31,6 +34,7 @@ func TestReadConfig(t *testing.T) {
 				"INPUT_LABEL":           "cpr:invalid",
 				"INPUT_VERBOSE":         "true",
 				"INPUT_MESSAGE":         "foo bar",
+				"GITHUB_API_URL":        "https://api.github.com/",
 			},
 			want: &Configuration{
 				Token:        "foo_bar",
@@ -46,6 +50,7 @@ func TestReadConfig(t *testing.T) {
 				Edit:         true,
 				Verbose:      true,
 				Message:      "foo bar",
+				BaseURL:      baseUrl,
 			},
 			wantErr: nil,
 		},
@@ -93,6 +98,41 @@ func TestReadConfig(t *testing.T) {
 			},
 			want:    nil,
 			wantErr: constants.ErrInvalidBranchPattern,
+		},
+		{
+			name: "should throw an error when base URL is invalid",
+			mocks: map[string]string{
+				"INPUT_ACCESS_TOKEN": "token",
+				"GITHUB_API_URL":     " https://api.github.com",
+			},
+			want:    nil,
+			wantErr: constants.ErrInvalidBaseURL,
+		},
+		{
+			name: "should not append trailing slash on base URL when URL has trailing slash",
+			mocks: map[string]string{
+				"INPUT_ACCESS_TOKEN": "token",
+				"GITHUB_API_URL":     "https://api.github.com/",
+			},
+			want: &Configuration{
+				Token:        "token",
+				BaseURL:      baseUrl,
+				IgnoredUsers: []string{},
+			},
+			wantErr: nil,
+		},
+		{
+			name: "should append trailing slash on base URL",
+			mocks: map[string]string{
+				"INPUT_ACCESS_TOKEN": "token",
+				"GITHUB_API_URL":     "https://api.github.com",
+			},
+			want: &Configuration{
+				Token:        "token",
+				BaseURL:      baseUrl,
+				IgnoredUsers: []string{},
+			},
+			wantErr: nil,
 		},
 	}
 

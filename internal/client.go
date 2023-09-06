@@ -10,7 +10,7 @@ import (
 )
 
 // GithubClient handles all interaction with Github's API
-// Designed this way for easier software testing
+// Designed this way for easier testing
 type GithubClient interface {
 	GetPullRequest(context.Context, string, string, int) (*github.PullRequest, error)
 	GetUser(context.Context, string) (*github.User, error)
@@ -38,6 +38,8 @@ func NewGithubClient(config *entity.Configuration) GithubClient {
 
 	oauth := oauth2.NewClient(ctx, ts)
 	github := github.NewClient(oauth)
+
+	github.BaseURL = config.BaseURL
 
 	return &githubClient{client: github}
 }
