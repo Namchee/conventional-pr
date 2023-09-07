@@ -45,6 +45,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "Th3S4mur41",
+      "name": "Michaël Vanderheyden",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5543595?v=4",
+      "profile": "https://th3s4mur41.me",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -52,5 +61,7 @@
   "projectOwner": "Namchee",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs",
+  "commitConvention": "angular"
 }
