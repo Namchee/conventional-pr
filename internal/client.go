@@ -6,6 +6,7 @@ import (
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/google/go-github/v32/github"
+	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 )
 
@@ -25,7 +26,7 @@ type GithubClient interface {
 }
 
 type githubClient struct {
-	client *github.Client
+	client *githubv4.Client
 }
 
 // NewGithubClient creates a GitHub API client wrapper
@@ -37,9 +38,11 @@ func NewGithubClient(config *entity.Configuration) GithubClient {
 	)
 
 	oauth := oauth2.NewClient(ctx, ts)
-	github := github.NewClient(oauth)
+	github := githubv4.NewClient(oauth)
 
-	github.BaseURL = config.BaseURL
+	if config.BaseURL != nil {
+		github = githubv4.NewEnterpriseClient(config.BaseURL.String(), oauth)
+	}
 
 	return &githubClient{client: github}
 }
@@ -50,7 +53,7 @@ func (cl *githubClient) GetPullRequest(
 	name string,
 	event int,
 ) (*github.PullRequest, error) {
-	pullRequest, _, err := cl.client.PullRequests.Get(ctx, owner, name, event)
+	pullRequest, _, err := cl.client.Query(ctx, )
 
 	return pullRequest, err
 }

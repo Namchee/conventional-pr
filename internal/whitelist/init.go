@@ -84,11 +84,7 @@ func (w *WhitelistGroup) Process(
 			return results[i].Name < results[j].Name
 		}
 
-		if results[i].Result {
-			return true
-		}
-
-		return false
+		return results[i].Result
 	})
 
 	return results

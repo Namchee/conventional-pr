@@ -88,11 +88,7 @@ func (v *ValidatorGroup) Process(
 			return results[i].Name < results[j].Name
 		}
 
-		if results[i].Result == nil {
-			return true
-		}
-
-		return false
+		return results[i].Result == nil
 	})
 
 	return results
