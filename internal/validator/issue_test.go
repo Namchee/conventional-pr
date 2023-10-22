@@ -24,11 +24,13 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			name: "should allow issue references",
 			args: args{
 				pullRequest: &github.PullRequest{
-					Links: &github.PRLinks{
-						Issue: &github.PRLink{
-							HRef: github.String("abc"),
-						},
-					},
+					Body: github.String(`
+						## Overview
+
+						Closes #1
+
+						This pull request resolves #123 by using xxx/yyy/zzz.
+					`),
 				},
 				config: true,
 			},
@@ -52,7 +54,36 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should reject if no issue at all",
 			args: args{
-				pullRequest: &github.PullRequest{},
+				pullRequest: &github.PullRequest{
+					Body: github.String("I don't reference any issues!"),
+				},
+				config:      true,
+			},
+			want: &entity.ValidationResult{
+				Name:   constants.IssueValidatorName,
+				Active: true,
+				Result: constants.ErrNoIssue,
+			},
+		},
+		{
+			name: "should reject if references are fake",
+			args: args{
+				pullRequest: &github.PullRequest{
+					Body: github.String(`
+						## Overview
+
+						Closes #1. resolved #2. fixes #3. Fix #321Closed #123
+
+						This pull request resolve #124 by using xxx/yyy/zzz.
+
+
+
+
+
+
+						close #9. Fixed #54.
+					`),
+				},
 				config:      true,
 			},
 			want: &entity.ValidationResult{
