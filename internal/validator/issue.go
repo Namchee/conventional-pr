@@ -1,10 +1,18 @@
 package validator
 
 import (
+	"context"
+	"regexp"
+	"strconv"
+
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/google/go-github/v32/github"
+)
+
+var (
+	keywordPattern = regexp.MustCompile(`(?mi)\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved) #(\d+)\b`)
 )
 
 type issueValidator struct {
@@ -37,15 +45,34 @@ func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.Valida
 		}
 	}
 
-	issue := pullRequest.GetLinks().GetIssue()
-
-	if issue != nil {
+	keywords := keywordPattern.FindAllStringSubmatch(pullRequest.GetBody(), -1)
+	
+	if keywords == nil {
 		return &entity.ValidationResult{
 			Name:   v.Name,
 			Active: true,
-			Result: nil,
+			Result: constants.ErrNoIssue,
 		}
 	}
+
+	for _, number := range keywords {
+		num, _ := strconv.Atoi(number[2])
+
+		issue, _ := v.client.GetIssue(
+			context.Background(),
+			v.meta.Owner,
+			v.meta.Name,
+			num,
+		)
+
+		if issue != nil {
+			return &entity.ValidationResult{
+				Name:   v.Name,
+				Active: true,
+				Result: nil,
+			}
+		}
+	} 
 
 	return &entity.ValidationResult{
 		Name:   v.Name,
