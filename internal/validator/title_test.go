@@ -5,12 +5,11 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
 // This test also tests the default pattern
-func TestTitleValidator_IsValid(t *testing.T) {
+func TestIsTitleValid(t *testing.T) {
 	type args struct {
 		title   string
 		pattern string
@@ -98,16 +97,14 @@ func TestTitleValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				Title: &tc.args.title,
+			pull := &entity.PullRequest{
+				Title: tc.args.title,
 			}
 			config := &entity.Configuration{
 				TitlePattern: tc.args.pattern,
 			}
 
-			validator := NewTitleValidator(nil, config, nil)
-
-			got := validator.IsValid(pull)
+			got := IsTitleValid(config, pull)
 
 			assert.Equal(t, got, tc.want)
 		})

@@ -1,81 +1,35 @@
 package validator
 
 import (
-	"context"
-	"regexp"
-	"strconv"
-
-	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
-var (
-	keywordPattern = regexp.MustCompile(`(?mi)\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved) #(\d+)\b`)
-)
-
-type issueValidator struct {
-	client internal.GithubClient
-	config *entity.Configuration
-	meta   *entity.Meta
-	Name   string
-}
-
-// NewIssueValidator creates a new validator that validates issue resolution
-func NewIssueValidator(
-	client internal.GithubClient,
-	config *entity.Configuration,
-	meta *entity.Meta,
-) internal.Validator {
-	return &issueValidator{
-		Name:   constants.IssueValidatorName,
-		client: client,
-		config: config,
-		meta:   meta,
-	}
-}
-
-func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
-	if !v.config.Issue {
+func IsIssueValid(config *entity.Configuration, pullRequest *entity.PullRequest) *entity.ValidationResult {
+	if !config.Issue {
 		return &entity.ValidationResult{
-			Name:   v.Name,
+			Name:   constants.IssueValidatorName,
 			Active: false,
 			Result: nil,
 		}
 	}
 
-	keywords := keywordPattern.FindAllStringSubmatch(pullRequest.GetBody(), -1)
-	
-	if keywords == nil {
-		return &entity.ValidationResult{
-			Name:   v.Name,
-			Active: true,
-			Result: constants.ErrNoIssue,
-		}
-	}
-
-	for _, number := range keywords {
-		num, _ := strconv.Atoi(number[2])
-
-		issue, _ := v.client.GetIssue(
-			context.Background(),
-			v.meta.Owner,
-			v.meta.Name,
-			num,
-		)
-
-		if issue != nil {
+	references := pullRequest.References
+	for _, reference := range references {
+		repo := reference.Owner + "/" + reference.Name
+		meta := pullRequest.Repository.Owner + "/" + pullRequest.Repository.Name
+ 
+		if repo == meta {
 			return &entity.ValidationResult{
-				Name:   v.Name,
+				Name:   constants.IssueValidatorName,
 				Active: true,
 				Result: nil,
 			}
 		}
-	} 
+	}
 
 	return &entity.ValidationResult{
-		Name:   v.Name,
+		Name:   constants.IssueValidatorName,
 		Active: true,
 		Result: constants.ErrNoIssue,
 	}

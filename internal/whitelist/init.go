@@ -6,7 +6,6 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
 var (
@@ -43,7 +42,7 @@ func NewWhitelistGroup(
 
 func (w *WhitelistGroup) processWhitelist(
 	whitelist internal.Whitelist,
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 	pool chan *entity.WhitelistResult,
 ) {
 	defer w.wg.Done()
@@ -60,7 +59,7 @@ func (w *WhitelistGroup) cleanup(
 
 // Process the pull request with all available whitelists
 func (w *WhitelistGroup) Process(
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 ) []*entity.WhitelistResult {
 	channel := make(chan *entity.WhitelistResult, len(whitelists))
 	w.wg.Add(len(whitelists))

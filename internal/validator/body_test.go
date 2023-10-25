@@ -5,7 +5,6 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -59,17 +58,15 @@ func TestBodyValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pullRequest := &github.PullRequest{
-				Body: &tc.args.body,
+			pullRequest := &entity.PullRequest{
+				Body: tc.args.body,
 			}
-
 			config := &entity.Configuration{
 				Body: tc.args.config,
 			}
 
-			bodyValidator := NewBodyValidator(nil, config, nil)
-
-			got := bodyValidator.IsValid(pullRequest)
+			validator := NewBodyValidator(config)
+			got := validator.IsValid(pullRequest)
 
 			assert.Equal(t, got, tc.want)
 		})

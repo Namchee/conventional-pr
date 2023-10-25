@@ -5,14 +5,13 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 	type args struct {
 		name   string
+		userType string
 		config bool
 	}
 	tests := []struct {
@@ -24,6 +23,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			name: "should be skipped if is bot and bot = true",
 			args: args{
 				name:   "foo",
+				userType: "Bot",
 				config: true,
 			},
 			want: &entity.WhitelistResult{
@@ -36,6 +36,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			name: "should be checked if is bot and bot = false",
 			args: args{
 				name:   "foo",
+				userType: "Bot",
 				config: false,
 			},
 			want: &entity.WhitelistResult{
@@ -48,6 +49,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			name: "should be checked if is not bot and bot = true",
 			args: args{
 				name:   "bar",
+				userType: "User",
 				config: true,
 			},
 			want: &entity.WhitelistResult{
@@ -60,6 +62,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			name: "should be checked if is not bot and bot = false",
 			args: args{
 				name:   "bar",
+				userType: "User",
 				config: false,
 			},
 			want: &entity.WhitelistResult{
@@ -72,18 +75,17 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			user := &github.User{
-				Login: &tc.args.name,
-			}
-			pull := &github.PullRequest{
-				User: user,
+			pull := &entity.PullRequest{
+				Author: entity.Actor{
+					Login: tc.args.name,
+					Type: tc.args.userType,
+				},
 			}
 			config := &entity.Configuration{
 				Bot: tc.args.config,
 			}
-			client := mocks.NewGithubClientMock()
 
-			whitelister := NewBotWhitelist(client, config, nil)
+			whitelister := NewBotWhitelist(config, nil)
 
 			got := whitelister.IsWhitelisted(pull)
 

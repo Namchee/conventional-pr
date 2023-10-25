@@ -4,7 +4,6 @@ import (
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
 type draftWhitelist struct {
@@ -24,7 +23,7 @@ func NewDraftWhitelist(
 	}
 }
 
-func (w *draftWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
+func (w *draftWhitelist) IsWhitelisted(pullRequest *entity.PullRequest) *entity.WhitelistResult {
 	if !w.config.Draft {
 		return &entity.WhitelistResult{
 			Name:   w.Name,
@@ -36,6 +35,6 @@ func (w *draftWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.
 	return &entity.WhitelistResult{
 		Name:   w.Name,
 		Active: true,
-		Result: pullRequest.GetDraft(),
+		Result: pullRequest.IsDraft,
 	}
 }

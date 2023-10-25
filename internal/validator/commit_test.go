@@ -6,15 +6,13 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
 // This test also tests the default pattern
-func TestCommitValidator_IsValid(t *testing.T) {
+func TestIsCommitValid(t *testing.T) {
 	type args struct {
-		number  int
+		commits []entity.Commit
 		pattern string
 	}
 	tests := []struct {
@@ -25,7 +23,11 @@ func TestCommitValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow valid commits",
 			args: args{
-				number:  123,
+				commits: []entity.Commit{
+					{
+						Message: "feat: valid commit",
+					},
+				},
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -37,7 +39,11 @@ func TestCommitValidator_IsValid(t *testing.T) {
 		{
 			name: "should skip when pattern is empty",
 			args: args{
-				number:  123,
+				commits: []entity.Commit{
+					{
+						Message: "bad commit",
+					},
+				},
 				pattern: "",
 			},
 			want: &entity.ValidationResult{
@@ -49,7 +55,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow when no commits",
 			args: args{
-				number:  420,
+				commits: []entity.Commit{},
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -61,31 +67,36 @@ func TestCommitValidator_IsValid(t *testing.T) {
 		{
 			name: "should reject on invalid commits",
 			args: args{
-				number:  69,
+				commits: []entity.Commit{
+					{
+						Hash: "e21b424",
+						Message: "feat: good commit",
+					},
+					{
+						Hash: "e21b423",
+						Message: "bad commit",
+					},
+				},
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
 				Active: true,
-				Result: errors.New("commit this is bad does not have valid commit message"),
+				Result: errors.New("commit e21b423 does not have valid commit message"),
 			},
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				Number: &tc.args.number,
+			pull := &entity.PullRequest{
+				Commits: tc.args.commits,
 			}
 			config := &entity.Configuration{
 				CommitPattern: tc.args.pattern,
 			}
 
-			client := mocks.NewGithubClientMock()
-
-			validator := NewCommitValidator(client, config, &entity.Meta{})
-
-			got := validator.IsValid(pull)
+			got := IsCommitValid(pull)
 
 			assert.Equal(t, tc.want, got)
 		})

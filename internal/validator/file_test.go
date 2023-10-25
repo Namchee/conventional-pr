@@ -5,11 +5,10 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFileValidator_IsValid(t *testing.T) {
+func TestIsFileValid(t *testing.T) {
 	type args struct {
 		changes int
 		config  int
@@ -59,16 +58,14 @@ func TestFileValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				ChangedFiles: &tc.args.changes,
+			pull := &entity.PullRequest{
+				Changes: tc.args.changes,
 			}
 			config := &entity.Configuration{
 				FileChanges: tc.args.config,
 			}
 
-			validator := NewFileValidator(nil, config, nil)
-
-			got := validator.IsValid(pull)
+			got := IsFileValid(config, pull)
 
 			assert.Equal(t, got, tc.want)
 		})

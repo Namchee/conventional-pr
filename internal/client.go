@@ -11,6 +11,7 @@ import (
 // Designed this way for easier testing
 type GithubClient interface {
 	GetPullRequest(context.Context, string, string, int) (*entity.PullRequest, error)
+	GetUser(context.Context, string) (*github.User, error)
 	GetIssue(context.Context, string, string, int) (*github.Issue, error)
 	GetComments(context.Context, string, string, int) ([]*github.IssueComment, error)
 	GetPermissionLevel(context.Context, string, string, string) (*github.RepositoryPermissionLevel, error)

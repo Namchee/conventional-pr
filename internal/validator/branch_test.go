@@ -5,11 +5,10 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBranchValidator_IsValid(t *testing.T) {
+func TestIsBranchValid(t *testing.T) {
 	type args struct {
 		branch  string
 		pattern string
@@ -59,18 +58,14 @@ func TestBranchValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				Head: &github.PullRequestBranch{
-					Ref: &tc.args.branch,
-				},
+			pull := &entity.PullRequest{
+				Branch: tc.args.branch,
 			}
 			config := &entity.Configuration{
 				BranchPattern: tc.args.pattern,
 			}
 
-			validator := NewBranchValidator(nil, config, nil)
-
-			got := validator.IsValid(pull)
+			got := IsBranchValid(config, pull)
 
 			assert.Equal(t, tc.want, got)
 		})

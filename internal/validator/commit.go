@@ -1,73 +1,41 @@
 package validator
 
 import (
-	"context"
 	"fmt"
 	"regexp"
 
-	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
-type commitValidator struct {
-	client internal.GithubClient
-	config *entity.Configuration
-	meta   *entity.Meta
-	Name   string
-}
-
-// NewCommitValidator creates a new validator that will validate all commit messages in a pull request
-func NewCommitValidator(
-	client internal.GithubClient,
-	config *entity.Configuration,
-	meta *entity.Meta,
-) internal.Validator {
-	return &commitValidator{
-		Name:   constants.CommitValidatorName,
-		client: client,
-		config: config,
-		meta:   meta,
-	}
-}
-
-func (v *commitValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
-	if v.config.CommitPattern == "" {
+func IsCommitValid(config *entity.Configuration, pullRequest *entity.PullRequest) *entity.ValidationResult {
+	if config.CommitPattern == "" {
 		return &entity.ValidationResult{
-			Name:   v.Name,
+			Name:   constants.CommitValidatorName,
 			Active: false,
 			Result: nil,
 		}
 	}
 
-	ctx := context.Background()
-
-	commits, _ := v.client.GetCommits(
-		ctx,
-		v.meta.Owner,
-		v.meta.Name,
-		pullRequest.GetNumber(),
-	)
-
-	pattern := regexp.MustCompile(v.config.CommitPattern)
+	commits := pullRequest.Commits
+	pattern := regexp.MustCompile(config.CommitPattern)
 
 	for _, commit := range commits {
-		message := commit.Commit.GetMessage()
+		message := commit.Message
 
 		if !pattern.Match([]byte(message)) {
 			return &entity.ValidationResult{
-				Name:   v.Name,
+				Name:   constants.CommitValidatorName,
 				Active: true,
 				Result: fmt.Errorf(
-					"commit %s does not have valid commit message", commit.GetSHA(),
+					"commit %s does not have valid commit message", commit.Hash,
 				),
 			}
 		}
 	}
 
 	return &entity.ValidationResult{
-		Name:   v.Name,
+		Name:   constants.CommitValidatorName,
 		Active: true,
 		Result: nil,
 	}

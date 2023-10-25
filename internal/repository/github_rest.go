@@ -45,7 +45,7 @@ func (cl *githubClient) GetPullRequest(
 		Branch: pullRequest.GetHead().GetRef(),
 		Changes: pullRequest.GetChangedFiles(),
 		Author: entity.Actor{
-			Name: pullRequest.GetUser().GetName(),
+			Login: pullRequest.GetUser().GetName(),
 			Type: pullRequest.GetUser().GetType(),
 		},
 	}, err

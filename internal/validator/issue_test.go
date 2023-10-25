@@ -5,15 +5,14 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIssueValidator_IsValid(t *testing.T) {
+func TestIsIssueValid(t *testing.T) {
 	type args struct {
 		config      bool
-		pullRequest *github.PullRequest
+		meta *entity.Meta
+		pullRequest *entity.PullRequest
 	}
 	tests := []struct {
 		name string
@@ -23,14 +22,20 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow issue references",
 			args: args{
-				pullRequest: &github.PullRequest{
-					Body: github.String(`
-						## Overview
-
-						Closes #1
-
-						This pull request resolves #123 by using xxx/yyy/zzz.
-					`),
+				pullRequest: &entity.PullRequest{
+					References: []entity.IssueReference{
+						{
+							Number: 123,
+							Meta: entity.Meta{
+								Owner: "Namchee",
+								Name: "conventional-pr",
+							},
+						},
+					},
+				},
+				meta: &entity.Meta{
+					Name: "conventional-pr",
+					Owner: "Namchee",
 				},
 				config: true,
 			},
@@ -43,7 +48,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should be skipped if disabled",
 			args: args{
-				pullRequest: &github.PullRequest{},
+				pullRequest: &entity.PullRequest{},
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
@@ -52,37 +57,10 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			},
 		},
 		{
-			name: "should reject if no issue at all",
+			name: "should reject if no issue references at all",
 			args: args{
-				pullRequest: &github.PullRequest{
-					Body: github.String("I don't reference any issues!"),
-				},
-				config:      true,
-			},
-			want: &entity.ValidationResult{
-				Name:   constants.IssueValidatorName,
-				Active: true,
-				Result: constants.ErrNoIssue,
-			},
-		},
-		{
-			name: "should reject if references are fake",
-			args: args{
-				pullRequest: &github.PullRequest{
-					Body: github.String(`
-						## Overview
-
-						Closes #1. resolved #2. fixes #3. Fix #321Closed #123
-
-						This pull request resolve #124 by using xxx/yyy/zzz.
-
-
-
-
-
-
-						close #9. Fixed #54.
-					`),
+				pullRequest: &entity.PullRequest{
+					References: []entity.IssueReference{},
 				},
 				config:      true,
 			},
@@ -96,14 +74,11 @@ func TestIssueValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			client := mocks.NewGithubClientMock()
 			config := &entity.Configuration{
 				Issue: tc.args.config,
 			}
 
-			validator := NewIssueValidator(client, config, &entity.Meta{})
-
-			got := validator.IsValid(tc.args.pullRequest)
+			got := IsIssueValid(config, tc.args.pullRequest)
 
 			assert.Equal(t, got, tc.want)
 		})

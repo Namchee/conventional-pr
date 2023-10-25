@@ -6,11 +6,10 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
 var (
-	validators = []func(internal.GithubClient, *entity.Configuration, *entity.Meta) internal.Validator{
+	validators = []func(*entity.Configuration, *entity.Meta) internal.Validator{
 		NewTitleValidator,
 		NewBodyValidator,
 		NewBranchValidator,
@@ -46,7 +45,7 @@ func NewValidatorGroup(
 
 func (v *ValidatorGroup) processValidator(
 	validator internal.Validator,
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 	pool chan *entity.ValidationResult,
 ) {
 	defer v.wg.Done()
@@ -63,14 +62,14 @@ func (v *ValidatorGroup) cleanup(
 
 // Process the pull request with all available validators
 func (v *ValidatorGroup) Process(
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 ) []*entity.ValidationResult {
 	channel := make(chan *entity.ValidationResult, len(validators))
 
 	v.wg.Add(len(validators))
 
 	for _, vv := range validators {
-		va := vv(v.client, v.config, v.meta)
+		va := vv(v.config, v.meta)
 
 		go v.processValidator(va, pullRequest, channel)
 	}

@@ -7,7 +7,6 @@ import (
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
 type permissionWhitelist struct {
@@ -31,7 +30,7 @@ func NewPermissionWhitelist(
 	}
 }
 
-func (w *permissionWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
+func (w *permissionWhitelist) IsWhitelisted(pullRequest *entity.PullRequest) *entity.WhitelistResult {
 	if w.config.Strict {
 		return &entity.WhitelistResult{
 			Name:   w.Name,
@@ -46,7 +45,7 @@ func (w *permissionWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *en
 		ctx,
 		w.meta.Owner,
 		w.meta.Name,
-		pullRequest.GetUser().GetLogin(),
+		pullRequest.Author.Login,
 	)
 
 	result := strings.ToLower(perms.GetPermission()) == constants.AdminUser

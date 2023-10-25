@@ -5,7 +5,6 @@ import (
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/utils"
-	"github.com/google/go-github/v32/github"
 )
 
 type usernameWhitelist struct {
@@ -23,7 +22,7 @@ func NewUsernameWhitelist(client internal.GithubClient, config *entity.Configura
 	}
 }
 
-func (w *usernameWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
+func (w *usernameWhitelist) IsWhitelisted(pullRequest *entity.PullRequest) *entity.WhitelistResult {
 	if len(w.config.IgnoredUsers) == 0 {
 		return &entity.WhitelistResult{
 			Name:   w.Name,
@@ -32,7 +31,7 @@ func (w *usernameWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *enti
 		}
 	}
 
-	user := pullRequest.GetUser().GetLogin()
+	user := pullRequest.Author.Login
 
 	return &entity.WhitelistResult{
 		Name:   w.Name,
