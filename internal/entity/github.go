@@ -19,8 +19,6 @@ type PullRequest struct {
 	Changes int
 	Author Actor
 
-	Commits []Commit
-	References []IssueReference
 	Repository Meta
 }
 

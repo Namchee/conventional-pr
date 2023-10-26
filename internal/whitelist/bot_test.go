@@ -85,8 +85,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 				Bot: tc.args.config,
 			}
 
-			whitelister := NewBotWhitelist(config, nil)
-
+			whitelister := NewBotWhitelist(nil, config)
 			got := whitelister.IsWhitelisted(pull)
 
 			assert.Equal(t, got, tc.want)

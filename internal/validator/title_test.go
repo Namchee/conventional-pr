@@ -104,7 +104,8 @@ func TestIsTitleValid(t *testing.T) {
 				TitlePattern: tc.args.pattern,
 			}
 
-			got := IsTitleValid(config, pull)
+			validator := NewTitleValidator(config)
+			got := validator.IsValid(pull)
 
 			assert.Equal(t, got, tc.want)
 		})

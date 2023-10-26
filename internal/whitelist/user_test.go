@@ -5,7 +5,6 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/Namchee/conventional-pr/internal/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -67,10 +66,8 @@ func TestUsernameWhitelist_IsWhitelisted(t *testing.T) {
 			config := &entity.Configuration{
 				IgnoredUsers: tc.args.config,
 			}
-			client := mocks.NewGithubClientMock()
 
-			whitelister := NewUsernameWhitelist(client, config, nil)
-
+			whitelister := NewUsernameWhitelist(nil, config)
 			got := whitelister.IsWhitelisted(pull)
 
 			assert.Equal(t, got, tc.want)

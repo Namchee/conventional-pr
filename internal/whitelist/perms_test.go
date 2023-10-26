@@ -79,10 +79,9 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 			config := &entity.Configuration{
 				Strict: tc.args.config,
 			}
-			meta := &entity.Meta{}
+			
 			client := mocks.NewGithubClientMock()
-
-			whitelister := NewPermissionWhitelist(client, config, meta)
+			whitelister := NewPermissionWhitelist(client, config)
 
 			got := whitelister.IsWhitelisted(pull)
 

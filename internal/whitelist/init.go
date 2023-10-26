@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	whitelists = []func(internal.GithubClient, *entity.Configuration, *entity.Meta) internal.Whitelist{
+	whitelists = []func(internal.GithubClient, *entity.Configuration) internal.Whitelist{
 		NewBotWhitelist,
 		NewDraftWhitelist,
 		NewPermissionWhitelist,
@@ -21,7 +21,7 @@ var (
 type WhitelistGroup struct {
 	client internal.GithubClient
 	config *entity.Configuration
-	meta   *entity.Meta
+
 	wg     *sync.WaitGroup
 }
 
@@ -29,13 +29,11 @@ type WhitelistGroup struct {
 func NewWhitelistGroup(
 	client internal.GithubClient,
 	config *entity.Configuration,
-	meta *entity.Meta,
 	wg *sync.WaitGroup,
 ) *WhitelistGroup {
 	return &WhitelistGroup{
 		client: client,
 		config: config,
-		meta:   meta,
 		wg:     wg,
 	}
 }
@@ -65,7 +63,7 @@ func (w *WhitelistGroup) Process(
 	w.wg.Add(len(whitelists))
 
 	for _, wv := range whitelists {
-		wl := wv(w.client, w.config, w.meta)
+		wl := wv(w.client, w.config)
 
 		go w.processWhitelist(wl, pullRequest, channel)
 	}

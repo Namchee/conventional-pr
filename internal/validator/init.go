@@ -9,36 +9,30 @@ import (
 )
 
 var (
-	validators = []func(*entity.Configuration, *entity.Meta) internal.Validator{
+	validators = []func(*entity.Configuration) internal.Validator{
 		NewTitleValidator,
 		NewBodyValidator,
 		NewBranchValidator,
 		NewCommitValidator,
 		NewIssueValidator,
 		NewFileValidator,
-		NewVerifiedValidator,
 	}
 )
 
 // ValidatorGroup is a collection of validation process, integrated in one function call
 type ValidatorGroup struct {
-	client internal.GithubClient
 	config *entity.Configuration
-	meta   *entity.Meta
+	
 	wg     *sync.WaitGroup
 }
 
 // NewValidatorGroup creates a new ValidatorGroup
 func NewValidatorGroup(
-	client internal.GithubClient,
 	config *entity.Configuration,
-	meta *entity.Meta,
 	wg *sync.WaitGroup,
 ) *ValidatorGroup {
 	return &ValidatorGroup{
-		client: client,
 		config: config,
-		meta:   meta,
 		wg:     wg,
 	}
 }
@@ -69,7 +63,7 @@ func (v *ValidatorGroup) Process(
 	v.wg.Add(len(validators))
 
 	for _, vv := range validators {
-		va := vv(v.config, v.meta)
+		va := vv(v.config)
 
 		go v.processValidator(va, pullRequest, channel)
 	}

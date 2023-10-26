@@ -73,7 +73,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	pullRequest, err := client.GetPullRequest(ctx, meta.Owner, meta.Name, event.Number)
+	pullRequest, err := client.GetPullRequest(ctx, meta, event.Number)
 
 	if err != nil {
 		errorLogger.Fatalf("Failed to fetch pull request data: %s", err.Error())
@@ -84,12 +84,12 @@ func main() {
 	sync := &sync.WaitGroup{}
 
 	infoLogger.Println("Testing pull request for whitelists")
-	wg := whitelist.NewWhitelistGroup(client, config, meta, sync)
+	wg := whitelist.NewWhitelistGroup(client, config, sync)
 	wgResult := wg.Process(pullRequest)
 
 	if !whitelist.IsWhitelisted(wgResult) {
 		infoLogger.Println("Testing pull request validity")
-		vg := validator.NewValidatorGroup(client, config, meta, sync)
+		vg := validator.NewValidatorGroup(config, sync)
 		vgResult = vg.Process(pullRequest)
 	}
 

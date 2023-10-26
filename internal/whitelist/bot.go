@@ -9,14 +9,15 @@ import (
 )
 
 type botWhitelist struct {
-	config *entity.Configuration
 	Name   string
+
+	config *entity.Configuration
 }
 
 // NewBotWhitelist creates a whitelist that bypasses checks on pull request submitted by bots
 func NewBotWhitelist(
+	_ internal.GithubClient,
 	config *entity.Configuration,
-	_ *entity.Meta,
 ) internal.Whitelist {
 	return &botWhitelist{
 		Name:   constants.BotWhitelistName,
@@ -24,7 +25,9 @@ func NewBotWhitelist(
 	}
 }
 
-func (w *botWhitelist) IsWhitelisted(pullRequest *entity.PullRequest) *entity.WhitelistResult {
+func (w *botWhitelist) IsWhitelisted(
+	pullRequest *entity.PullRequest,
+) *entity.WhitelistResult {
 	if !w.config.Bot {
 		return &entity.WhitelistResult{
 			Name:   w.Name,

@@ -17,14 +17,12 @@ func TestWhitelistGroup(t *testing.T) {
 	}
 
 	config := &entity.Configuration{}
-	meta := &entity.Meta{}
 
 	wg := sync.WaitGroup{}
 
 	whitelistGroup := NewWhitelistGroup(
 		clientMock,
 		config,
-		meta,
 		&wg,
 	)
 

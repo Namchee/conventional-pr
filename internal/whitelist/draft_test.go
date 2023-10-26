@@ -77,8 +77,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 				Draft: tc.args.config,
 			}
 
-			whitelister := NewDraftWhitelist(nil, config, nil)
-
+			whitelister := NewDraftWhitelist(nil, config)
 			got := whitelister.IsWhitelisted(pull)
 
 			assert.Equal(t, got, tc.want)

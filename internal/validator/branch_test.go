@@ -65,7 +65,9 @@ func TestIsBranchValid(t *testing.T) {
 				BranchPattern: tc.args.pattern,
 			}
 
-			got := IsBranchValid(config, pull)
+			validator := NewBranchValidator(config)
+
+			got := validator.IsValid(pull)
 
 			assert.Equal(t, tc.want, got)
 		})

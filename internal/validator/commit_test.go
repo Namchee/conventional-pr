@@ -96,7 +96,8 @@ func TestIsCommitValid(t *testing.T) {
 				CommitPattern: tc.args.pattern,
 			}
 
-			got := IsCommitValid(pull)
+			validator := NewCommitValidator(config)
+			got := validator.IsValid(pull)
 
 			assert.Equal(t, tc.want, got)
 		})

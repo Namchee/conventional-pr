@@ -3,15 +3,32 @@ package validator
 import (
 	"regexp"
 
+	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 )
 
-func IsTitleValid(
+type titleValidator struct {
+	Name   string
+
+	config *entity.Configuration
+}
+
+// NewTitleValidator creates a new validator that validates a pull request title
+func NewTitleValidator(
 	config *entity.Configuration,
+) internal.Validator {
+	return &titleValidator{
+		Name:   constants.TitleValidatorName,
+
+		config: config,
+	}
+}
+
+func (v *titleValidator) IsValid(
 	pullRequest *entity.PullRequest,
 ) *entity.ValidationResult {
-	if config.TitlePattern == "" {
+	if v.config.TitlePattern == "" {
 		return &entity.ValidationResult{
 			Name:   constants.TitleValidatorName,
 			Active: false,
@@ -20,8 +37,7 @@ func IsTitleValid(
 	}
 
 	title := pullRequest.Title
-
-	pattern := regexp.MustCompile(config.TitlePattern)
+	pattern := regexp.MustCompile(v.config.TitlePattern)
 
 	if !pattern.Match([]byte(title)) {
 		return &entity.ValidationResult{

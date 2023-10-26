@@ -78,7 +78,8 @@ func TestIsIssueValid(t *testing.T) {
 				Issue: tc.args.config,
 			}
 
-			got := IsIssueValid(config, tc.args.pullRequest)
+			validator := NewIssueValidator(config)
+			got := validator.IsValid(tc.args.pullRequest)
 
 			assert.Equal(t, got, tc.want)
 		})

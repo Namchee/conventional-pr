@@ -65,7 +65,8 @@ func TestIsFileValid(t *testing.T) {
 				FileChanges: tc.args.config,
 			}
 
-			got := IsFileValid(config, pull)
+			validator := NewFileValidator(config)
+			got := validator.IsValid(pull)
 
 			assert.Equal(t, got, tc.want)
 		})

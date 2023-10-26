@@ -1,15 +1,37 @@
 package validator
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 
+	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 )
 
-func IsCommitValid(config *entity.Configuration, pullRequest *entity.PullRequest) *entity.ValidationResult {
-	if config.CommitPattern == "" {
+type commitValidator struct {
+	Name   string
+
+	client internal.GithubClient
+	config *entity.Configuration
+}
+
+// NewCommitValidator creates a new validator that will validate all commit messages in a pull request
+func NewCommitValidator(
+	client internal.GithubClient,
+	config *entity.Configuration,
+) internal.Validator {
+	return &commitValidator{
+		Name:   constants.CommitValidatorName,
+		client: client,
+		config: config,
+	}
+}
+
+
+func (v *commitValidator) IsValid(pullRequest *entity.PullRequest) *entity.ValidationResult {
+	if v.config.CommitPattern == "" {
 		return &entity.ValidationResult{
 			Name:   constants.CommitValidatorName,
 			Active: false,
@@ -17,8 +39,8 @@ func IsCommitValid(config *entity.Configuration, pullRequest *entity.PullRequest
 		}
 	}
 
-	commits := pullRequest.Commits
-	pattern := regexp.MustCompile(config.CommitPattern)
+	commits := v.client.GetCommits(context.Background())
+	pattern := regexp.MustCompile(v.config.CommitPattern)
 
 	for _, commit := range commits {
 		message := commit.Message
