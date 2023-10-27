@@ -11,7 +11,7 @@ import (
 )
 
 type commitValidator struct {
-	Name   string
+	Name string
 
 	client internal.GithubClient
 	config *entity.Configuration
@@ -29,8 +29,10 @@ func NewCommitValidator(
 	}
 }
 
-
-func (v *commitValidator) IsValid(pullRequest *entity.PullRequest) *entity.ValidationResult {
+func (v *commitValidator) IsValid(
+	ctx context.Context,
+	pullRequest *entity.PullRequest,
+) *entity.ValidationResult {
 	if v.config.CommitPattern == "" {
 		return &entity.ValidationResult{
 			Name:   constants.CommitValidatorName,
@@ -39,7 +41,19 @@ func (v *commitValidator) IsValid(pullRequest *entity.PullRequest) *entity.Valid
 		}
 	}
 
-	commits := v.client.GetCommits(context.Background())
+	commits, err := v.client.GetCommits(
+		ctx,
+		&pullRequest.Repository,
+		pullRequest.Number,
+	)
+	if err != nil {
+		return &entity.ValidationResult{
+			Name:   constants.CommitValidatorName,
+			Active: true,
+			Result: nil,
+		}
+	}
+
 	pattern := regexp.MustCompile(v.config.CommitPattern)
 
 	for _, commit := range commits {

@@ -1,6 +1,7 @@
 package whitelist
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -78,7 +79,7 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 			}
 
 			whitelister := NewDraftWhitelist(nil, config)
-			got := whitelister.IsWhitelisted(pull)
+			got := whitelister.IsWhitelisted(context.TODO(), pull)
 
 			assert.Equal(t, got, tc.want)
 		})

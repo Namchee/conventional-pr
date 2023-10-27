@@ -1,6 +1,7 @@
 package whitelist
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -86,7 +87,7 @@ func TestBotWhitelist_IsWhitelisted(t *testing.T) {
 			}
 
 			whitelister := NewBotWhitelist(nil, config)
-			got := whitelister.IsWhitelisted(pull)
+			got := whitelister.IsWhitelisted(context.TODO(), pull)
 
 			assert.Equal(t, got, tc.want)
 		})

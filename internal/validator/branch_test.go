@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -65,9 +66,8 @@ func TestIsBranchValid(t *testing.T) {
 				BranchPattern: tc.args.pattern,
 			}
 
-			validator := NewBranchValidator(config)
-
-			got := validator.IsValid(pull)
+			validator := NewBranchValidator(nil, config)
+			got := validator.IsValid(context.TODO(), pull)
 
 			assert.Equal(t, tc.want, got)
 		})

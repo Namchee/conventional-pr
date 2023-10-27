@@ -1,6 +1,7 @@
 package whitelist
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -68,7 +69,7 @@ func TestUsernameWhitelist_IsWhitelisted(t *testing.T) {
 			}
 
 			whitelister := NewUsernameWhitelist(nil, config)
-			got := whitelister.IsWhitelisted(pull)
+			got := whitelister.IsWhitelisted(context.TODO(), pull)
 
 			assert.Equal(t, got, tc.want)
 		})

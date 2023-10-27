@@ -1,6 +1,7 @@
 package whitelist
 
 import (
+	"context"
 	"sync"
 	"testing"
 
@@ -26,7 +27,7 @@ func TestWhitelistGroup(t *testing.T) {
 		&wg,
 	)
 
-	got := whitelistGroup.Process(pullRequest)
+	got := whitelistGroup.Process(context.TODO(), pullRequest)
 
 	assert.Equal(t, 4, len(got))
 }

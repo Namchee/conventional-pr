@@ -1,6 +1,7 @@
 package whitelist
 
 import (
+	"context"
 	"strings"
 
 	"github.com/Namchee/conventional-pr/internal"
@@ -26,6 +27,7 @@ func NewBotWhitelist(
 }
 
 func (w *botWhitelist) IsWhitelisted(
+	_ context.Context,
 	pullRequest *entity.PullRequest,
 ) *entity.WhitelistResult {
 	if !w.config.Bot {

@@ -1,19 +1,22 @@
 package validator
 
 import (
+	"context"
+
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 )
 
 type fileValidator struct {
-	Name   string
+	Name string
 
 	config *entity.Configuration
 }
 
 // NewFileValidator creates a new validator that validates if a pull request introduces too many file changes
 func NewFileValidator(
+	_ internal.GithubClient,
 	config *entity.Configuration,
 ) internal.Validator {
 	return &fileValidator{
@@ -22,7 +25,10 @@ func NewFileValidator(
 	}
 }
 
-func (v *fileValidator) IsValid(pullRequest *entity.PullRequest) *entity.ValidationResult {
+func (v *fileValidator) IsValid(
+	_ context.Context,
+	pullRequest *entity.PullRequest,
+) *entity.ValidationResult {
 	if v.config.FileChanges == 0 {
 		return &entity.ValidationResult{
 			Name:   constants.FileValidatorName,

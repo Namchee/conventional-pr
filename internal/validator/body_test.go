@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -65,8 +66,8 @@ func TestBodyValidator_IsValid(t *testing.T) {
 				Body: tc.args.config,
 			}
 
-			validator := NewBodyValidator(config)
-			got := validator.IsValid(pullRequest)
+			validator := NewBodyValidator(nil, config)
+			got := validator.IsValid(context.TODO(), pullRequest)
 
 			assert.Equal(t, got, tc.want)
 		})

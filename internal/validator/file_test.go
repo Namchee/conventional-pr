@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -65,8 +66,8 @@ func TestIsFileValid(t *testing.T) {
 				FileChanges: tc.args.config,
 			}
 
-			validator := NewFileValidator(config)
-			got := validator.IsValid(pull)
+			validator := NewFileValidator(nil, config)
+			got := validator.IsValid(context.TODO(), pull)
 
 			assert.Equal(t, got, tc.want)
 		})

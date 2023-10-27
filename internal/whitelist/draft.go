@@ -1,6 +1,8 @@
 package whitelist
 
 import (
+	"context"
+
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -24,6 +26,7 @@ func NewDraftWhitelist(
 }
 
 func (w *draftWhitelist) IsWhitelisted(
+	_ context.Context,
 	pullRequest *entity.PullRequest,
 ) *entity.WhitelistResult {
 	if !w.config.Draft {

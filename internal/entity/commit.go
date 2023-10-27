@@ -6,6 +6,4 @@ type Commit struct {
 	Hash string
 	// Commit message
 	Message string
-	// Commit verification status
-	Verified bool
 }

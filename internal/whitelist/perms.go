@@ -1,13 +1,16 @@
 package whitelist
 
 import (
+	"context"
+	"strings"
+
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 )
 
 type permissionWhitelist struct {
-	Name   string
+	Name string
 
 	client internal.GithubClient
 	config *entity.Configuration
@@ -25,8 +28,10 @@ func NewPermissionWhitelist(
 	}
 }
 
-func (w *permissionWhitelist) IsWhitelisted(pullRequest *entity.PullRequest) *entity.WhitelistResult {
-	/*
+func (w *permissionWhitelist) IsWhitelisted(
+	ctx context.Context,
+	pullRequest *entity.PullRequest,
+) *entity.WhitelistResult {
 	if w.config.Strict {
 		return &entity.WhitelistResult{
 			Name:   w.Name,
@@ -35,21 +40,33 @@ func (w *permissionWhitelist) IsWhitelisted(pullRequest *entity.PullRequest) *en
 		}
 	}
 
-	ctx := context.Background()
-
-	perms, _ := w.client.GetPermissionLevel(
+	permissions, err := w.client.GetPermissions(
 		ctx,
-		pullRequest.Repository.Owner,
-		pullRequest.Repository.Name,
+		&pullRequest.Repository,
 		pullRequest.Author.Login,
 	)
 
-	result := strings.ToLower(perms.GetPermission()) == constants.AdminUser
-	*/
+	if err != nil {
+		return &entity.WhitelistResult{
+			Name:   w.Name,
+			Active: true,
+			Result: false,
+		}
+	}
+
+	for _, permission := range permissions {
+		if strings.ToLower(permission) == constants.AdminUser {
+			return &entity.WhitelistResult{
+				Name:   w.Name,
+				Active: true,
+				Result: true,
+			}
+		}
+	}
 
 	return &entity.WhitelistResult{
 		Name:   w.Name,
 		Active: true,
-		Result: true,
+		Result: false,
 	}
 }

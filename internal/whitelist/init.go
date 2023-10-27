@@ -1,6 +1,7 @@
 package whitelist
 
 import (
+	"context"
 	"sort"
 	"sync"
 
@@ -39,12 +40,13 @@ func NewWhitelistGroup(
 }
 
 func (w *WhitelistGroup) processWhitelist(
+	ctx context.Context,
 	whitelist internal.Whitelist,
 	pullRequest *entity.PullRequest,
 	pool chan *entity.WhitelistResult,
 ) {
 	defer w.wg.Done()
-	result := whitelist.IsWhitelisted(pullRequest)
+	result := whitelist.IsWhitelisted(ctx, pullRequest)
 	pool <- result
 }
 
@@ -57,6 +59,7 @@ func (w *WhitelistGroup) cleanup(
 
 // Process the pull request with all available whitelists
 func (w *WhitelistGroup) Process(
+	ctx context.Context,
 	pullRequest *entity.PullRequest,
 ) []*entity.WhitelistResult {
 	channel := make(chan *entity.WhitelistResult, len(whitelists))
@@ -65,7 +68,7 @@ func (w *WhitelistGroup) Process(
 	for _, wv := range whitelists {
 		wl := wv(w.client, w.config)
 
-		go w.processWhitelist(wl, pullRequest, channel)
+		go w.processWhitelist(ctx, wl, pullRequest, channel)
 	}
 
 	go w.cleanup(channel)

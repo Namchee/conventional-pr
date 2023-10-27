@@ -1,18 +1,20 @@
 package validator
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
 // This test also tests the default pattern
 func TestIsCommitValid(t *testing.T) {
 	type args struct {
-		commits []entity.Commit
+		number  int
 		pattern string
 	}
 	tests := []struct {
@@ -23,11 +25,6 @@ func TestIsCommitValid(t *testing.T) {
 		{
 			name: "should allow valid commits",
 			args: args{
-				commits: []entity.Commit{
-					{
-						Message: "feat: valid commit",
-					},
-				},
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -39,11 +36,6 @@ func TestIsCommitValid(t *testing.T) {
 		{
 			name: "should skip when pattern is empty",
 			args: args{
-				commits: []entity.Commit{
-					{
-						Message: "bad commit",
-					},
-				},
 				pattern: "",
 			},
 			want: &entity.ValidationResult{
@@ -55,7 +47,6 @@ func TestIsCommitValid(t *testing.T) {
 		{
 			name: "should allow when no commits",
 			args: args{
-				commits: []entity.Commit{},
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -67,16 +58,17 @@ func TestIsCommitValid(t *testing.T) {
 		{
 			name: "should reject on invalid commits",
 			args: args{
-				commits: []entity.Commit{
-					{
-						Hash: "e21b424",
-						Message: "feat: good commit",
-					},
-					{
-						Hash: "e21b423",
-						Message: "bad commit",
-					},
-				},
+				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
+			},
+			want: &entity.ValidationResult{
+				Name:   constants.CommitValidatorName,
+				Active: true,
+				Result: errors.New("commit e21b423 does not have valid commit message"),
+			},
+		},
+		{
+			name: "should pass when fetch fails",
+			args: args{
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -90,14 +82,16 @@ func TestIsCommitValid(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			pull := &entity.PullRequest{
-				Commits: tc.args.commits,
+				Number: tc.args.number,
 			}
 			config := &entity.Configuration{
 				CommitPattern: tc.args.pattern,
 			}
 
-			validator := NewCommitValidator(config)
-			got := validator.IsValid(pull)
+			client := mocks.NewGithubClientMock()
+
+			validator := NewCommitValidator(client, config)
+			got := validator.IsValid(context.TODO(), pull)
 
 			assert.Equal(t, tc.want, got)
 		})

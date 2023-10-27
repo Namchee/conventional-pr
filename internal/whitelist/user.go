@@ -1,6 +1,8 @@
 package whitelist
 
 import (
+	"context"
+
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -25,6 +27,7 @@ func NewUsernameWhitelist(
 }
 
 func (w *usernameWhitelist) IsWhitelisted(
+	_ context.Context,
 	pullRequest *entity.PullRequest,
 ) *entity.WhitelistResult {
 	if len(w.config.IgnoredUsers) == 0 {

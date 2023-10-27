@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"context"
 	"regexp"
 
 	"github.com/Namchee/conventional-pr/internal"
@@ -15,6 +16,7 @@ type branchValidator struct {
 
 // NewBranchValidator creates a validator that validates pull request branch name
 func NewBranchValidator(
+	_ internal.GithubClient,
 	config *entity.Configuration,
 ) internal.Validator {
 	return &branchValidator{
@@ -24,6 +26,7 @@ func NewBranchValidator(
 }
 
 func (v *branchValidator) IsValid(
+	_ context.Context,
 	pullRequest *entity.PullRequest,
 ) *entity.ValidationResult {
 	if v.config.BranchPattern == "" {
