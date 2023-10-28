@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/Namchee/conventional-pr/internal"
@@ -9,13 +10,16 @@ import (
 )
 
 func main() {
-	token := "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"
+	token := ""
 
 	client := internal.NewGithubClient(&entity.Configuration{Token: token, GraphQLURL: "https://api.github.com/graphql"})
-	_, err := client.GetPullRequest(context.Background(), &entity.Meta{
+	items, err := client.GetCommits(context.Background(), &entity.Meta{
 		Owner: "Namchee",
 		Name:  "conventional-pr",
-	}, 95)
+	}, 77)
 
 	fmt.Println(err)
+
+	beautified, _ := json.MarshalIndent(items, "", "  ")
+	fmt.Println(string(beautified))
 }
