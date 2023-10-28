@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIsFileValid(t *testing.T) {
+func TestFileValidator_IsValid(t *testing.T) {
 	type args struct {
 		changes int
 		config  int

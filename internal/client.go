@@ -3,7 +3,9 @@ package internal
 import (
 	"context"
 
+	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
+	"github.com/google/go-github/v56/github"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 )
@@ -15,21 +17,19 @@ type GithubClient interface {
 	GetIssueReferences(context.Context, *entity.Meta, int) ([]*entity.IssueReference, error)
 	GetCommits(context.Context, *entity.Meta, int) ([]*entity.Commit, error)
 	GetPermissions(context.Context, *entity.Meta, string) ([]string, error)
+	GetSelf(context.Context) (*entity.Actor, error)
+	GetComments(context.Context, *entity.Meta, int) ([]*entity.Comment, error)
 
-	/*
-		GetUser(context.Context, string) (*github.User, error)
-		GetIssue(context.Context, string, string, int) (*github.Issue, error)
-		GetComments(context.Context, *entity.Meta, int) ([]*github.IssueComment, error)
-		GetCommits(context.Context, string, string, int) ([]*github.RepositoryCommit, error)
-		CreateComment(context.Context, string, string, int, *github.IssueComment) error
-		EditComment(context.Context, string, string, int64, *github.IssueComment) error
-		Label(context.Context, string, string, int, string) error
-		Close(context.Context, string, string, int) error
-	*/
+	CreateComment(context.Context, *entity.Meta, int, string) error
+	EditComment(context.Context, *entity.Meta, int, string) error
+	Close(context.Context, *entity.Meta, int) error
+
+	Label(context.Context, *entity.Meta, int, string) error
 }
 
 type githubClient struct {
-	client *githubv4.Client
+	restClient *github.Client
+	gqlClient  *githubv4.Client
 }
 
 // NewGithubClient instatiates a new GitHub client API interface
@@ -40,10 +40,15 @@ func NewGithubClient(config *entity.Configuration) GithubClient {
 		&oauth2.Token{AccessToken: config.Token},
 	)
 
-	oauth := oauth2.NewClient(ctx, ts)
-	github := githubv4.NewEnterpriseClient(config.BaseURL.String(), oauth)
+	client := oauth2.NewClient(ctx, ts)
 
-	return &githubClient{client: github}
+	restClient, _ := github.NewClient(client).WithEnterpriseURLs(config.RestURL, config.RestURL)
+	gqlClient := githubv4.NewEnterpriseClient(config.GraphQLURL, client)
+
+	return &githubClient{
+		gqlClient:  gqlClient,
+		restClient: restClient,
+	}
 }
 
 func (c *githubClient) GetPullRequest(
@@ -54,6 +59,7 @@ func (c *githubClient) GetPullRequest(
 	var query struct {
 		Repository struct {
 			PullRequest struct {
+				Id           string
 				Title        string
 				Body         string
 				HeadRefName  string
@@ -73,7 +79,7 @@ func (c *githubClient) GetPullRequest(
 		"number": githubv4.Int(prNumber),
 	}
 
-	err := c.client.Query(ctx, &query, variables)
+	err := c.gqlClient.Query(ctx, &query, variables)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +134,7 @@ func (c *githubClient) GetIssueReferences(
 
 	var allReferences []*entity.IssueReference
 	for {
-		err := c.client.Query(ctx, &query, variables)
+		err := c.gqlClient.Query(ctx, &query, variables)
 		if err != nil {
 			return allReferences, err
 		}
@@ -185,7 +191,7 @@ func (c *githubClient) GetCommits(
 
 	var allCommits []*entity.Commit
 	for {
-		err := c.client.Query(ctx, &query, variables)
+		err := c.gqlClient.Query(ctx, &query, variables)
 		if err != nil {
 			return allCommits, err
 		}
@@ -230,7 +236,7 @@ func (c *githubClient) GetPermissions(
 
 	var allPermissions []string
 
-	err := c.client.Query(ctx, &query, variables)
+	err := c.gqlClient.Query(ctx, &query, variables)
 	if err != nil {
 		return allPermissions, err
 	}
@@ -240,4 +246,156 @@ func (c *githubClient) GetPermissions(
 	}
 
 	return allPermissions, nil
+}
+
+func (c *githubClient) GetComments(
+	ctx context.Context,
+	meta *entity.Meta,
+	prNumber int,
+) ([]*entity.Comment, error) {
+	var query struct {
+		Repository struct {
+			PullRequest struct {
+				Comments struct {
+					PageInfo struct {
+						EndCursor   string
+						HasNextPage bool
+					}
+					Nodes []struct {
+						DatabaseId int
+						Author     struct {
+							Login string
+						}
+						Body string
+					}
+				} `graphql:"comments(first: 100, after, $cursor)"`
+			} `graphql:"pullRequest(number: $number)"`
+		} `graphql:"repository(owner: $owner, name: $name)"`
+	}
+
+	variables := map[string]interface{}{
+		"owner":  githubv4.String(meta.Owner),
+		"name":   githubv4.String(meta.Name),
+		"number": githubv4.Int(prNumber),
+	}
+
+	var allComments []*entity.Comment
+	for {
+		err := c.gqlClient.Query(ctx, &query, variables)
+		if err != nil {
+			return allComments, err
+		}
+
+		for _, node := range query.Repository.PullRequest.Comments.Nodes {
+			allComments = append(allComments, &entity.Comment{
+				ID: node.DatabaseId,
+				Author: entity.Actor{
+					Login: node.Author.Login,
+				},
+				Body: node.Body,
+			})
+		}
+
+		if !query.Repository.PullRequest.Comments.PageInfo.HasNextPage {
+			return allComments, nil
+		}
+
+		variables["cursor"] = query.Repository.PullRequest.Comments.PageInfo.EndCursor
+	}
+}
+
+func (c *githubClient) GetSelf(
+	ctx context.Context,
+) (*entity.Actor, error) {
+	var query struct {
+		Viewer struct {
+			Login string
+		}
+	}
+
+	err := c.gqlClient.Query(ctx, &query, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity.Actor{
+		Login: query.Viewer.Login,
+	}, nil
+}
+
+func (c *githubClient) CreateComment(
+	ctx context.Context,
+	meta *entity.Meta,
+	prNumber int,
+	body string,
+) error {
+	_, _, err := c.restClient.PullRequests.CreateComment(
+		ctx,
+		meta.Owner,
+		meta.Name,
+		prNumber,
+		&github.PullRequestComment{
+			Body: &body,
+		},
+	)
+
+	return err
+}
+
+func (c *githubClient) EditComment(
+	ctx context.Context,
+	meta *entity.Meta,
+	commentID int,
+	body string,
+) error {
+	_, _, err := c.restClient.PullRequests.EditComment(
+		ctx,
+		meta.Owner,
+		meta.Name,
+		int64(commentID),
+		&github.PullRequestComment{
+			Body: &body,
+		},
+	)
+
+	return err
+}
+
+func (c *githubClient) Close(
+	ctx context.Context,
+	meta *entity.Meta,
+	prNumber int,
+) error {
+	state := constants.Closed
+
+	_, _, err := c.restClient.PullRequests.Edit(
+		ctx,
+		meta.Owner,
+		meta.Name,
+		prNumber,
+		&github.PullRequest{
+			State: &state,
+		},
+	)
+
+	return err
+}
+
+func (c *githubClient) Label(
+	ctx context.Context,
+	meta *entity.Meta,
+	prNumber int,
+	label string,
+) error {
+	_, _, err := c.restClient.Issues.AddLabelsToIssue(
+		ctx,
+		meta.Owner,
+		meta.Name,
+		prNumber,
+		[]string{
+			label,
+		},
+	)
+
+	return err
 }

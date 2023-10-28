@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"context"
 	"sort"
 	"sync"
 
@@ -9,7 +10,7 @@ import (
 )
 
 var (
-	validators = []func(*entity.Configuration) internal.Validator{
+	validators = []func(internal.GithubClient, *entity.Configuration) internal.Validator{
 		NewTitleValidator,
 		NewBodyValidator,
 		NewBranchValidator,
@@ -21,29 +22,33 @@ var (
 
 // ValidatorGroup is a collection of validation process, integrated in one function call
 type ValidatorGroup struct {
+	client internal.GithubClient
 	config *entity.Configuration
-	
-	wg     *sync.WaitGroup
+
+	wg *sync.WaitGroup
 }
 
 // NewValidatorGroup creates a new ValidatorGroup
 func NewValidatorGroup(
+	client internal.GithubClient,
 	config *entity.Configuration,
 	wg *sync.WaitGroup,
 ) *ValidatorGroup {
 	return &ValidatorGroup{
 		config: config,
+		client: client,
 		wg:     wg,
 	}
 }
 
 func (v *ValidatorGroup) processValidator(
+	ctx context.Context,
 	validator internal.Validator,
 	pullRequest *entity.PullRequest,
 	pool chan *entity.ValidationResult,
 ) {
 	defer v.wg.Done()
-	result := validator.IsValid(pullRequest)
+	result := validator.IsValid(ctx, pullRequest)
 	pool <- result
 }
 
@@ -56,6 +61,7 @@ func (v *ValidatorGroup) cleanup(
 
 // Process the pull request with all available validators
 func (v *ValidatorGroup) Process(
+	ctx context.Context,
 	pullRequest *entity.PullRequest,
 ) []*entity.ValidationResult {
 	channel := make(chan *entity.ValidationResult, len(validators))
@@ -63,9 +69,9 @@ func (v *ValidatorGroup) Process(
 	v.wg.Add(len(validators))
 
 	for _, vv := range validators {
-		va := vv(v.config)
+		va := vv(v.client, v.config)
 
-		go v.processValidator(va, pullRequest, channel)
+		go v.processValidator(ctx, va, pullRequest, channel)
 	}
 
 	go v.cleanup(channel)

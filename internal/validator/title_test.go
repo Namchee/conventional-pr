@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -9,7 +10,7 @@ import (
 )
 
 // This test also tests the default pattern
-func TestIsTitleValid(t *testing.T) {
+func TestTitleValidator_IsValid(t *testing.T) {
 	type args struct {
 		title   string
 		pattern string
@@ -104,8 +105,8 @@ func TestIsTitleValid(t *testing.T) {
 				TitlePattern: tc.args.pattern,
 			}
 
-			validator := NewTitleValidator(config)
-			got := validator.IsValid(pull)
+			validator := NewTitleValidator(nil, config)
+			got := validator.IsValid(context.TODO(), pull)
 
 			assert.Equal(t, got, tc.want)
 		})

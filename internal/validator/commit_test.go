@@ -12,7 +12,7 @@ import (
 )
 
 // This test also tests the default pattern
-func TestIsCommitValid(t *testing.T) {
+func TestCommitValidator_IsValid(t *testing.T) {
 	type args struct {
 		number  int
 		pattern string
@@ -25,6 +25,7 @@ func TestIsCommitValid(t *testing.T) {
 		{
 			name: "should allow valid commits",
 			args: args{
+				number:  123,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -36,6 +37,7 @@ func TestIsCommitValid(t *testing.T) {
 		{
 			name: "should skip when pattern is empty",
 			args: args{
+				number:  69,
 				pattern: "",
 			},
 			want: &entity.ValidationResult{
@@ -47,6 +49,7 @@ func TestIsCommitValid(t *testing.T) {
 		{
 			name: "should allow when no commits",
 			args: args{
+				number:  456,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -58,23 +61,25 @@ func TestIsCommitValid(t *testing.T) {
 		{
 			name: "should reject on invalid commits",
 			args: args{
+				number:  69,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
 				Active: true,
-				Result: errors.New("commit e21b423 does not have valid commit message"),
+				Result: errors.New("commit e21b424 does not have valid commit message"),
 			},
 		},
 		{
 			name: "should pass when fetch fails",
 			args: args{
+				number:  1,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
 				Active: true,
-				Result: errors.New("commit e21b423 does not have valid commit message"),
+				Result: nil,
 			},
 		},
 	}

@@ -85,12 +85,12 @@ func main() {
 
 	infoLogger.Println("Testing pull request for whitelists")
 	wg := whitelist.NewWhitelistGroup(client, config, sync)
-	wgResult := wg.Process(pullRequest)
+	wgResult := wg.Process(ctx, pullRequest)
 
 	if !whitelist.IsWhitelisted(wgResult) {
 		infoLogger.Println("Testing pull request validity")
-		vg := validator.NewValidatorGroup(config, sync)
-		vgResult = vg.Process(pullRequest)
+		vg := validator.NewValidatorGroup(client, config, sync)
+		vgResult = vg.Process(ctx, pullRequest)
 	}
 
 	svc := service.NewGithubService(client, config, meta)

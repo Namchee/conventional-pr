@@ -1,11 +1,13 @@
 package validator
 
 import (
+	"context"
 	"errors"
 	"sync"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
+	"github.com/Namchee/conventional-pr/internal/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,13 +19,15 @@ func TestValidatorGroup(t *testing.T) {
 	config := &entity.Configuration{}
 
 	wg := sync.WaitGroup{}
+	client := mocks.NewGithubClientMock()
 
 	validatorGroup := NewValidatorGroup(
+		client,
 		config,
 		&wg,
 	)
 
-	got := validatorGroup.Process(pullRequest)
+	got := validatorGroup.Process(context.TODO(), pullRequest)
 
 	assert.Equal(t, 6, len(got))
 }

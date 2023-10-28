@@ -2,6 +2,7 @@ package validator
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
@@ -44,6 +45,7 @@ func (v *issueValidator) IsValid(
 		&pullRequest.Repository,
 		pullRequest.Number,
 	)
+	fmt.Println("here")
 	if err != nil {
 		return &entity.ValidationResult{
 			Name:   constants.IssueValidatorName,

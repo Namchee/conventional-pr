@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIsBranchValid(t *testing.T) {
+func TestBranchValidator_IsValid(t *testing.T) {
 	type args struct {
 		branch  string
 		pattern string
