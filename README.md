@@ -232,23 +232,6 @@ This validator checks if the pull request introduces too many changes to the bas
 
 Filling the input with zero will disable this validator.
 
-### All commits in the pull request are signed
-
-<table>
-  <tr>
-    <th>Default</th>
-    <td>Disabled</td>
-  </tr>
-  <tr>
-    <th>Input</th>
-    <td><code>signed</code></td>
-  </tr>
-</table>
-
-This validator checks if all commits in the pull request is [signed commits](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work).
-
-Please refer to [this document](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) on how signed commits work on GitHub.
-
 ## Inputs
 
 You can customize this actions with these following options (fill it on `with` section):
@@ -268,7 +251,6 @@ You can customize this actions with these following options (fill it on `with` s
 | `body`                | `false`       | `true`                                  | Require all pull request to have a non-empty body.                                                                                                                                                                                                                                                |
 | `issue`               | `false`       | `true`                                  | Require all pull request to reference an existing issue.                                                                                                                                                                                                                     |
 | `maximum_changes` | `false`       | `0`                                     | Limits file changes per one pull request. Fill with zero to disable this feature.                                                                                                                                                                                                                          |
-| `signed` | `false` | `false` | Require all commits on the pull request to be [signed commits](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits) |
 | `ignored_users` | `false` | `''` | GitHub usernames to be whitelisted from pull request validation. Must be a comma-separated string. Example: `Namchee, foo, bar` will bypass pull request validation for users `Namchee`, `foo`, `bar`. Case-sensitive.
 | `verbose` | `false` | `false` | Post validation report on every pull request validation flow.
 | `edit` | `false` | `false` | Edit existing validation report instead of submitting a new comment.

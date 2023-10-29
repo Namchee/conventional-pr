@@ -53,10 +53,6 @@ inputs:
     description: "Limits file changes per pull request"
     required: false
     default: 0
-  signed:
-    description: "Require all commits to be signed"
-    required: false
-    default: false
   ignored_users:
     description: "GitHub usernames to be whitelisted from pull request validation"
     required: false
