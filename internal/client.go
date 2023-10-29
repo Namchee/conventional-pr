@@ -59,7 +59,6 @@ func (c *githubClient) GetPullRequest(
 	var query struct {
 		Repository struct {
 			PullRequest struct {
-				Id           string
 				Title        string
 				Body         string
 				HeadRefName  string
@@ -121,7 +120,7 @@ func (c *githubClient) GetIssueReferences(
 							Name string
 						}
 					}
-				} `graphql:"closingIssueReference(first: 100, after: $cursor)"`
+				} `graphql:"closingIssuesReferences(first: 100, after: $cursor)"`
 			} `graphql:"pullRequest(number: $number)"`
 		} `graphql:"repository(owner: $owner, name: $name)"`
 	}
@@ -130,6 +129,7 @@ func (c *githubClient) GetIssueReferences(
 		"owner":  githubv4.String(meta.Owner),
 		"name":   githubv4.String(meta.Name),
 		"number": githubv4.Int(prNumber),
+		"cursor": githubv4.String(""),
 	}
 
 	var allReferences []*entity.IssueReference
@@ -187,6 +187,7 @@ func (c *githubClient) GetCommits(
 		"owner":  githubv4.String(meta.Owner),
 		"name":   githubv4.String(meta.Name),
 		"number": githubv4.Int(prNumber),
+		"cursor": githubv4.String(""),
 	}
 
 	var allCommits []*entity.Commit
@@ -253,55 +254,30 @@ func (c *githubClient) GetComments(
 	meta *entity.Meta,
 	prNumber int,
 ) ([]*entity.Comment, error) {
-	var query struct {
-		Repository struct {
-			PullRequest struct {
-				Comments struct {
-					PageInfo struct {
-						EndCursor   string
-						HasNextPage bool
-					}
-					Nodes []struct {
-						DatabaseId int
-						Author     struct {
-							Login string
-						}
-						Body string
-					}
-				} `graphql:"comments(first: 100, after, $cursor)"`
-			} `graphql:"pullRequest(number: $number)"`
-		} `graphql:"repository(owner: $owner, name: $name)"`
+	comments, _, err := c.restClient.Issues.ListComments(
+		ctx,
+		meta.Owner,
+		meta.Name,
+		prNumber,
+		nil,
+	)
+	if err != nil {
+		return nil, err
 	}
 
-	variables := map[string]interface{}{
-		"owner":  githubv4.String(meta.Owner),
-		"name":   githubv4.String(meta.Name),
-		"number": githubv4.Int(prNumber),
+	allComments := []*entity.Comment{}
+	for _, rawComment := range comments {
+		allComments = append(allComments, &entity.Comment{
+			ID: int(rawComment.GetID()),
+			Author: entity.Actor{
+				Type:  rawComment.GetUser().GetType(),
+				Login: rawComment.GetUser().GetLogin(),
+			},
+			Body: rawComment.GetBody(),
+		})
 	}
 
-	var allComments []*entity.Comment
-	for {
-		err := c.gqlClient.Query(ctx, &query, variables)
-		if err != nil {
-			return allComments, err
-		}
-
-		for _, node := range query.Repository.PullRequest.Comments.Nodes {
-			allComments = append(allComments, &entity.Comment{
-				ID: node.DatabaseId,
-				Author: entity.Actor{
-					Login: node.Author.Login,
-				},
-				Body: node.Body,
-			})
-		}
-
-		if !query.Repository.PullRequest.Comments.PageInfo.HasNextPage {
-			return allComments, nil
-		}
-
-		variables["cursor"] = query.Repository.PullRequest.Comments.PageInfo.EndCursor
-	}
+	return allComments, nil
 }
 
 func (c *githubClient) GetSelf(
@@ -309,6 +285,7 @@ func (c *githubClient) GetSelf(
 ) (*entity.Actor, error) {
 	var query struct {
 		Viewer struct {
+			Type  string `graphql:"typename: __typename"`
 			Login string
 		}
 	}
@@ -320,6 +297,7 @@ func (c *githubClient) GetSelf(
 
 	return &entity.Actor{
 		Login: query.Viewer.Login,
+		Type:  query.Viewer.Type,
 	}, nil
 }
 
