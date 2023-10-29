@@ -1,16 +1,17 @@
 package validator
 
 import (
+	"context"
 	"regexp"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
 type titleValidator struct {
-	Name   string
+	Name string
+
 	config *entity.Configuration
 }
 
@@ -18,37 +19,39 @@ type titleValidator struct {
 func NewTitleValidator(
 	_ internal.GithubClient,
 	config *entity.Configuration,
-	_ *entity.Meta,
 ) internal.Validator {
 	return &titleValidator{
-		Name:   constants.TitleValidatorName,
+		Name: constants.TitleValidatorName,
+
 		config: config,
 	}
 }
 
-func (v *titleValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
+func (v *titleValidator) IsValid(
+	_ context.Context,
+	pullRequest *entity.PullRequest,
+) *entity.ValidationResult {
 	if v.config.TitlePattern == "" {
 		return &entity.ValidationResult{
-			Name:   v.Name,
+			Name:   constants.TitleValidatorName,
 			Active: false,
 			Result: nil,
 		}
 	}
 
-	title := pullRequest.GetTitle()
-
+	title := pullRequest.Title
 	pattern := regexp.MustCompile(v.config.TitlePattern)
 
 	if !pattern.Match([]byte(title)) {
 		return &entity.ValidationResult{
-			Name:   v.Name,
+			Name:   constants.TitleValidatorName,
 			Active: true,
 			Result: constants.ErrInvalidTitle,
 		}
 	}
 
 	return &entity.ValidationResult{
-		Name:   v.Name,
+		Name:   constants.TitleValidatorName,
 		Active: true,
 		Result: nil,
 	}

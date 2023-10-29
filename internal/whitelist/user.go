@@ -1,29 +1,35 @@
 package whitelist
 
 import (
+	"context"
+
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/utils"
-	"github.com/google/go-github/v32/github"
 )
 
 type usernameWhitelist struct {
-	client internal.GithubClient
-	config *entity.Configuration
 	Name   string
+
+	config *entity.Configuration
 }
 
 // NewUsernameWhitelist creates a whitelist that bypasses checks for certain usernames
-func NewUsernameWhitelist(client internal.GithubClient, config *entity.Configuration, _ *entity.Meta) internal.Whitelist {
+func NewUsernameWhitelist(
+	_ internal.GithubClient,
+	config *entity.Configuration,
+) internal.Whitelist {
 	return &usernameWhitelist{
-		client: client,
-		config: config,
 		Name:   constants.UsernameWhitelistName,
+		config: config,
 	}
 }
 
-func (w *usernameWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
+func (w *usernameWhitelist) IsWhitelisted(
+	_ context.Context,
+	pullRequest *entity.PullRequest,
+) *entity.WhitelistResult {
 	if len(w.config.IgnoredUsers) == 0 {
 		return &entity.WhitelistResult{
 			Name:   w.Name,
@@ -32,7 +38,7 @@ func (w *usernameWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *enti
 		}
 	}
 
-	user := pullRequest.GetUser().GetLogin()
+	user := pullRequest.Author.Login
 
 	return &entity.WhitelistResult{
 		Name:   w.Name,

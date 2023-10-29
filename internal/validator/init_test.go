@@ -1,39 +1,35 @@
 package validator
 
 import (
+	"context"
 	"errors"
 	"sync"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestValidatorGroup(t *testing.T) {
-	clientMock := mocks.NewGithubClientMock()
-
-	prNum := 123
-	pullRequest := &github.PullRequest{
-		Number: &prNum,
+	pullRequest := &entity.PullRequest{
+		Number: 123,
 	}
 
 	config := &entity.Configuration{}
-	meta := &entity.Meta{}
 
 	wg := sync.WaitGroup{}
+	client := mocks.NewGithubClientMock()
 
 	validatorGroup := NewValidatorGroup(
-		clientMock,
+		client,
 		config,
-		meta,
 		&wg,
 	)
 
-	got := validatorGroup.Process(pullRequest)
+	got := validatorGroup.Process(context.TODO(), pullRequest)
 
-	assert.Equal(t, 7, len(got))
+	assert.Equal(t, 6, len(got))
 }
 
 func TestIsValid(t *testing.T) {

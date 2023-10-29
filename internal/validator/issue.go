@@ -2,80 +2,73 @@ package validator
 
 import (
 	"context"
-	"regexp"
-	"strconv"
+	"fmt"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
-)
-
-var (
-	keywordPattern = regexp.MustCompile(`(?mi)\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved) #(\d+)\b`)
 )
 
 type issueValidator struct {
+	Name string
+
 	client internal.GithubClient
 	config *entity.Configuration
-	meta   *entity.Meta
-	Name   string
 }
 
 // NewIssueValidator creates a new validator that validates issue resolution
 func NewIssueValidator(
 	client internal.GithubClient,
 	config *entity.Configuration,
-	meta *entity.Meta,
 ) internal.Validator {
 	return &issueValidator{
 		Name:   constants.IssueValidatorName,
 		client: client,
 		config: config,
-		meta:   meta,
 	}
 }
 
-func (v *issueValidator) IsValid(pullRequest *github.PullRequest) *entity.ValidationResult {
+func (v *issueValidator) IsValid(
+	ctx context.Context,
+	pullRequest *entity.PullRequest,
+) *entity.ValidationResult {
 	if !v.config.Issue {
 		return &entity.ValidationResult{
-			Name:   v.Name,
+			Name:   constants.IssueValidatorName,
 			Active: false,
 			Result: nil,
 		}
 	}
 
-	keywords := keywordPattern.FindAllStringSubmatch(pullRequest.GetBody(), -1)
-	
-	if keywords == nil {
+	references, err := v.client.GetIssueReferences(
+		ctx,
+		&pullRequest.Repository,
+		pullRequest.Number,
+	)
+	fmt.Println("here")
+	if err != nil {
 		return &entity.ValidationResult{
-			Name:   v.Name,
+			Name:   constants.IssueValidatorName,
 			Active: true,
-			Result: constants.ErrNoIssue,
+			Result: nil,
 		}
 	}
 
-	for _, number := range keywords {
-		num, _ := strconv.Atoi(number[2])
+	for _, reference := range references {
+		repo := reference.Owner + "/" + reference.Name
+		meta := pullRequest.Repository.Owner + "/" + pullRequest.Repository.Name
 
-		issue, _ := v.client.GetIssue(
-			context.Background(),
-			v.meta.Owner,
-			v.meta.Name,
-			num,
-		)
-
-		if issue != nil {
+		if repo == meta {
 			return &entity.ValidationResult{
-				Name:   v.Name,
+				Name:   constants.IssueValidatorName,
 				Active: true,
 				Result: nil,
 			}
 		}
-	} 
+	}
 
 	return &entity.ValidationResult{
-		Name:   v.Name,
+		Name:   constants.IssueValidatorName,
 		Active: true,
 		Result: constants.ErrNoIssue,
 	}

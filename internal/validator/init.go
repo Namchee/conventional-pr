@@ -1,23 +1,22 @@
 package validator
 
 import (
+	"context"
 	"sort"
 	"sync"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
 var (
-	validators = []func(internal.GithubClient, *entity.Configuration, *entity.Meta) internal.Validator{
+	validators = []func(internal.GithubClient, *entity.Configuration) internal.Validator{
 		NewTitleValidator,
 		NewBodyValidator,
 		NewBranchValidator,
 		NewCommitValidator,
 		NewIssueValidator,
 		NewFileValidator,
-		NewVerifiedValidator,
 	}
 )
 
@@ -25,32 +24,31 @@ var (
 type ValidatorGroup struct {
 	client internal.GithubClient
 	config *entity.Configuration
-	meta   *entity.Meta
-	wg     *sync.WaitGroup
+
+	wg *sync.WaitGroup
 }
 
 // NewValidatorGroup creates a new ValidatorGroup
 func NewValidatorGroup(
 	client internal.GithubClient,
 	config *entity.Configuration,
-	meta *entity.Meta,
 	wg *sync.WaitGroup,
 ) *ValidatorGroup {
 	return &ValidatorGroup{
-		client: client,
 		config: config,
-		meta:   meta,
+		client: client,
 		wg:     wg,
 	}
 }
 
 func (v *ValidatorGroup) processValidator(
+	ctx context.Context,
 	validator internal.Validator,
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 	pool chan *entity.ValidationResult,
 ) {
 	defer v.wg.Done()
-	result := validator.IsValid(pullRequest)
+	result := validator.IsValid(ctx, pullRequest)
 	pool <- result
 }
 
@@ -63,16 +61,17 @@ func (v *ValidatorGroup) cleanup(
 
 // Process the pull request with all available validators
 func (v *ValidatorGroup) Process(
-	pullRequest *github.PullRequest,
+	ctx context.Context,
+	pullRequest *entity.PullRequest,
 ) []*entity.ValidationResult {
 	channel := make(chan *entity.ValidationResult, len(validators))
 
 	v.wg.Add(len(validators))
 
 	for _, vv := range validators {
-		va := vv(v.client, v.config, v.meta)
+		va := vv(v.client, v.config)
 
-		go v.processValidator(va, pullRequest, channel)
+		go v.processValidator(ctx, va, pullRequest, channel)
 	}
 
 	go v.cleanup(channel)
@@ -88,11 +87,7 @@ func (v *ValidatorGroup) Process(
 			return results[i].Name < results[j].Name
 		}
 
-		if results[i].Result == nil {
-			return true
-		}
-
-		return false
+		return results[i].Result == nil
 	})
 
 	return results

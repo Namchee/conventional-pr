@@ -3,13 +3,17 @@ package service
 import (
 	"context"
 	"errors"
+	"regexp"
 	"time"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/formatter"
-	"github.com/google/go-github/v32/github"
+)
+
+var (
+	conventionalPrReportPattern = regexp.MustCompile("([Conventional PR])")
 )
 
 // GithubService is a service that simplifies GitHub API interaction
@@ -34,12 +38,11 @@ func NewGithubService(
 
 // WriteReport creates a new comment that contains conventional-pr workflow report in markdown format
 func (s *GithubService) WriteReport(
-	pullRequest *github.PullRequest,
+	ctx context.Context,
+	pullRequest *entity.PullRequest,
 	results *entity.PullRequestResult,
 	time time.Time,
 ) error {
-	ctx := context.Background()
-
 	report := formatter.FormatResultToTables(
 		results,
 		time,
@@ -48,7 +51,7 @@ func (s *GithubService) WriteReport(
 	if s.config.Edit {
 		err := s.editComment(
 			ctx,
-			pullRequest.GetNumber(),
+			pullRequest.Number,
 			report,
 		)
 
@@ -56,7 +59,7 @@ func (s *GithubService) WriteReport(
 			errors.Is(err, constants.ErrFirstComment) {
 			return s.createComment(
 				ctx,
-				pullRequest.GetNumber(),
+				pullRequest.Number,
 				report,
 			)
 		}
@@ -66,7 +69,7 @@ func (s *GithubService) WriteReport(
 
 	return s.createComment(
 		ctx,
-		pullRequest.GetNumber(),
+		pullRequest.Number,
 		report,
 	)
 }
@@ -78,12 +81,9 @@ func (s *GithubService) createComment(
 ) error {
 	return s.client.CreateComment(
 		ctx,
-		s.meta.Owner,
-		s.meta.Name,
+		s.meta,
 		number,
-		&github.IssueComment{
-			Body: github.String(body),
-		},
+		body,
 	)
 }
 
@@ -92,25 +92,26 @@ func (s *GithubService) editComment(
 	prNumber int,
 	body string,
 ) error {
-	var prev *github.IssueComment
+	var prev *entity.Comment
 
 	comments, err := s.client.GetComments(
 		ctx,
-		s.meta.Owner,
-		s.meta.Name,
+		s.meta,
 		prNumber,
 	)
 	if err != nil {
 		return err
 	}
 
-	user, err := s.client.GetUser(ctx, "")
+	user, err := s.client.GetSelf(ctx)
 	if err != nil {
 		return err
 	}
 
 	for _, comment := range comments {
-		if comment.GetUser().GetID() == user.GetID() {
+		isSameUser := comment.Author.Login == user.Login
+		isReport := conventionalPrReportPattern.FindStringIndex(comment.Body)
+		if isSameUser && len(isReport) > 0 {
 			prev = comment
 			break
 		}
@@ -122,18 +123,15 @@ func (s *GithubService) editComment(
 
 	return s.client.EditComment(
 		ctx,
-		s.meta.Owner,
-		s.meta.Name,
-		prev.GetID(),
-		&github.IssueComment{
-			Body: github.String(body),
-		},
+		s.meta,
+		prev.ID,
+		body,
 	)
 }
 
 // WriteMessage creates a new comment that contains user-desired message
 func (s *GithubService) WriteMessage(
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 ) error {
 	if s.config.Message == "" {
 		return nil
@@ -143,18 +141,15 @@ func (s *GithubService) WriteMessage(
 
 	return s.client.CreateComment(
 		ctx,
-		s.meta.Owner,
-		s.meta.Name,
-		pullRequest.GetNumber(),
-		&github.IssueComment{
-			Body: &s.config.Message,
-		},
+		s.meta,
+		pullRequest.Number,
+		s.config.Message,
 	)
 }
 
 // AttachLabel attachs label to invalid pull request
 func (s *GithubService) AttachLabel(
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 ) error {
 	if s.config.Label == "" {
 		return nil
@@ -164,16 +159,15 @@ func (s *GithubService) AttachLabel(
 
 	return s.client.Label(
 		ctx,
-		s.meta.Owner,
-		s.meta.Name,
-		pullRequest.GetNumber(),
+		s.meta,
+		pullRequest.Number,
 		s.config.Label,
 	)
 }
 
 // ClosePullRequest closes invalid pull request
 func (s *GithubService) ClosePullRequest(
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 ) error {
 	if !s.config.Close {
 		return nil
@@ -183,8 +177,7 @@ func (s *GithubService) ClosePullRequest(
 
 	return s.client.Close(
 		ctx,
-		s.meta.Owner,
-		s.meta.Name,
-		pullRequest.GetNumber(),
+		&pullRequest.Repository,
+		pullRequest.Number,
 	)
 }

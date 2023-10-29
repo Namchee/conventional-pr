@@ -6,7 +6,7 @@ import (
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
-	"github.com/google/go-github/v32/github"
+	"github.com/Namchee/conventional-pr/internal/entity"
 )
 
 // GitHub's client mock. Used in testing
@@ -14,129 +14,102 @@ type githubClientMock struct{}
 
 func (m *githubClientMock) GetPullRequest(
 	_ context.Context,
-	_ string,
-	_ string,
-	event int,
-) (*github.PullRequest, error) {
-	if event == 123 {
-		return &github.PullRequest{}, nil
+	_ *entity.Meta,
+	prNumber int,
+) (*entity.PullRequest, error) {
+	if prNumber == 123 {
+		return &entity.PullRequest{}, nil
 	}
 
 	return nil, errors.New("not found")
 }
 
-func (m *githubClientMock) GetUser(ctx context.Context, name string) (*github.User, error) {
-	if name == "foo" {
-		return &github.User{Type: github.String(constants.BotUser)}, nil
-	}
-
-	return &github.User{
-		Type: github.String(constants.NormalUser),
-		ID:   github.Int64(123),
+func (m *githubClientMock) GetSelf(ctx context.Context) (*entity.Actor, error) {
+	return &entity.Actor{
+		Type:  constants.NormalUser,
+		Login: "Namchee",
 	}, nil
 }
 
-func (m *githubClientMock) GetComments(_ context.Context, _ string, _ string, number int) ([]*github.IssueComment, error) {
+func (m *githubClientMock) GetComments(
+	_ context.Context,
+	_ *entity.Meta,
+	number int,
+) ([]*entity.Comment, error) {
 	if number == 1 {
 		return nil, errors.New("error")
 	}
 
 	if number == 2 {
-		return []*github.IssueComment{}, nil
+		return []*entity.Comment{}, nil
 	}
 
-	return []*github.IssueComment{
+	return []*entity.Comment{
 		{
-			ID:   github.Int64(3),
-			Body: github.String("foo bar"),
-			User: &github.User{
-				ID: github.Int64(123),
+			ID:   3,
+			Body: "foobar",
+			Author: entity.Actor{
+				Login: "Namchee",
 			},
 		},
 	}, nil
 }
 
-func (m *githubClientMock) GetIssue(
-	ctx context.Context,
-	_ string,
-	_ string,
-	number int,
-) (*github.Issue, error) {
-	if number == 123 {
-		return &github.Issue{}, nil
-	}
-
-	return nil, nil
-}
-
-func (m *githubClientMock) GetPermissionLevel(
+func (m *githubClientMock) GetPermissions(
 	_ context.Context,
-	_ string,
-	_ string,
+	_ *entity.Meta,
 	user string,
-) (*github.RepositoryPermissionLevel, error) {
+) ([]string, error) {
 	admin := constants.AdminUser
 	writeOnly := "write"
 
-	if user == "foo" {
-		return &github.RepositoryPermissionLevel{
-			Permission: &admin,
-		}, nil
+	switch user {
+	case "foo":
+		return []string{admin}, nil
+	case "bar":
+		return []string{writeOnly}, nil
+	default:
+		return []string{}, errors.New("mock error")
 	}
-
-	return &github.RepositoryPermissionLevel{
-		Permission: &writeOnly,
-	}, nil
 }
 
 func (m *githubClientMock) GetCommits(
 	ctx context.Context,
-	owner string,
-	name string,
+	_ *entity.Meta,
 	event int,
-) ([]*github.RepositoryCommit, error) {
+) ([]*entity.Commit, error) {
 	good := "feat(test): test something"
 	bad := "this is bad"
 
-	verifiedTrue := true
-	verifiedFalse := false
-
 	if event == 123 {
-		return []*github.RepositoryCommit{
+		return []*entity.Commit{
 			{
-				Commit: &github.Commit{
-					Message: &good,
-					Verification: &github.SignatureVerification{
-						Verified: &verifiedTrue,
-					},
-				},
+				Message: good,
 			},
 		}, nil
 	}
 
 	if event == 69 {
-		return []*github.RepositoryCommit{
+		return []*entity.Commit{
 			{
-				SHA: &bad,
-				Commit: &github.Commit{
-					Message: &bad,
-					Verification: &github.SignatureVerification{
-						Verified: &verifiedFalse,
-					},
-				},
+				Hash:    "e21b424",
+				Message: bad,
 			},
 		}, nil
 	}
 
-	return []*github.RepositoryCommit{}, nil
+	if event == 1 {
+		return []*entity.Commit{}, errors.New("mock error")
+	}
+
+	return []*entity.Commit{}, nil
 }
 
 func (m *githubClientMock) CreateComment(
 	_ context.Context,
-	_ string,
-	_ string,
+	_ *entity.Meta,
 	event int,
-	_ *github.IssueComment,
+	_ string,
 ) error {
 	if event == 123 {
 		return nil
@@ -147,10 +120,9 @@ func (m *githubClientMock) CreateComment(
 
 func (m *githubClientMock) EditComment(
 	_ context.Context,
+	_ *entity.Meta,
+	id int,
 	_ string,
-	_ string,
-	id int64,
-	_ *github.IssueComment,
 ) error {
 	if id == 123 {
 		return nil
@@ -161,8 +133,7 @@ func (m *githubClientMock) EditComment(
 
 func (m *githubClientMock) Label(
 	_ context.Context,
-	_ string,
-	_ string,
+	_ *entity.Meta,
 	event int,
 	_ string,
 ) error {
@@ -175,15 +146,36 @@ func (m *githubClientMock) Label(
 
 func (m *githubClientMock) Close(
 	_ context.Context,
-	_ string,
-	_ string,
+	_ *entity.Meta,
 	event int,
 ) error {
 	if event == 123 {
 		return nil
 	}
 
-	return errors.New("Error")
+	return errors.New("error")
+}
+
+func (m *githubClientMock) GetIssueReferences(
+	_ context.Context,
+	_ *entity.Meta,
+	prNumber int,
+) ([]*entity.IssueReference, error) {
+	switch prNumber {
+	case 1:
+		return []*entity.IssueReference{
+			{
+				Meta: entity.Meta{
+					Owner: "Namchee",
+					Name:  "conventional-pr",
+				},
+			},
+		}, nil
+	case 2:
+		return []*entity.IssueReference{}, nil
+	default:
+		return nil, errors.New("mock error")
+	}
 }
 
 // NewGithubClientMock creates a GitHub client mock for testing purposes

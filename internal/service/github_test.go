@@ -1,11 +1,11 @@
 package service
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -74,6 +74,25 @@ func TestGithubClient_WriteReport(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "edit - error cannot get elf",
+			args: args{
+				number: 1,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config: &entity.Configuration{
+				Edit: true,
+			},
+			wantErr: true,
+		},
+		{
 			name: "edit - cannot find comment",
 			args: args{
 				number: 2,
@@ -115,8 +134,8 @@ func TestGithubClient_WriteReport(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pullRequest := &github.PullRequest{
-				Number: &tc.args.number,
+			pullRequest := &entity.PullRequest{
+				Number: tc.args.number,
 			}
 
 			client := mocks.NewGithubClientMock()
@@ -126,6 +145,7 @@ func TestGithubClient_WriteReport(t *testing.T) {
 			service := NewGithubService(client, tc.config, meta)
 
 			got := service.WriteReport(
+				context.TODO(),
 				pullRequest,
 				tc.args.results,
 				mocks.ClockMock{}.Now(),
@@ -174,8 +194,8 @@ func TestGithubClient_WriteTemplate(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pullRequest := &github.PullRequest{
-				Number: &tc.args.number,
+			pullRequest := &entity.PullRequest{
+				Number: tc.args.number,
 			}
 
 			client := mocks.NewGithubClientMock()
@@ -232,8 +252,8 @@ func TestGithubClient_AttachLabel(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pullRequest := &github.PullRequest{
-				Number: &tc.args.number,
+			pullRequest := &entity.PullRequest{
+				Number: tc.args.number,
 			}
 
 			client := mocks.NewGithubClientMock()
@@ -290,8 +310,8 @@ func TestGithubClient_ClosePullRequest(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pullRequest := &github.PullRequest{
-				Number: &tc.args.number,
+			pullRequest := &entity.PullRequest{
+				Number: tc.args.number,
 			}
 
 			client := mocks.NewGithubClientMock()

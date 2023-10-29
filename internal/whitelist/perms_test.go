@@ -1,12 +1,12 @@
 package whitelist
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -68,25 +68,35 @@ func TestPermissionWhitelist_IsWhitelisted(t *testing.T) {
 				Result: false,
 			},
 		},
+		{
+			name: "should be checked if any privilege, strict = false, and client returns an error",
+			args: args{
+				name:   "baz",
+				config: false,
+			},
+			want: &entity.WhitelistResult{
+				Name:   constants.PermissionWhitelistName,
+				Active: true,
+				Result: false,
+			},
+		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			user := &github.User{
-				Login: &tc.args.name,
-			}
-			pull := &github.PullRequest{
-				User: user,
+			pull := &entity.PullRequest{
+				Author: entity.Actor{
+					Login: tc.args.name,
+				},
 			}
 			config := &entity.Configuration{
 				Strict: tc.args.config,
 			}
-			meta := &entity.Meta{}
+
 			client := mocks.NewGithubClientMock()
+			whitelister := NewPermissionWhitelist(client, config)
 
-			whitelister := NewPermissionWhitelist(client, config, meta)
-
-			got := whitelister.IsWhitelisted(pull)
+			got := whitelister.IsWhitelisted(context.Background(), pull)
 
 			assert.Equal(t, got, tc.want)
 		})

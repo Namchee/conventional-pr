@@ -1,19 +1,20 @@
 package validator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestIssueValidator_IsValid(t *testing.T) {
 	type args struct {
-		config      bool
-		pullRequest *github.PullRequest
+		config   bool
+		meta     *entity.Meta
+		prNumber int
 	}
 	tests := []struct {
 		name string
@@ -23,14 +24,10 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow issue references",
 			args: args{
-				pullRequest: &github.PullRequest{
-					Body: github.String(`
-						## Overview
-
-						Closes #1
-
-						This pull request resolves #123 by using xxx/yyy/zzz.
-					`),
+				prNumber: 1,
+				meta: &entity.Meta{
+					Name:  "conventional-pr",
+					Owner: "Namchee",
 				},
 				config: true,
 			},
@@ -43,7 +40,12 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		{
 			name: "should be skipped if disabled",
 			args: args{
-				pullRequest: &github.PullRequest{},
+				prNumber: 2,
+				meta: &entity.Meta{
+					Name:  "conventional-pr",
+					Owner: "Namchee",
+				},
+				config: false,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
@@ -52,12 +54,14 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			},
 		},
 		{
-			name: "should reject if no issue at all",
+			name: "should reject if no issue references at all",
 			args: args{
-				pullRequest: &github.PullRequest{
-					Body: github.String("I don't reference any issues!"),
+				prNumber: 2,
+				meta: &entity.Meta{
+					Name:  "conventional-pr",
+					Owner: "Namchee",
 				},
-				config:      true,
+				config: true,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
@@ -66,25 +70,14 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			},
 		},
 		{
-			name: "should reject if references are fake",
+			name: "should reject if reference is not on the same repository",
 			args: args{
-				pullRequest: &github.PullRequest{
-					Body: github.String(`
-						## Overview
-
-						Closes #1. resolved #2. fixes #3. Fix #321Closed #123
-
-						This pull request resolve #124 by using xxx/yyy/zzz.
-
-
-
-
-
-
-						close #9. Fixed #54.
-					`),
+				prNumber: 1,
+				meta: &entity.Meta{
+					Name:  "conventional-pr",
+					Owner: "namcheee",
 				},
-				config:      true,
+				config: true,
 			},
 			want: &entity.ValidationResult{
 				Name:   constants.IssueValidatorName,
@@ -92,18 +85,38 @@ func TestIssueValidator_IsValid(t *testing.T) {
 				Result: constants.ErrNoIssue,
 			},
 		},
+		{
+			name: "should pass if data fetching failed",
+			args: args{
+				prNumber: 3,
+				meta: &entity.Meta{
+					Name:  "conventional-pr",
+					Owner: "Namchee",
+				},
+				config: true,
+			},
+			want: &entity.ValidationResult{
+				Name:   constants.IssueValidatorName,
+				Active: true,
+				Result: nil,
+			},
+		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			client := mocks.NewGithubClientMock()
 			config := &entity.Configuration{
 				Issue: tc.args.config,
 			}
+			pullRequest := &entity.PullRequest{
+				Number:     tc.args.prNumber,
+				Repository: *tc.args.meta,
+			}
 
-			validator := NewIssueValidator(client, config, &entity.Meta{})
+			client := mocks.NewGithubClientMock()
 
-			got := validator.IsValid(tc.args.pullRequest)
+			validator := NewIssueValidator(client, config)
+			got := validator.IsValid(context.TODO(), pullRequest)
 
 			assert.Equal(t, got, tc.want)
 		})

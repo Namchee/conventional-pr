@@ -1,13 +1,13 @@
 package validator
 
 import (
+	"context"
 	"errors"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -37,7 +37,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 		{
 			name: "should skip when pattern is empty",
 			args: args{
-				number:  123,
+				number:  69,
 				pattern: "",
 			},
 			want: &entity.ValidationResult{
@@ -49,7 +49,7 @@ func TestCommitValidator_IsValid(t *testing.T) {
 		{
 			name: "should allow when no commits",
 			args: args{
-				number:  420,
+				number:  456,
 				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
 			},
 			want: &entity.ValidationResult{
@@ -67,15 +67,27 @@ func TestCommitValidator_IsValid(t *testing.T) {
 			want: &entity.ValidationResult{
 				Name:   constants.CommitValidatorName,
 				Active: true,
-				Result: errors.New("commit this is bad does not have valid commit message"),
+				Result: errors.New("commit e21b424 does not have valid commit message"),
+			},
+		},
+		{
+			name: "should pass when fetch fails",
+			args: args{
+				number:  1,
+				pattern: `([\w\-]+)(\([\w\-]+\))?!?: [\w\s:\-]+`,
+			},
+			want: &entity.ValidationResult{
+				Name:   constants.CommitValidatorName,
+				Active: true,
+				Result: nil,
 			},
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				Number: &tc.args.number,
+			pull := &entity.PullRequest{
+				Number: tc.args.number,
 			}
 			config := &entity.Configuration{
 				CommitPattern: tc.args.pattern,
@@ -83,9 +95,8 @@ func TestCommitValidator_IsValid(t *testing.T) {
 
 			client := mocks.NewGithubClientMock()
 
-			validator := NewCommitValidator(client, config, &entity.Meta{})
-
-			got := validator.IsValid(pull)
+			validator := NewCommitValidator(client, config)
+			got := validator.IsValid(context.TODO(), pull)
 
 			assert.Equal(t, tc.want, got)
 		})

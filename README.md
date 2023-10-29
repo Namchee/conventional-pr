@@ -215,8 +215,6 @@ Filling the input with an empty string will disabled this validator.
 
 This validator checks if the pull request is linked one or more issues.
 
-> Due to current limitations, an issue is considered linked only if the body has [special keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue). Please see [this issue](https://github.com/Namchee/conventional-pr/issues/94) for future solutionss.
-
 ### Pull request does not introduce too many changes
 
 <table>

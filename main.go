@@ -73,7 +73,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	pullRequest, err := client.GetPullRequest(ctx, meta.Owner, meta.Name, event.Number)
+	pullRequest, err := client.GetPullRequest(ctx, meta, event.Number)
 
 	if err != nil {
 		errorLogger.Fatalf("Failed to fetch pull request data: %s", err.Error())
@@ -84,13 +84,13 @@ func main() {
 	sync := &sync.WaitGroup{}
 
 	infoLogger.Println("Testing pull request for whitelists")
-	wg := whitelist.NewWhitelistGroup(client, config, meta, sync)
-	wgResult := wg.Process(pullRequest)
+	wg := whitelist.NewWhitelistGroup(client, config, sync)
+	wgResult := wg.Process(ctx, pullRequest)
 
 	if !whitelist.IsWhitelisted(wgResult) {
 		infoLogger.Println("Testing pull request validity")
-		vg := validator.NewValidatorGroup(client, config, meta, sync)
-		vgResult = vg.Process(pullRequest)
+		vg := validator.NewValidatorGroup(client, config, sync)
+		vgResult = vg.Process(ctx, pullRequest)
 	}
 
 	svc := service.NewGithubService(client, config, meta)
@@ -106,7 +106,7 @@ func main() {
 	defaultLogger.Println(resultLog)
 
 	if config.Verbose {
-		err = svc.WriteReport(pullRequest, results, time.Now())
+		err = svc.WriteReport(ctx, pullRequest, results, time.Now())
 
 		if err != nil {
 			errorLogger.Fatalf("Failed to write report: %s", err.Error())

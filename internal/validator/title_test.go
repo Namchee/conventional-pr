@@ -1,11 +1,11 @@
 package validator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -98,16 +98,15 @@ func TestTitleValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				Title: &tc.args.title,
+			pull := &entity.PullRequest{
+				Title: tc.args.title,
 			}
 			config := &entity.Configuration{
 				TitlePattern: tc.args.pattern,
 			}
 
-			validator := NewTitleValidator(nil, config, nil)
-
-			got := validator.IsValid(pull)
+			validator := NewTitleValidator(nil, config)
+			got := validator.IsValid(context.TODO(), pull)
 
 			assert.Equal(t, got, tc.want)
 		})

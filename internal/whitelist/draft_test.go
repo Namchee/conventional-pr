@@ -1,11 +1,11 @@
 package whitelist
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -71,16 +71,15 @@ func TestDraftWhitelist_IsWhitelisted(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				Draft: &tc.args.draft,
+			pull := &entity.PullRequest{
+				IsDraft: tc.args.draft,
 			}
 			config := &entity.Configuration{
 				Draft: tc.args.config,
 			}
 
-			whitelister := NewDraftWhitelist(nil, config, nil)
-
-			got := whitelister.IsWhitelisted(pull)
+			whitelister := NewDraftWhitelist(nil, config)
+			got := whitelister.IsWhitelisted(context.TODO(), pull)
 
 			assert.Equal(t, got, tc.want)
 		})

@@ -7,31 +7,31 @@ import (
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
 type permissionWhitelist struct {
+	Name string
+
 	client internal.GithubClient
 	config *entity.Configuration
-	meta   *entity.Meta
-	Name   string
 }
 
 // NewPermissionWhitelist creates a whitelist that bypasses checks on pull request submitted by user with high privileges
 func NewPermissionWhitelist(
 	client internal.GithubClient,
 	config *entity.Configuration,
-	meta *entity.Meta,
 ) internal.Whitelist {
 	return &permissionWhitelist{
 		Name:   constants.PermissionWhitelistName,
 		client: client,
 		config: config,
-		meta:   meta,
 	}
 }
 
-func (w *permissionWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *entity.WhitelistResult {
+func (w *permissionWhitelist) IsWhitelisted(
+	ctx context.Context,
+	pullRequest *entity.PullRequest,
+) *entity.WhitelistResult {
 	if w.config.Strict {
 		return &entity.WhitelistResult{
 			Name:   w.Name,
@@ -40,20 +40,33 @@ func (w *permissionWhitelist) IsWhitelisted(pullRequest *github.PullRequest) *en
 		}
 	}
 
-	ctx := context.Background()
-
-	perms, _ := w.client.GetPermissionLevel(
+	permissions, err := w.client.GetPermissions(
 		ctx,
-		w.meta.Owner,
-		w.meta.Name,
-		pullRequest.GetUser().GetLogin(),
+		&pullRequest.Repository,
+		pullRequest.Author.Login,
 	)
 
-	result := strings.ToLower(perms.GetPermission()) == constants.AdminUser
+	if err != nil {
+		return &entity.WhitelistResult{
+			Name:   w.Name,
+			Active: true,
+			Result: false,
+		}
+	}
+
+	for _, permission := range permissions {
+		if strings.ToLower(permission) == constants.AdminUser {
+			return &entity.WhitelistResult{
+				Name:   w.Name,
+				Active: true,
+				Result: true,
+			}
+		}
+	}
 
 	return &entity.WhitelistResult{
 		Name:   w.Name,
 		Active: true,
-		Result: result,
+		Result: false,
 	}
 }

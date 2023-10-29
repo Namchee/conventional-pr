@@ -1,11 +1,11 @@
 package validator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -59,18 +59,15 @@ func TestBranchValidator_IsValid(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			pull := &github.PullRequest{
-				Head: &github.PullRequestBranch{
-					Ref: &tc.args.branch,
-				},
+			pull := &entity.PullRequest{
+				Branch: tc.args.branch,
 			}
 			config := &entity.Configuration{
 				BranchPattern: tc.args.pattern,
 			}
 
-			validator := NewBranchValidator(nil, config, nil)
-
-			got := validator.IsValid(pull)
+			validator := NewBranchValidator(nil, config)
+			got := validator.IsValid(context.TODO(), pull)
 
 			assert.Equal(t, tc.want, got)
 		})

@@ -1,16 +1,16 @@
 package whitelist
 
 import (
+	"context"
 	"sort"
 	"sync"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/entity"
-	"github.com/google/go-github/v32/github"
 )
 
 var (
-	whitelists = []func(internal.GithubClient, *entity.Configuration, *entity.Meta) internal.Whitelist{
+	whitelists = []func(internal.GithubClient, *entity.Configuration) internal.Whitelist{
 		NewBotWhitelist,
 		NewDraftWhitelist,
 		NewPermissionWhitelist,
@@ -22,7 +22,7 @@ var (
 type WhitelistGroup struct {
 	client internal.GithubClient
 	config *entity.Configuration
-	meta   *entity.Meta
+
 	wg     *sync.WaitGroup
 }
 
@@ -30,24 +30,23 @@ type WhitelistGroup struct {
 func NewWhitelistGroup(
 	client internal.GithubClient,
 	config *entity.Configuration,
-	meta *entity.Meta,
 	wg *sync.WaitGroup,
 ) *WhitelistGroup {
 	return &WhitelistGroup{
 		client: client,
 		config: config,
-		meta:   meta,
 		wg:     wg,
 	}
 }
 
 func (w *WhitelistGroup) processWhitelist(
+	ctx context.Context,
 	whitelist internal.Whitelist,
-	pullRequest *github.PullRequest,
+	pullRequest *entity.PullRequest,
 	pool chan *entity.WhitelistResult,
 ) {
 	defer w.wg.Done()
-	result := whitelist.IsWhitelisted(pullRequest)
+	result := whitelist.IsWhitelisted(ctx, pullRequest)
 	pool <- result
 }
 
@@ -60,15 +59,16 @@ func (w *WhitelistGroup) cleanup(
 
 // Process the pull request with all available whitelists
 func (w *WhitelistGroup) Process(
-	pullRequest *github.PullRequest,
+	ctx context.Context,
+	pullRequest *entity.PullRequest,
 ) []*entity.WhitelistResult {
 	channel := make(chan *entity.WhitelistResult, len(whitelists))
 	w.wg.Add(len(whitelists))
 
 	for _, wv := range whitelists {
-		wl := wv(w.client, w.config, w.meta)
+		wl := wv(w.client, w.config)
 
-		go w.processWhitelist(wl, pullRequest, channel)
+		go w.processWhitelist(ctx, wl, pullRequest, channel)
 	}
 
 	go w.cleanup(channel)
@@ -84,11 +84,7 @@ func (w *WhitelistGroup) Process(
 			return results[i].Name < results[j].Name
 		}
 
-		if results[i].Result {
-			return true
-		}
-
-		return false
+		return results[i].Result
 	})
 
 	return results

@@ -1,36 +1,33 @@
 package whitelist
 
 import (
+	"context"
 	"sync"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
 	"github.com/Namchee/conventional-pr/internal/mocks"
-	"github.com/google/go-github/v32/github"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestWhitelistGroup(t *testing.T) {
 	clientMock := mocks.NewGithubClientMock()
 
-	prNum := 123
-	pullRequest := &github.PullRequest{
-		Number: &prNum,
+	pullRequest := &entity.PullRequest{
+		Number: 123,
 	}
 
 	config := &entity.Configuration{}
-	meta := &entity.Meta{}
 
 	wg := sync.WaitGroup{}
 
 	whitelistGroup := NewWhitelistGroup(
 		clientMock,
 		config,
-		meta,
 		&wg,
 	)
 
-	got := whitelistGroup.Process(pullRequest)
+	got := whitelistGroup.Process(context.TODO(), pullRequest)
 
 	assert.Equal(t, 4, len(got))
 }
