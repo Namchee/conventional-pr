@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"testing"
 
 	"github.com/Namchee/conventional-pr/internal/entity"
@@ -73,6 +74,25 @@ func TestGithubClient_WriteReport(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name: "edit - error cannot get elf",
+			args: args{
+				number: 1,
+				results: &entity.PullRequestResult{
+					Whitelist: []*entity.WhitelistResult{
+						{
+							Name:   "foo",
+							Result: true,
+						},
+					},
+					Validation: []*entity.ValidationResult{},
+				},
+			},
+			config: &entity.Configuration{
+				Edit: true,
+			},
+			wantErr: true,
+		},
+		{
 			name: "edit - cannot find comment",
 			args: args{
 				number: 2,
@@ -125,6 +145,7 @@ func TestGithubClient_WriteReport(t *testing.T) {
 			service := NewGithubService(client, tc.config, meta)
 
 			got := service.WriteReport(
+				context.TODO(),
 				pullRequest,
 				tc.args.results,
 				mocks.ClockMock{}.Now(),

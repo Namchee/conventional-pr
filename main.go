@@ -106,7 +106,7 @@ func main() {
 	defaultLogger.Println(resultLog)
 
 	if config.Verbose {
-		err = svc.WriteReport(pullRequest, results, time.Now())
+		err = svc.WriteReport(ctx, pullRequest, results, time.Now())
 
 		if err != nil {
 			errorLogger.Fatalf("Failed to write report: %s", err.Error())

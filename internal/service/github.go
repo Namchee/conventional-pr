@@ -38,12 +38,11 @@ func NewGithubService(
 
 // WriteReport creates a new comment that contains conventional-pr workflow report in markdown format
 func (s *GithubService) WriteReport(
+	ctx context.Context,
 	pullRequest *entity.PullRequest,
 	results *entity.PullRequestResult,
 	time time.Time,
 ) error {
-	ctx := context.Background()
-
 	report := formatter.FormatResultToTables(
 		results,
 		time,
