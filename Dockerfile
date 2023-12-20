@@ -17,6 +17,6 @@ FROM ubuntu:22.04
 RUN mkdir /app
 WORKDIR /app
 
-COPY --from=builder /ci/cpr .
+COPY --from=builder /ci/cpr /app/cpr
 
-ENTRYPOINT ["./cpr"]
+ENTRYPOINT ["/app/cpr"]
