@@ -1,4 +1,4 @@
-FROM golang:1.18
+FROM golang:1.18 as builder
 
 WORKDIR /ci
 
@@ -9,8 +9,14 @@ RUN go mod download
 
 COPY . .
 
-RUN  go build -a -o cpr .
+ENV GOCACHE=/root/.cache/go-build
+RUN --mount=type=cache,target="/root/.cache/go-build" go build -o cpr .
 
-RUN chmod +x /ci/cpr
+FROM ubuntu:22.04
 
-CMD ["/ci/cpr"]
+RUN mkdir /app
+WORKDIR /app
+
+COPY --from=builder /ci/cpr .
+
+ENTRYPOINT ["/cpr"]
