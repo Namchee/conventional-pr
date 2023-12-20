@@ -156,6 +156,27 @@ func (m *githubClientMock) Close(
 	return errors.New("error")
 }
 
+func (m *githubClientMock) GetIssue(
+	_ context.Context,
+	_ *entity.Meta,
+	issueNumber int,
+) (*entity.IssueReference, error) {
+	switch issueNumber {
+	case 2:
+		return &entity.IssueReference{
+			Number: 2,
+			Meta: entity.Meta{
+				Owner: "Namchee",
+				Name:  "conventional-pr",
+			},
+		}, nil
+	case 3:
+		return &entity.IssueReference{}, nil
+	default:
+		return nil, errors.New("mock error")
+	}
+}
+
 func (m *githubClientMock) GetIssueReferences(
 	_ context.Context,
 	_ *entity.Meta,

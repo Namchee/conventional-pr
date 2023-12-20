@@ -15,6 +15,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 		config   bool
 		meta     *entity.Meta
 		prNumber int
+		body     string
 	}
 	tests := []struct {
 		name string
@@ -86,9 +87,26 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			},
 		},
 		{
+			name: "should pass if issue is referenced as magic string",
+			args: args{
+				prNumber: 2,
+				meta: &entity.Meta{
+					Name:  "conventional-pr",
+					Owner: "namcheee",
+				},
+				body:   "Closes #3",
+				config: true,
+			},
+			want: &entity.ValidationResult{
+				Name:   constants.IssueValidatorName,
+				Active: true,
+				Result: nil,
+			},
+		},
+		{
 			name: "should pass if data fetching failed",
 			args: args{
-				prNumber: 3,
+				prNumber: 99,
 				meta: &entity.Meta{
 					Name:  "conventional-pr",
 					Owner: "Namchee",
@@ -111,6 +129,7 @@ func TestIssueValidator_IsValid(t *testing.T) {
 			pullRequest := &entity.PullRequest{
 				Number:     tc.args.prNumber,
 				Repository: *tc.args.meta,
+				Body:       tc.args.body,
 			}
 
 			client := mocks.NewGithubClientMock()

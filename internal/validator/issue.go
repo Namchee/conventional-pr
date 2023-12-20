@@ -2,10 +2,16 @@ package validator
 
 import (
 	"context"
+	"regexp"
+	"strconv"
 
 	"github.com/Namchee/conventional-pr/internal"
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/entity"
+)
+
+var (
+	keywordPattern = regexp.MustCompile(`(?mi)\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved) #(\d+)\b`)
 )
 
 type issueValidator struct {
@@ -65,9 +71,40 @@ func (v *issueValidator) IsValid(
 		}
 	}
 
+	if v.hasIssueMagicString(ctx, pullRequest) {
+		return &entity.ValidationResult{
+			Name:   constants.IssueValidatorName,
+			Active: true,
+			Result: nil,
+		}
+	}
+
 	return &entity.ValidationResult{
 		Name:   constants.IssueValidatorName,
 		Active: true,
 		Result: constants.ErrNoIssue,
 	}
+}
+
+func (v *issueValidator) hasIssueMagicString(
+	ctx context.Context,
+	pullRequest *entity.PullRequest,
+) bool {
+	keywords := keywordPattern.FindAllStringSubmatch(pullRequest.Body, -1)
+
+	for _, number := range keywords {
+		num, _ := strconv.Atoi(number[2])
+
+		issue, _ := v.client.GetIssue(
+			context.Background(),
+			&pullRequest.Repository,
+			num,
+		)
+
+		if issue != nil {
+			return true
+		}
+	}
+
+	return false
 }
