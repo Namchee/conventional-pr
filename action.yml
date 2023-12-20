@@ -8,7 +8,7 @@ inputs:
   close:
     description: "Immediately close invalid pull request"
     required: false
-    default: true
+    default: false
   label:
     description: "Invalid pull requests label"
     required: false
