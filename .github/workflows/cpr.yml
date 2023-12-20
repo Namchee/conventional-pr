@@ -12,3 +12,4 @@ jobs:
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
           edit: true
+          verbose: true
