@@ -207,7 +207,7 @@ func TestGithubClient_WriteTemplate(t *testing.T) {
 
 			service := NewGithubService(client, config, meta)
 
-			got := service.WriteMessage(pullRequest)
+			got := service.WriteMessage(context.TODO(), pullRequest)
 
 			assert.Equal(t, tc.wantErr, got != nil)
 		})
@@ -265,7 +265,7 @@ func TestGithubClient_AttachLabel(t *testing.T) {
 
 			service := NewGithubService(client, config, meta)
 
-			got := service.AttachLabel(pullRequest)
+			got := service.AttachLabel(context.TODO(), pullRequest)
 
 			assert.Equal(t, tc.wantErr, got != nil)
 		})
@@ -323,7 +323,7 @@ func TestGithubClient_ClosePullRequest(t *testing.T) {
 
 			service := NewGithubService(client, config, meta)
 
-			got := service.ClosePullRequest(pullRequest)
+			got := service.ClosePullRequest(context.TODO(), pullRequest)
 
 			assert.Equal(t, tc.wantErr, got != nil)
 		})

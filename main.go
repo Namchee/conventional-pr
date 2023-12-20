@@ -116,19 +116,31 @@ func main() {
 	if !validator.IsValid(vgResult) {
 		infoLogger.Println("Processing invalid pull request")
 
-		err = svc.AttachLabel(pullRequest)
-		if err != nil {
-			errorLogger.Fatalf("Failed to attach invalid pull request label: %s", err.Error())
+		if config.Label != "" {
+			infoLogger.Println("Attaching label to invalid pull request")
+
+			err = svc.AttachLabel(ctx, pullRequest)
+			if err != nil {
+				errorLogger.Fatalf("Failed to attach invalid pull request label: %s", err.Error())
+			}
 		}
 
-		err = svc.WriteMessage(pullRequest)
-		if err != nil {
-			errorLogger.Fatalf("Failed to write message: %s", err.Error())
+		if config.Message != "" {
+			infoLogger.Println("Writing custom error message to invalid pull request")
+
+			err = svc.WriteMessage(ctx, pullRequest)
+			if err != nil {
+				errorLogger.Fatalf("Failed to write message: %s", err.Error())
+			}
 		}
 
-		err = svc.ClosePullRequest(pullRequest)
-		if err != nil {
-			errorLogger.Fatalf("Failed to close invalid pull request: %s", err.Error())
+		if config.Close {
+			infoLogger.Println("Closing invalid pull request")
+
+			err = svc.ClosePullRequest(ctx, pullRequest)
+			if err != nil {
+				errorLogger.Fatalf("Failed to close invalid pull request: %s", err.Error())
+			}
 		}
 
 		infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())

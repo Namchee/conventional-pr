@@ -131,14 +131,9 @@ func (s *GithubService) editComment(
 
 // WriteMessage creates a new comment that contains user-desired message
 func (s *GithubService) WriteMessage(
+	ctx context.Context,
 	pullRequest *entity.PullRequest,
 ) error {
-	if s.config.Message == "" {
-		return nil
-	}
-
-	ctx := context.Background()
-
 	return s.client.CreateComment(
 		ctx,
 		s.meta,
@@ -149,14 +144,9 @@ func (s *GithubService) WriteMessage(
 
 // AttachLabel attachs label to invalid pull request
 func (s *GithubService) AttachLabel(
+	ctx context.Context,
 	pullRequest *entity.PullRequest,
 ) error {
-	if s.config.Label == "" {
-		return nil
-	}
-
-	ctx := context.Background()
-
 	return s.client.Label(
 		ctx,
 		s.meta,
@@ -167,14 +157,9 @@ func (s *GithubService) AttachLabel(
 
 // ClosePullRequest closes invalid pull request
 func (s *GithubService) ClosePullRequest(
+	ctx context.Context,
 	pullRequest *entity.PullRequest,
 ) error {
-	if !s.config.Close {
-		return nil
-	}
-
-	ctx := context.Background()
-
 	return s.client.Close(
 		ctx,
 		&pullRequest.Repository,
