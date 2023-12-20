@@ -32,7 +32,6 @@ func init() {
 
 func main() {
 	infoLogger.Println("Initializing conventional-pr")
-	start := time.Now()
 
 	ctx := context.Background()
 
@@ -142,8 +141,5 @@ func main() {
 				errorLogger.Fatalf("Failed to close invalid pull request: %s", err.Error())
 			}
 		}
-
-		infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
-		os.Exit(1)
 	}
 }
