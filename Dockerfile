@@ -17,6 +17,8 @@ FROM ubuntu:22.04
 RUN mkdir /app
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
+
 COPY --from=builder /ci/cpr /app/cpr
 
 ENTRYPOINT ["/app/cpr"]

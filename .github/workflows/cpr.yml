@@ -1,7 +1,7 @@
 name: Check PR semantics
 
 on:
-  pull_request:
+  pull_request_target:
 
 jobs:
   cpr:
@@ -12,3 +12,4 @@ jobs:
         uses: ./
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
+  
