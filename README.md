@@ -323,7 +323,3 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://allcontributors.org) specification.
 Contributions of any kind are welcome!
-
-## License
-
-This project is licensed under the [MIT License](./LICENSE)
