@@ -14,6 +14,7 @@ import (
 // Designed this way for easier testing
 type GithubClient interface {
 	GetPullRequest(context.Context, *entity.Meta, int) (*entity.PullRequest, error)
+	GetIssue(context.Context, *entity.Meta, int) (*entity.IssueReference, error)
 	GetIssueReferences(context.Context, *entity.Meta, int) ([]*entity.IssueReference, error)
 	GetCommits(context.Context, *entity.Meta, int) ([]*entity.Commit, error)
 	GetPermissions(context.Context, *entity.Meta, string) ([]string, error)
@@ -95,6 +96,38 @@ func (c *githubClient) GetPullRequest(
 			Type:  query.Repository.PullRequest.Author.Type,
 			Login: query.Repository.PullRequest.Author.Login,
 		},
+	}, nil
+}
+
+func (c *githubClient) GetIssue(
+	ctx context.Context,
+	meta *entity.Meta,
+	issueNumber int,
+) (*entity.IssueReference, error) {
+	var query struct {
+		Repository struct {
+			Issue struct {
+				Number int
+			} `graphql:"issue(number: $number)"`
+		} `graphql:"repository(owner: $owner, name: $name)"`
+	}
+
+	variables := map[string]interface{}{
+		"owner":  githubv4.String(meta.Owner),
+		"name":   githubv4.String(meta.Name),
+		"number": githubv4.Int(issueNumber),
+	}
+
+	var issue *entity.IssueReference
+
+	err := c.gqlClient.Query(ctx, &query, variables)
+	if err != nil {
+		return issue, err
+	}
+
+	return &entity.IssueReference{
+		Number: issueNumber,
+		Meta:   *meta,
 	}, nil
 }
 
