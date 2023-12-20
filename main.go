@@ -146,6 +146,4 @@ func main() {
 		infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
 		os.Exit(1)
 	}
-
-	infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
 }
