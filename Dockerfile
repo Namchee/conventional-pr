@@ -19,4 +19,4 @@ WORKDIR /app
 
 COPY --from=builder /ci/cpr .
 
-ENTRYPOINT ["/cpr"]
+ENTRYPOINT ["./cpr"]
