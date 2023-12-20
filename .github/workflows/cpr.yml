@@ -7,8 +7,9 @@ jobs:
   cpr:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Check PR semantics
-        uses: Namchee/conventional-pr@master
+        uses: ./
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
           edit: true
