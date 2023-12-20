@@ -307,12 +307,12 @@ func (c *githubClient) CreateComment(
 	prNumber int,
 	body string,
 ) error {
-	_, _, err := c.restClient.PullRequests.CreateComment(
+	_, _, err := c.restClient.Issues.CreateComment(
 		ctx,
 		meta.Owner,
 		meta.Name,
 		prNumber,
-		&github.PullRequestComment{
+		&github.IssueComment{
 			Body: &body,
 		},
 	)
@@ -326,12 +326,12 @@ func (c *githubClient) EditComment(
 	commentID int,
 	body string,
 ) error {
-	_, _, err := c.restClient.PullRequests.EditComment(
+	_, _, err := c.restClient.Issues.EditComment(
 		ctx,
 		meta.Owner,
 		meta.Name,
 		int64(commentID),
-		&github.PullRequestComment{
+		&github.IssueComment{
 			Body: &body,
 		},
 	)
