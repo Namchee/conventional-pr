@@ -36,7 +36,7 @@ jobs:
   cpr:
     runs-on: ubuntu-latest
     steps:
-      - name: Validates the pull request
+      - name: Validate the pull request
         uses: Namchee/conventional-pr@v(version)
         with:
           access_token: YOUR_GITHUB_ACCESS_TOKEN_HERE
@@ -253,7 +253,7 @@ You can customize this actions with these following options (fill it on `with` s
 | `maximum_changes` | `false`       | `0`                                     | Limits file changes per one pull request. Fill with zero to disable this feature.                                                                                                                                                                                                                                                                                                                                                 |
 | `ignored_users`   | `false`       | `''`                                    | GitHub usernames to be whitelisted from pull request validation. Must be a comma-separated string. Example: `Namchee, foo, bar` will bypass pull request validation for users `Namchee`, `foo`, `bar`. Case-sensitive.                                                                                                                                                                                                            |
 | `verbose`         | `false`       | `false`                                 | Post validation report on every pull request validation flow.                                                                                                                                                                                                                                                                                                                                                                     |
-| `edit`            | `false`       | `false`                                 | Edit existing validation report instead of submitting a new comment.                                                                                                                                                                                                                                                                                                                                                              |
+| `edit`            | `false`       | `false`                                 | Edit existing validation report instead of submitting a new comment. Does not do anything if `verbose` is `false`.                                                                                                                                                                                                                                                                                                                |
 
 ## Supported Events
 
