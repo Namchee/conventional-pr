@@ -1,4 +1,4 @@
-name: Check PR semantics
+name: Check pull request semantics
 
 on:
   pull_request_target:
@@ -7,10 +7,8 @@ jobs:
   cpr:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
       - name: Check PR semantics
-        uses: ./
+        uses: Namchee/conventional-pr@latest
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
-          edit: true
-          verbose: true
+

@@ -1,0 +1,17 @@
+name: Do self test
+
+on:
+  pull_request:
+
+jobs:
+  cpr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test validation to self
+        uses: ./
+        with:
+          access_token: ${{ secrets.ACCESS_TOKEN }}
+          edit: true
+          verbose: true
+
