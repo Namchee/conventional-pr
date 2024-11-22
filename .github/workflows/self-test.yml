@@ -1,4 +1,4 @@
-name: Do self test
+name: Do self test using current action
 
 on:
   pull_request_target:
