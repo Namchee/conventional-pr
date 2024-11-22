@@ -7,11 +7,11 @@ jobs:
   cpr:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Test validation to self
         uses: ./
         with:
-          access_token: ${{ secrets.ACCESS_TOKEN }}
+          access_token: ${{ secrets.GITHUB_TOKEN }}
           edit: true
           verbose: true
 
