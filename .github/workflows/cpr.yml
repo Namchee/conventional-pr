@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR semantics
-        uses: Namchee/conventional-pr@latest
+        uses: Namchee/conventional-pr@master
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
 
