@@ -11,3 +11,4 @@ jobs:
         uses: Namchee/conventional-pr@master
         with:
           access_token: ${{ secrets.ACCESS_TOKEN }}
+
