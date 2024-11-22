@@ -1,7 +1,7 @@
 # Conventional PR
 
 [![Go Version Badge](https://img.shields.io/github/go-mod/go-version/namchee/conventional-pr)](https://github.com/Namchee/conventional-pr) [![Go Report Card](https://goreportcard.com/badge/github.com/Namchee/conventional-pr)](https://goreportcard.com/report/github.com/Namchee/conventional-pr) [![codecov](https://codecov.io/gh/Namchee/conventional-pr/branch/master/graph/badge.svg)](https://codecov.io/gh/Namchee/conventional-pr) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END --> 
 
 Conventional PR is a GitHub Action that validates all pull requests sent to a GitHub-hosted repository.
@@ -313,6 +313,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://th3s4mur41.me"><img src="https://avatars.githubusercontent.com/u/5543595?v=4?s=100" width="100px;" alt="Michaël Vanderheyden"/><br /><sub><b>Michaël Vanderheyden</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/issues?q=author%3ATh3S4mur41" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/berkon"><img src="https://avatars.githubusercontent.com/u/28842661?v=4?s=100" width="100px;" alt="Bernd Konnerth"/><br /><sub><b>Bernd Konnerth</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/issues?q=author%3Aberkon" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/TheGoderGuy"><img src="https://avatars.githubusercontent.com/u/26481335?v=4?s=100" width="100px;" alt="TheGoderGuy"/><br /><sub><b>TheGoderGuy</b></sub></a><br /><a href="https://github.com/Namchee/conventional-pr/commits?author=TheGoderGuy" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Lapotor"><img src="https://avatars.githubusercontent.com/u/17144397?v=4?s=100" width="100px;" alt="Lapotor"/><br /><sub><b>Lapotor</b></sub></a><br /><a href="#ideas-Lapotor" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
