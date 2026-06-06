@@ -34,8 +34,6 @@ func main() {
 	infoLogger.Println("Initializing conventional-pr")
 	start := time.Now()
 
-	ctx := context.Background()
-
 	var config *entity.Configuration
 	var meta *entity.Meta
 	var event *entity.Event
@@ -46,6 +44,14 @@ func main() {
 
 	if err != nil {
 		errorLogger.Fatalln(err)
+	}
+
+	ctx := context.Background()
+
+	if config.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, time.Duration(config.Timeout)*time.Second)
+		defer cancel()
 	}
 
 	infoLogger.Println("Reading repository metadata")

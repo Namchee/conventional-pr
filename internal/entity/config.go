@@ -29,6 +29,8 @@ type Configuration struct {
 
 	RestURL    string
 	GraphQLURL string
+
+	Timeout int
 }
 
 // ReadConfig reads environment variables for input values which are supplied
@@ -49,6 +51,7 @@ func ReadConfig() (*Configuration, error) {
 	signed := utils.ReadEnvBool("INPUT_SIGNED")
 	edit := utils.ReadEnvBool("INPUT_EDIT")
 	verbose := utils.ReadEnvBool("INPUT_VERBOSE")
+	timeout := utils.ReadEnvInt("INPUT_TIMEOUT")
 
 	label := utils.ReadEnvString("INPUT_LABEL")
 	message := utils.ReadEnvString("INPUT_MESSAGE")
@@ -100,6 +103,7 @@ func ReadConfig() (*Configuration, error) {
 		Signed:        signed,
 		IgnoredUsers:  ignoredUsers,
 		Verbose:       verbose,
+		Timeout:       timeout,
 
 		RestURL:    restUrl,
 		GraphQLURL: graphqlUrl,

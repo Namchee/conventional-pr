@@ -26,7 +26,7 @@ func ReadEnvString(key string) string {
 }
 
 // ReadEnvInt read an integer environment variables.
-// Will return `0` if the variable is not a `bool`
+// Will return `0` if the variable is not an `int`
 func ReadEnvInt(key string) int {
 	value := os.Getenv(key)
 	parsed, err := strconv.Atoi(value)
