@@ -4,6 +4,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ReadEnvBool read and parse boolean environment variables.
@@ -57,4 +58,9 @@ func ReadEnvStringArray(key string) []string {
 	}
 
 	return value
+}
+
+// ReadEnvTime read and try to parse time duration from environment variables.
+func ReadEnvTime(key string) time.Duration {
+
 }

@@ -51,7 +51,10 @@ func ReadConfig() (*Configuration, error) {
 	signed := utils.ReadEnvBool("INPUT_SIGNED")
 	edit := utils.ReadEnvBool("INPUT_EDIT")
 	verbose := utils.ReadEnvBool("INPUT_VERBOSE")
-	timeout := utils.ReadEnvInt("INPUT_TIMEOUT")
+	timeout, err := utils.ReadEnvInt("INPUT_TIMEOUT")
+	if err != nil || timeout < 0 {
+		timeout = 5
+	}
 
 	label := utils.ReadEnvString("INPUT_LABEL")
 	message := utils.ReadEnvString("INPUT_MESSAGE")
@@ -74,7 +77,7 @@ func ReadConfig() (*Configuration, error) {
 		return nil, constants.ErrInvalidBranchPattern
 	}
 
-	fileChanges := utils.ReadEnvInt("INPUT_MAXIMUM_CHANGES")
+	fileChanges, _ := utils.ReadEnvInt("INPUT_MAXIMUM_CHANGES")
 
 	if fileChanges < 0 {
 		return nil, constants.ErrNegativeFileChange
