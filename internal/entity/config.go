@@ -2,6 +2,7 @@ package entity
 
 import (
 	"regexp"
+	"time"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/utils"
@@ -30,7 +31,7 @@ type Configuration struct {
 	RestURL    string
 	GraphQLURL string
 
-	Timeout int
+	Timeout time.Duration
 }
 
 // ReadConfig reads environment variables for input values which are supplied
@@ -51,10 +52,6 @@ func ReadConfig() (*Configuration, error) {
 	signed := utils.ReadEnvBool("INPUT_SIGNED")
 	edit := utils.ReadEnvBool("INPUT_EDIT")
 	verbose := utils.ReadEnvBool("INPUT_VERBOSE")
-	timeout, err := utils.ReadEnvInt("INPUT_TIMEOUT")
-	if err != nil || timeout < 0 {
-		timeout = 5
-	}
 
 	label := utils.ReadEnvString("INPUT_LABEL")
 	message := utils.ReadEnvString("INPUT_MESSAGE")
@@ -77,7 +74,7 @@ func ReadConfig() (*Configuration, error) {
 		return nil, constants.ErrInvalidBranchPattern
 	}
 
-	fileChanges, _ := utils.ReadEnvInt("INPUT_MAXIMUM_CHANGES")
+	fileChanges := utils.ReadEnvInt("INPUT_MAXIMUM_CHANGES")
 
 	if fileChanges < 0 {
 		return nil, constants.ErrNegativeFileChange
@@ -87,6 +84,12 @@ func ReadConfig() (*Configuration, error) {
 
 	restUrl := utils.ReadEnvString("GITHUB_API_URL")
 	graphqlUrl := utils.ReadEnvString("GITHUB_GRAPHQL_URL")
+
+	timeout := utils.ReadEnvTime("INPUT_TIMEOUT")
+
+	if timeout < 0 {
+		return nil, constants.ErrNegativeTimeout
+	}
 
 	return &Configuration{
 		Token:         token,

@@ -61,6 +61,22 @@ func ReadEnvStringArray(key string) []string {
 }
 
 // ReadEnvTime read and try to parse time duration from environment variables.
+// If the value is parsable as an integer, it will use seconds as unit.
 func ReadEnvTime(key string) time.Duration {
+	raw := os.Getenv(key)
+	if len(raw) == 0 {
+		return 0
+	}
 
+	duration, err := time.ParseDuration(raw)
+	if err == nil {
+		return duration
+	}
+
+	durationS, err := strconv.Atoi(raw)
+	if err != nil {
+		return 0
+	}
+
+	return time.Second * time.Duration(durationS)
 }
