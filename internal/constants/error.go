@@ -15,6 +15,7 @@ var (
 	ErrInvalidCommitPattern = errors.New("[Config] Invalid pull request commit message pattern")
 	ErrInvalidBranchPattern = errors.New("[Config] Invalid pull request branch name pattern")
 	ErrInvalidBaseURL       = errors.New("[Config] Invalid GitHub API base URL")
+	ErrNegativeTimeout      = errors.New("[Config] Timeout value must not be a negative number")
 )
 
 // Event error

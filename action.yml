@@ -65,6 +65,10 @@ inputs:
     describe: "Post validation report on every pull request validation flow"
     required: false
     default: false
+  timeout:
+    describe: "Timeout for API requests in seconds. Set to 0 for no timeout"
+    required: false
+    default: 5
 runs:
   using: docker
   image: "Dockerfile"

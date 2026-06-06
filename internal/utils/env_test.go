@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -149,6 +150,41 @@ func TestReadEnvStringArray(t *testing.T) {
 			defer os.Unsetenv("TEST")
 
 			got := ReadEnvStringArray("TEST")
+
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}
+
+func TestReadEnvTime(t *testing.T) {
+	tests := []struct {
+		name      string
+		mockValue string
+		want      time.Duration
+	}{
+		{
+			name:      "should return 0",
+			mockValue: "",
+			want:      0,
+		},
+		{
+			name:      "should parse integer as seconds",
+			mockValue: "5",
+			want:      5 * time.Second,
+		},
+		{
+			name:      "should parse normal time string",
+			mockValue: "3s",
+			want:      3 * time.Second,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			os.Setenv("TEST", tc.mockValue)
+			defer os.Unsetenv("TEST")
+
+			got := ReadEnvTime("TEST")
 
 			assert.Equal(t, tc.want, got)
 		})

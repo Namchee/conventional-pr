@@ -4,6 +4,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ReadEnvBool read and parse boolean environment variables.
@@ -26,7 +27,7 @@ func ReadEnvString(key string) string {
 }
 
 // ReadEnvInt read an integer environment variables.
-// Will return `0` if the variable is not a `bool`
+// Will return `0` if the variable is not an `int`
 func ReadEnvInt(key string) int {
 	value := os.Getenv(key)
 	parsed, err := strconv.Atoi(value)
@@ -57,4 +58,25 @@ func ReadEnvStringArray(key string) []string {
 	}
 
 	return value
+}
+
+// ReadEnvTime read and try to parse time duration from environment variables.
+// If the value is parsable as an integer, it will use seconds as unit.
+func ReadEnvTime(key string) time.Duration {
+	raw := os.Getenv(key)
+	if len(raw) == 0 {
+		return 0
+	}
+
+	duration, err := time.ParseDuration(raw)
+	if err == nil {
+		return duration
+	}
+
+	durationS, err := strconv.Atoi(raw)
+	if err != nil {
+		return 0
+	}
+
+	return time.Second * time.Duration(durationS)
 }

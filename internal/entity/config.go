@@ -2,6 +2,7 @@ package entity
 
 import (
 	"regexp"
+	"time"
 
 	"github.com/Namchee/conventional-pr/internal/constants"
 	"github.com/Namchee/conventional-pr/internal/utils"
@@ -29,6 +30,8 @@ type Configuration struct {
 
 	RestURL    string
 	GraphQLURL string
+
+	Timeout time.Duration
 }
 
 // ReadConfig reads environment variables for input values which are supplied
@@ -82,6 +85,12 @@ func ReadConfig() (*Configuration, error) {
 	restUrl := utils.ReadEnvString("GITHUB_API_URL")
 	graphqlUrl := utils.ReadEnvString("GITHUB_GRAPHQL_URL")
 
+	timeout := utils.ReadEnvTime("INPUT_TIMEOUT")
+
+	if timeout < 0 {
+		return nil, constants.ErrNegativeTimeout
+	}
+
 	return &Configuration{
 		Token:         token,
 		Draft:         draft,
@@ -100,6 +109,7 @@ func ReadConfig() (*Configuration, error) {
 		Signed:        signed,
 		IgnoredUsers:  ignoredUsers,
 		Verbose:       verbose,
+		Timeout:       timeout,
 
 		RestURL:    restUrl,
 		GraphQLURL: graphqlUrl,

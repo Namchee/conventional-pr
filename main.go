@@ -34,8 +34,6 @@ func main() {
 	infoLogger.Println("Initializing conventional-pr")
 	start := time.Now()
 
-	ctx := context.Background()
-
 	var config *entity.Configuration
 	var meta *entity.Meta
 	var event *entity.Event
@@ -46,6 +44,14 @@ func main() {
 
 	if err != nil {
 		errorLogger.Fatalln(err)
+	}
+
+	ctx := context.Background()
+
+	if config.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, config.Timeout)
+		defer cancel()
 	}
 
 	infoLogger.Println("Reading repository metadata")
@@ -116,7 +122,9 @@ func main() {
 		}
 	}
 
-	if !validator.IsValid(vgResult) {
+	isValid := validator.IsValid(vgResult)
+
+	if !isValid {
 		infoLogger.Println("Processing invalid pull request")
 
 		if config.Label != "" {
@@ -145,10 +153,11 @@ func main() {
 				errorLogger.Fatalf("Failed to close invalid pull request: %s", err.Error())
 			}
 		}
-
-		infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
-		os.Exit(1)
 	}
 
 	infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
+
+	if !isValid {
+		os.Exit(1)
+	}
 }
