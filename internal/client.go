@@ -34,7 +34,7 @@ type githubClient struct {
 }
 
 // NewGithubClient instatiates a new GitHub client API interface
-func NewGithubClient(config *entity.Configuration) GithubClient {
+func NewGithubClient(config *entity.Configuration) (GithubClient, error) {
 	ctx := context.Background()
 
 	ts := oauth2.StaticTokenSource(
@@ -43,13 +43,17 @@ func NewGithubClient(config *entity.Configuration) GithubClient {
 
 	client := oauth2.NewClient(ctx, ts)
 
-	restClient, _ := github.NewClient(client).WithEnterpriseURLs(config.RestURL, config.RestURL)
+	restClient, err := github.NewClient(client).WithEnterpriseURLs(config.RestURL, config.RestURL)
+	if err != nil {
+		return nil, err
+	}
+
 	gqlClient := githubv4.NewEnterpriseClient(config.GraphQLURL, client)
 
 	return &githubClient{
 		gqlClient:  gqlClient,
 		restClient: restClient,
-	}
+	}, nil
 }
 
 func (c *githubClient) GetPullRequest(

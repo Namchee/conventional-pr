@@ -58,7 +58,10 @@ func main() {
 	}
 
 	infoLogger.Println("Initializing GitHub Client")
-	client := internal.NewGithubClient(config)
+	client, err := internal.NewGithubClient(config)
+	if err != nil {
+		errorLogger.Fatalf("Failed to construct GitHub client, URL might be malformed: %s", err.Error())
+	}
 
 	infoLogger.Println("Reading pull request metadata")
 	event, err = entity.ReadEvent(os.DirFS("/"))
