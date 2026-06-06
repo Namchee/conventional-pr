@@ -50,7 +50,7 @@ func main() {
 
 	if config.Timeout > 0 {
 		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, time.Duration(config.Timeout)*time.Second)
+		ctx, cancel = context.WithTimeout(ctx, config.Timeout)
 		defer cancel()
 	}
 
@@ -151,9 +151,6 @@ func main() {
 				errorLogger.Fatalf("Failed to close invalid pull request: %s", err.Error())
 			}
 		}
-
-		infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
-		os.Exit(1)
 	}
 
 	infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
