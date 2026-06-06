@@ -122,7 +122,9 @@ func main() {
 		}
 	}
 
-	if !validator.IsValid(vgResult) {
+	isValid := validator.IsValid(vgResult)
+
+	if !isValid {
 		infoLogger.Println("Processing invalid pull request")
 
 		if config.Label != "" {
@@ -154,4 +156,8 @@ func main() {
 	}
 
 	infoLogger.Printf("Finished processing on %.2fs", time.Since(start).Seconds())
+
+	if !isValid {
+		os.Exit(1)
+	}
 }
